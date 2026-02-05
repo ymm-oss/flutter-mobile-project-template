@@ -9,6 +9,7 @@ jobs:
     timeout-minutes: 5
     permissions:
       pull-requests: write
+      contents: read
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: Checkout

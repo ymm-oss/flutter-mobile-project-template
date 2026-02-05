@@ -28,6 +28,7 @@ jobs:
     timeout-minutes: 5
     permissions:
       pull-requests: read
+      contents: read
     outputs:
       any: ${{ steps.filter.outputs.changes != '[]' }}
       actions: ${{ steps.filter.outputs.actions }}
