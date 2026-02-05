@@ -101,7 +101,7 @@ melos:
         dirExists: lib
         dependsOn: custom_lint
 
-    format:
+    format:apply:
       description: |
         すべてのパッケージに `dart format` を実行します。
         自動生成されたコードは対象外になるように設定しています。
