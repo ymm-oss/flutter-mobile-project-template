@@ -18,7 +18,7 @@ runs:
 
     - name: Install jq
       # https://github.com/dcarbone/install-jq-action
-      uses: dcarbone/install-jq-action@8867ddb4788346d7c22b72ea2e2ffe4d514c7bcb # v2.1.0
+      uses: dcarbone/install-jq-action@b7ef57d46ece78760b4019dbc4080a1ba2a40b45 # v3.2.0
 
     - name: Install strip-json-comments-cli
       # https://www.npmjs.com/package/strip-json-comments-cli
