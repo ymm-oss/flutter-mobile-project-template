@@ -16,6 +16,6 @@ jobs:
     steps:
       # https://github.com/srvaroa/labeler
       - name: Label manager for PRs and Issues based on configurable conditions
-        uses: srvaroa/labeler@1eec6d9e7c5fa5864840279978680302f955fc37 # v1.10.1
+        uses: srvaroa/labeler@bf262763a8a8e191f5847873aecc0f29df84f957 # v1.14.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
