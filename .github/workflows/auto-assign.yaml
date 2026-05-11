@@ -32,7 +32,7 @@ jobs:
       # https://github.com/marketplace/actions/create-github-app-token
       - name: Generate a token
         id: app-token
-        uses: actions/create-github-app-token@e8e39f73bb84fdf315a015fa3104f314c0a258b4 # v1.8.1
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
         with:
           app-id: ${{ secrets.APP_ID_OF_YUMEMI_TEAM_REVIEW_REQUESTER }}
           private-key: ${{ secrets.APP_PRIVATE_KEY_OF_YUMEMI_TEAM_REVIEW_REQUESTER }}
