@@ -63,7 +63,7 @@ jobs:
 
       - name: Post comment if rebased
         if: steps.check.outputs.rebase == 'true'
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
