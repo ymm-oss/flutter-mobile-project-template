@@ -10,6 +10,9 @@ concurrency:
 jobs:
   changes:
     uses: ./.github/workflows/wc-changes.yml
+    permissions:
+      pull-requests: read
+      contents: read
 
   skip-comment:
     runs-on: ubuntu-24.04
@@ -151,6 +154,9 @@ jobs:
 
   check-dependencies:
     uses: ./.github/workflows/wc-check-dependencies.yml
+    permissions:
+      pull-requests: write
+      contents: read
     needs:
       - changes
       - cache-dependencies

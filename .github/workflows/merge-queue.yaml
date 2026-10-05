@@ -10,6 +10,9 @@ concurrency:
 jobs:
   changes:
     uses: ./.github/workflows/wc-changes.yml
+    permissions:
+      pull-requests: read
+      contents: read
 
   skip-comment:
     runs-on: ubuntu-24.04
