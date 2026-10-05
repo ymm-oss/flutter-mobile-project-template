@@ -10,6 +10,9 @@ concurrency:
 jobs:
   changes:
     uses: ./.github/workflows/wc-changes.yml
+    permissions:
+      pull-requests: read
+      contents: read
 
   skip-comment:
     runs-on: ubuntu-24.04
@@ -29,6 +32,9 @@ jobs:
             チェック対象ファイルの変更がなかったため、checkジョブをスキップしました
   check-actions:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write
     needs: changes
     if: ${{ needs.changes.outputs.actions == 'true' }}
     timeout-minutes: 10
@@ -68,6 +74,9 @@ jobs:
     if: ${{ needs.changes.outputs.src == 'true' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    permissions:
+      contents: read
+      checks: write
 
     steps:
       # https://github.com/actions/checkout

@@ -32,10 +32,10 @@ jobs:
       # https://github.com/marketplace/actions/create-github-app-token
       - name: Generate a token
         id: app-token
-        uses: actions/create-github-app-token@e8e39f73bb84fdf315a015fa3104f314c0a258b4 # v1.8.1
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ secrets.APP_ID_OF_YUMEMI_TEAM_REVIEW_REQUESTER }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY_OF_YUMEMI_TEAM_REVIEW_REQUESTER }}
+          app-id: ${{ secrets.APP_ID_OF_YMM_OSS_TEAM_REVIEW_REQUESTER }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY_OF_YMM_OSS_TEAM_REVIEW_REQUESTER }}
 
       - name: Request reviewers
         env:
@@ -45,7 +45,7 @@ jobs:
           reviewers=$(jq -R 'split(",")' <<< "${REVIEWERS:-}" | jq 'map(select(length > 0))')
           team_reviewers=$(jq -R 'split(",")' <<< "${TEAM_REVIEWERS:-}" | jq 'map(select(length > 0))')
           # https://docs.github.com/ja/rest/pulls/review-requests?apiVersion=2022-11-28#request-reviewers-for-a-pull-request
-          curl -L \
+          curl -L --fail-with-body \
             -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ steps.app-token.outputs.token }}" \
