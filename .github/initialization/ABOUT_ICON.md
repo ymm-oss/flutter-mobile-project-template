@@ -28,7 +28,7 @@ labels: initialization
 
 |                                                          `adaptive_icon_foreground`                                                          |                                                          `adaptive_icon_background`                                                          |
 | :------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------: |
-| <img src="https://github.com/yumemi-inc/flutter-mobile-project-template/assets/67954894/0d1e1559-1600-4c12-aea6-2b4b234c7f41" width="300" /> | <img src="https://github.com/yumemi-inc/flutter-mobile-project-template/assets/67954894/521be3f1-945c-4c08-9c81-6f612679801c" width="300" /> |
+| <img src="https://github.com/ymm-oss/flutter-mobile-project-template/assets/67954894/0d1e1559-1600-4c12-aea6-2b4b234c7f41" width="300" /> | <img src="https://github.com/ymm-oss/flutter-mobile-project-template/assets/67954894/521be3f1-945c-4c08-9c81-6f612679801c" width="300" /> |
 
 <!-- Links -->
 

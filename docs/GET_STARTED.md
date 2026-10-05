@@ -120,5 +120,5 @@ Please check:
 [mise]: https://mise.jdx.dev/
 [melos]: https://melos.invertase.dev/
 [yq]: https://github.com/mikefarah/yq
-[flutter-mobile-project-template]: https://github.com/yumemi-inc/flutter-mobile-project-template/tree/main
-[flutter-mobile-project-docs-template]: https://github.com/yumemi-inc/flutter-mobile-project-docs-template
+[flutter-mobile-project-template]: https://github.com/ymm-oss/flutter-mobile-project-template/tree/main
+[flutter-mobile-project-docs-template]: https://github.com/ymm-oss/flutter-mobile-project-docs-template
