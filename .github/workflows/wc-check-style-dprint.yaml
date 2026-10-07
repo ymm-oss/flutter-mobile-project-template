@@ -22,7 +22,7 @@ jobs:
 
       # https://github.com/jdx/mise-action
       - name: Install Mise dependencies
-        uses: jdx/mise-action@5083fe46898c414b2475087cc79da59e7da859e8 # v2.2.2
+        uses: jdx/mise-action@7a111ead46986ccad89a74ad013ba2a7c08c9e67 # v2.2.1
         with:
           install_args: "dprint"
 
