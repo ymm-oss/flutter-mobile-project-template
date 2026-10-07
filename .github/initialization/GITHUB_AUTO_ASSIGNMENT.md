@@ -20,7 +20,7 @@ labels: initialization
 ### 1. GitHubアクセストークンの設定
 
 [.github/workflows/auto-assign.yaml] 内の
-`jobs.request-reviewers`の`Generate a token`のstepに、トークンを生成するGitHubアプリの適切な`app-id`と`private-key`を設定してください。
+`jobs.request-reviewers`の`Generate a token`のstepに、トークンを生成するGitHubアプリの適切な`client-id`と`private-key`を設定してください。
 
 トークンを生成するGitHubアプリがない場合は作成してください。
 
@@ -33,7 +33,7 @@ labels: initialization
         id: app-token
         uses: actions/create-github-app-token@vX.X.X
         with:
-          app-id: #適切な値を設定する
+          client-id: #適切な値を設定する
           private-key: #適切な値を設定する
 ```
 
