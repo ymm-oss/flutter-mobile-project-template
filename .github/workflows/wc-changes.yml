@@ -78,6 +78,7 @@ jobs:
               - "**.yaml"
               - "**/pubspec.lock"
               - "scripts/**"
+              - ".reviewdog.yml"
             spell:
               - "**.md"
               - "**.yaml"
