@@ -153,3 +153,5 @@ extension on ThemeSetting {
     };
   }
 }
+
+void _unusedFoo() { var x = 1; print(x); }
