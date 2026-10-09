@@ -78,6 +78,7 @@ jobs:
     permissions:
       contents: read
       checks: write
+      pull-requests: write
 
     steps:
       # https://github.com/actions/checkout
@@ -87,11 +88,16 @@ jobs:
       - name: Setup Application Runtime
         uses: ./.github/actions/setup-application-runtime
 
-      # https://github.com/invertase/github-action-dart-analyzer
-      - name: Report analyze
-        uses: invertase/github-action-dart-analyzer@e981b01a458d0bab71ee5da182e5b26687b7101b # v3.0.0
+      # https://github.com/reviewdog/action-setup
+      - name: Setup reviewdog
+        uses: reviewdog/action-setup@d8a7baabd7f3e8544ee4dbde3ee41d0011c3a93f # v1.5.0
         with:
-          fatal-infos: true
+          reviewdog_version: v0.21.2
+
+      - name: Report analyze
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ github.token }}
+        run: reviewdog -runners=dart-analyze -reporter=github-pr-review -filter-mode=nofilter -fail-level=info
 
       - name: Check format
         run: melos run format:check
