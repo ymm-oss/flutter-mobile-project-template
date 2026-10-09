@@ -2,6 +2,7 @@ andstor
 DavidAnson
 dcarbone
 dorny
+errorformat
 ghaction
 hkusu
 mikefarah
