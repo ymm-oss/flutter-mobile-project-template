@@ -89,6 +89,12 @@ melos:
         - gen:labeler
         - gen:labels
 
+    check:debug_tree_shaking:
+      description: |
+        リリースビルドにデバッグ機能が含まれていないこと（tree shaking されていること）を確認します。
+        `flutter build apk --analyze-size` と同じ AOT スナップショットを生成して検査します。
+      run: bash "$MELOS_ROOT_PATH/scripts/check-debug-tree-shaking.sh"
+
     fix:
       description: |
         すべてのパッケージに `dart fix --apply` を実行します。

@@ -99,6 +99,9 @@ jobs:
       - name: Check for circular dependencies
         run: melos list --cycles
 
+      - name: Check debug features are excluded from release build
+        run: melos run check:debug_tree_shaking
+
       - name: Run test
         run: melos run report:test --no-select
         continue-on-error: true
