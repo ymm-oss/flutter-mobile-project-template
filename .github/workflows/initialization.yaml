@@ -28,7 +28,7 @@ jobs:
     steps:
       # https://github.com/actions/checkout
       - name: Fetch sources
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Generate Matrix Data
         id: matrix
@@ -50,7 +50,7 @@ jobs:
     steps:
       # https://github.com/actions/checkout
       - name: Fetch sources
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Create Issue from File
         uses: peter-evans/create-issue-from-file@24452a72d85239eacf1468b0f1982a9f3fec4c94 # v5.0.0
@@ -71,7 +71,7 @@ jobs:
     steps:
       # https://github.com/actions/checkout
       - name: Fetch sources
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Cleanup Copilot Settings
         uses: ./.github/actions/cleanup-copilot-settings
@@ -114,4 +114,4 @@ jobs:
       #         This occurs when cleaning up a modified remote branch that remains in the stale state from `Fetch sources` step.
       - name: Check out latest state of original repository
         # https://github.com/actions/checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
