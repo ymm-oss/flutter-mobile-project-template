@@ -114,7 +114,7 @@ jobs:
       # https://github.com/dorny/test-reporter
       - name: Report test
         if: steps.check_files.outputs.files_exists == 'true'
-        uses: dorny/test-reporter@eaa763f6ffc21c7a37837f56cd5f9737f27fc6c8 # v1.8.0
+        uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2 # v3.0.0
         with:
           name: "flutter test"
           # https://github.com/mrmlnc/fast-glob の形式
