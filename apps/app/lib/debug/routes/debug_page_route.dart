@@ -1,4 +1,4 @@
-part of 'package:flutter_app/router/router.dart';
+part of 'package:flutter_app/debug/debug_features_impl.dart';
 
 final class _DebugPageNavigatorImpl implements DebugPageNavigator {
   const _DebugPageNavigatorImpl();
@@ -54,8 +54,7 @@ class DebugPageRoute extends GoRouteData with _$DebugPageRoute {
 
   static const path = '/debug';
 
-  static final GlobalKey<NavigatorState> $parentNavigatorKey =
-      _rootNavigatorKey;
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -79,8 +78,7 @@ class NavigationDebugPageRoute extends GoRouteData
 
   static const path = 'navigation_debug';
 
-  static final GlobalKey<NavigatorState> $parentNavigatorKey =
-      _rootNavigatorKey;
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -93,8 +91,7 @@ class TalkerPageRoute extends GoRouteData with _$TalkerPageRoute {
 
   static const path = 'talker';
 
-  static final GlobalKey<NavigatorState> $parentNavigatorKey =
-      _rootNavigatorKey;
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
