@@ -40,6 +40,8 @@ void main() async {
     ProviderScope(
       overrides: overrideProviders,
       observers: [...?debugFeatures?.observers],
+      // 失敗した Provider を自動でリトライしない
+      retry: (_, _) => null,
       child: TranslationProvider(child: const MainApp()),
     ),
   );
