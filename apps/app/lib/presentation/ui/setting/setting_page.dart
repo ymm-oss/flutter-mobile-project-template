@@ -33,26 +33,28 @@ class SettingPage extends ConsumerWidget {
       body: CustomScrollView(
         slivers: [
           SettingSectionTitle(text: t.themeSettingLabel),
-          SliverList.builder(
-            itemCount: ThemeSetting.values.length,
-            itemBuilder: (context, index) {
-              final themeSetting = ThemeSetting.values[index];
+          SliverToBoxAdapter(
+            child: RadioGroup<ThemeSetting>(
+              groupValue: currentThemeSetting,
+              onChanged: (newThemeSetting) async {
+                if (newThemeSetting == null) {
+                  return;
+                }
 
-              return RadioListTile(
-                value: themeSetting,
-                groupValue: currentThemeSetting,
-                onChanged: (newThemeSetting) async {
-                  if (newThemeSetting == null) {
-                    return;
-                  }
-
-                  await ref
-                      .read(themeSettingProvider.notifier)
-                      .changeThemeSetting(newThemeSetting);
-                },
-                title: Text(themeSetting.name),
-              );
-            },
+                await ref
+                    .read(themeSettingProvider.notifier)
+                    .changeThemeSetting(newThemeSetting);
+              },
+              child: Column(
+                children: [
+                  for (final themeSetting in ThemeSetting.values)
+                    RadioListTile(
+                      value: themeSetting,
+                      title: Text(themeSetting.name),
+                    ),
+                ],
+              ),
+            ),
           ),
           const SettingSectionSpacer(),
           SettingSectionTitle(text: t.aboutLabel),
