@@ -9,8 +9,6 @@ part 'build_config.freezed.dart';
 
 @Freezed(map: FreezedMapOptions.none, when: FreezedWhenOptions.none)
 abstract class BuildConfig with _$BuildConfig {
-  const BuildConfig._();
-
   const factory BuildConfig._init({
     required String appName,
     required String packageName,
