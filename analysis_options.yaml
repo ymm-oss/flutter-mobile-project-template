@@ -1,4 +1,4 @@
-include: package:yumemi_lints/flutter/3.32/recommended.yaml
+include: package:yumemi_lints/flutter/3.35/recommended.yaml
 
 analyzer:
   plugins:
