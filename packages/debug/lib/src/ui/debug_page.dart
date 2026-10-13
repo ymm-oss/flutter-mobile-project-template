@@ -99,10 +99,9 @@ class DebugPage extends ConsumerWidget {
 
 class _FixSizedElevatedButton extends StatelessWidget {
   const _FixSizedElevatedButton({
-    required String title,
-    required VoidCallback onPressed,
-  }) : _title = title,
-       _onPressed = onPressed;
+    required this._title,
+    required this._onPressed,
+  });
 
   final String _title;
   final VoidCallback _onPressed;

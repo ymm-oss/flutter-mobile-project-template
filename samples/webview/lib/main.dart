@@ -25,8 +25,7 @@ class MyApp extends StatelessWidget {
 }
 
 class WebPage extends StatefulWidget {
-  const WebPage({required Uri initialUrl, super.key})
-    : _initialUrl = initialUrl;
+  const WebPage({required this._initialUrl, super.key});
 
   final Uri _initialUrl;
 
