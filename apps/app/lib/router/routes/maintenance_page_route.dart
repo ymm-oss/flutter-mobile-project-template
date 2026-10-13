@@ -3,7 +3,7 @@ part of 'package:flutter_app/router/router.dart';
 @TypedGoRoute<MaintenancePageRoute>(
   path: MaintenancePageRoute.path,
 )
-class MaintenancePageRoute extends GoRouteData with _$MaintenancePageRoute {
+class MaintenancePageRoute extends GoRouteData with $MaintenancePageRoute {
   const MaintenancePageRoute();
 
   static const path = '/maintenance';

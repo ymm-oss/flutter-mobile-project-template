@@ -12,7 +12,7 @@ class HomeShellBranch extends StatefulShellBranchData {
   const HomeShellBranch();
 }
 
-class HomePageRoute extends GoRouteData with _$HomePageRoute {
+class HomePageRoute extends GoRouteData with $HomePageRoute {
   const HomePageRoute();
 
   static const path = '/';
