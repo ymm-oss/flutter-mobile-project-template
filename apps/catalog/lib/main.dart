@@ -5,6 +5,8 @@ import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart';
 
 void main() {
+  // catalog は Riverpod を使わないため ProviderScope は不要
+  // ignore: riverpod_lint/missing_provider_scope
   runApp(const WidgetbookApp());
 }
 

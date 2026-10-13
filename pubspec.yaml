@@ -92,12 +92,6 @@ melos:
         すべてのパッケージに `dart fix --apply` を実行します。
         analyze の対象として開発者が気づけるようにしつつ fix からは対象外とするため独自実装です。
       run: bash "$MELOS_ROOT_PATH/scripts/fix.sh"
-    fix:custom:
-      description: すべてのパッケージに custom_lint の fix を実行します。
-      exec: dart run custom_lint --fix
-      packageFilters:
-        dirExists: lib
-        dependsOn: custom_lint
 
     format:
       description: |
@@ -265,12 +259,6 @@ melos:
       packageFilters:
         dependsOn: test
         dirExists: test
-
-    ci:report:custom_lint:
-      description: CI 環境で custom_lint のレポートを生成します。
-      exec: bash "$MELOS_ROOT_PATH/scripts/report-custom-lint-ci.sh"
-      packageFilters:
-        dependsOn: custom_lint
 
     golden_test:ci:
       description: golden_test を実行します。
