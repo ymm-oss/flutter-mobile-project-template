@@ -29,7 +29,7 @@ final class OperationalSettingsRepositoryProvider
         argument: null,
         retry: null,
         name: r'operationalSettingsRepositoryProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -60,4 +60,4 @@ final class OperationalSettingsRepositoryProvider
 }
 
 String _$operationalSettingsRepositoryHash() =>
-    r'c99ff645986e07e252693758b216a964a9457ea6';
+    r'9c16c9756b3333e04bdd58fd7d2835a689bfb53d';

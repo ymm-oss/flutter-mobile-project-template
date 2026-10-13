@@ -23,7 +23,7 @@ class GitHubRepositoryListPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scrollController = useScrollController();
-    ref.listen(scrollNotifierProvider, (_, _) async {
+    ref.listen(scrollProvider, (_, _) async {
       if (!context.mounted) {
         return;
       }

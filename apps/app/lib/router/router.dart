@@ -26,8 +26,8 @@ final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 @Riverpod(keepAlive: true)
 GoRouter router(Ref ref) {
   final isMaintenanceModeEnabled = ref.watch(
-    maintenancePolicyNotifierProvider.select(
-      (state) => state.valueOrNull is MaintenanceEnabled,
+    maintenancePolicyProvider.select(
+      (state) => state.value is MaintenanceEnabled,
     ),
   );
   return GoRouter(

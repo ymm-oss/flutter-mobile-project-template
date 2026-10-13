@@ -54,7 +54,7 @@ class CommonPagingView<
   });
 
   /// Specifies the provider for a [PagingAsyncNotifier] implemented class.
-  final AutoDisposeAsyncNotifierProvider<N, D> _provider;
+  final AsyncNotifierProvider<N, D> _provider;
 
   /// Specifies a function to build widgets for displaying paginated data.
   /// The function may receive an optional `endItem` widget, which serves as a
@@ -144,6 +144,9 @@ class CommonPagingView<
           // Continues showing data on subsequent load errors,
           // without hiding existing content.
           skipErrorOnHasValue: true,
+          // Continues showing data while loading the next page.
+          // Assigning AsyncLoading to the state is treated as a reload.
+          skipLoadingOnHasValue: true,
         );
   }
 }
