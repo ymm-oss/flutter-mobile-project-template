@@ -2,6 +2,7 @@
 /.dart_tool/*
 /.flutter-plugins
 /.flutter-plugins-dependencies
+/build/
 
 # IntelliJ related
 /*.iml
