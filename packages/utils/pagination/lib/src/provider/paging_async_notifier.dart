@@ -10,7 +10,7 @@ import 'package:utils_pagination/src/model/paging_data.dart';
 /// T: The type of the paginated data structure being managed.
 /// U: The type of the items within the paginated data.
 abstract class PagingAsyncNotifier<T extends PagingData<U>, U>
-    extends AutoDisposeAsyncNotifier<T> {
+    extends AsyncNotifier<T> {
   Future<void> loadNext();
 
   void forceRefresh() {
@@ -60,13 +60,13 @@ abstract class PageBasedPagingAsyncNotifier<T>
 
   @override
   Future<void> loadNext() async {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) {
       return;
     }
 
     if (value.hasMore) {
-      state = AsyncLoading<PageBasedPagingData<T>>().copyWithPrevious(state);
+      state = AsyncLoading<PageBasedPagingData<T>>();
 
       state = await state.guardPreservingPreviousOnError(
         () async {

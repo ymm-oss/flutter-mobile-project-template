@@ -29,7 +29,7 @@ final class GetForceUpdatePolicyUseCaseProvider
         argument: null,
         retry: null,
         name: r'getForceUpdatePolicyUseCaseProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -58,4 +58,4 @@ final class GetForceUpdatePolicyUseCaseProvider
 }
 
 String _$getForceUpdatePolicyUseCaseHash() =>
-    r'09f16f9534db71567dcdda740ebc731a8379baea';
+    r'86921928c8beb78012a256646dc230f07c0a1c6e';

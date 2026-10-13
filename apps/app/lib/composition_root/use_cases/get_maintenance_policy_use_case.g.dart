@@ -29,7 +29,7 @@ final class GetMaintenancePolicyUseCaseProvider
         argument: null,
         retry: null,
         name: r'getMaintenancePolicyUseCaseProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -58,4 +58,4 @@ final class GetMaintenancePolicyUseCaseProvider
 }
 
 String _$getMaintenancePolicyUseCaseHash() =>
-    r'7a1fbe03ed4df19641e9ceffd25c92ca6dd77fdc';
+    r'3698dc3ec3d4c3674b3cb4c638c20156e6512a47';

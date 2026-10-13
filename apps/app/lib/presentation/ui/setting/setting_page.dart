@@ -22,7 +22,7 @@ class SettingPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentThemeSetting = ref.watch(themeSettingNotifierProvider);
+    final currentThemeSetting = ref.watch(themeSettingProvider);
     final buildConfig = ref.watch(buildConfigProvider);
     final t = Translations.of(context).setting;
 
@@ -47,7 +47,7 @@ class SettingPage extends ConsumerWidget {
                   }
 
                   await ref
-                      .read(themeSettingNotifierProvider.notifier)
+                      .read(themeSettingProvider.notifier)
                       .changeThemeSetting(newThemeSetting);
                 },
                 title: Text(themeSetting.name),

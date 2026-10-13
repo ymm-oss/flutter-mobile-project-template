@@ -24,7 +24,7 @@ class MaintenancePage extends ConsumerWidget {
             const SizedBox(height: 64),
             ElevatedButton(
               onPressed: () {
-                ref.read(maintenancePolicyNotifierProvider.notifier).disable();
+                ref.read(maintenancePolicyProvider.notifier).disable();
               },
               child: Text(t.disableButtonLabel),
             ),
