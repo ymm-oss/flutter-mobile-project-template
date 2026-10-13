@@ -30,7 +30,9 @@ class PageBasedGitHubRepositoryNotifier
       final res = await ref.read(
         listOrganizationRepositoriesProvider(page: page).future,
       );
-      ref.keepAlive();
+      if (ref.mounted) {
+        ref.keepAlive();
+      }
       return PageBasedFetchResult(
         items: res.items,
         hasMore: res.hasMore,
