@@ -9,42 +9,46 @@ part of 'app_colors.dart';
 // ThemeExtensionsGenerator
 // **************************************************************************
 
-mixin _$ThemeExtensionMixin on ThemeExtension<AppColors> {
+mixin _$AppColors on ThemeExtension<AppColors> {
   @override
   ThemeExtension<AppColors> copyWith({Color? icon}) {
-    final object = this as AppColors;
+    final _this = (this as AppColors);
 
-    return AppColors(icon: icon ?? object.icon);
+    return AppColors(icon: icon ?? _this.icon);
   }
 
   @override
   ThemeExtension<AppColors> lerp(ThemeExtension<AppColors>? other, double t) {
-    final otherValue = other;
-
-    if (otherValue is! AppColors) {
+    if (other is! AppColors) {
       return this;
     }
 
-    final value = this as AppColors;
+    final _this = (this as AppColors);
 
-    return AppColors(icon: Color.lerp(value.icon, otherValue.icon, t)!);
+    return AppColors(icon: Color.lerp(_this.icon, other.icon, t)!);
   }
 
   @override
   bool operator ==(Object other) {
-    final value = this as AppColors;
+    if (identical(this, other)) {
+      return true;
+    }
 
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is AppColors &&
-            identical(value.icon, other.icon));
+    if (other.runtimeType != runtimeType) {
+      return false;
+    }
+
+    final _this = (this as AppColors);
+    final _other = (other as AppColors);
+
+    return _other.icon == _this.icon;
   }
 
   @override
   int get hashCode {
-    final value = this as AppColors;
+    final _this = (this as AppColors);
 
-    return Object.hash(runtimeType, value.icon);
+    return Object.hash(runtimeType, _this.icon);
   }
 }
 

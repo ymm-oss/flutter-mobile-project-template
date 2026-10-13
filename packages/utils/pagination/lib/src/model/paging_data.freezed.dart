@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'paging_data.dart';
@@ -9,6 +9,7 @@ part of 'paging_data.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $PageBasedPagingDataCopyWith<T, PageBasedPagingData<T>> get copyWith => _$PageBa
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PageBasedPagingData<T>&&const DeepCollectionEquality().equals(other.items, items)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.hasMore, hasMore) || other.hasMore == hasMore));
+  final _this = this as PageBasedPagingData<T>;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PageBasedPagingData<T>&&const DeepCollectionEquality().equals(other.items, _this.items)&&(identical(other.currentPage, _this.currentPage) || other.currentPage == _this.currentPage)&&(identical(other.hasMore, _this.hasMore) || other.hasMore == _this.hasMore));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(items),currentPage,hasMore);
+int get hashCode {
+  final _this = this as PageBasedPagingData<T>;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.items),_this.currentPage,_this.hasMore);
+}
 
 @override
 String toString() {
-  return 'PageBasedPagingData<$T>(items: $items, currentPage: $currentPage, hasMore: $hasMore)';
+  final _this = this as PageBasedPagingData<T>;
+  return 'PageBasedPagingData<$T>(items: ${_this.items}, currentPage: ${_this.currentPage}, hasMore: ${_this.hasMore})';
 }
 
 
@@ -63,7 +69,7 @@ class _$PageBasedPagingDataCopyWithImpl<T,$Res>
 /// Create a copy of PageBasedPagingData
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? items = null,Object? currentPage = null,Object? hasMore = null,}) {
-  return _then(_self.copyWith(
+  return _then(PageBasedPagingData(
 items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
 as List<T>,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
 as int,hasMore: null == hasMore ? _self.hasMore : hasMore // ignore: cast_nullable_to_non_nullable
@@ -208,7 +214,7 @@ return $default(_that.items,_that.currentPage,_that.hasMore);case _:
 
 
 class _PageBasedPagingData<T> extends PageBasedPagingData<T> {
-  const _PageBasedPagingData({required final  List<T> items, required this.currentPage, required this.hasMore}): _items = items,super._();
+  const _PageBasedPagingData({required  List<T> items, required this.currentPage, required this.hasMore}): _items = items,super._();
   
 
  final  List<T> _items;
@@ -231,16 +237,18 @@ _$PageBasedPagingDataCopyWith<T, _PageBasedPagingData<T>> get copyWith => __$Pag
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PageBasedPagingData<T>&&const DeepCollectionEquality().equals(other._items, _items)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.hasMore, hasMore) || other.hasMore == hasMore));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PageBasedPagingData<T>&&const DeepCollectionEquality().equals(other.items, _items)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.hasMore, hasMore) || other.hasMore == hasMore));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_items),currentPage,hasMore);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_items),currentPage,hasMore);
+}
 
 @override
 String toString() {
-  return 'PageBasedPagingData<$T>(items: $items, currentPage: $currentPage, hasMore: $hasMore)';
+    return 'PageBasedPagingData<$T>(items: $items, currentPage: $currentPage, hasMore: $hasMore)';
 }
 
 
