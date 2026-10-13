@@ -11,6 +11,12 @@ class ExceptionGeneratorApi extends _$ExceptionGeneratorApi {
 
   Future<void> request() async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() => throw UnimplementedError());
+    final result = await AsyncValue.guard<String>(
+      () => throw UnimplementedError(),
+    );
+    if (!ref.mounted) {
+      return;
+    }
+    state = result;
   }
 }

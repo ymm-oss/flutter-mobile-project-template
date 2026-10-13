@@ -68,7 +68,7 @@ abstract class PageBasedPagingAsyncNotifier<T>
     if (value.hasMore) {
       state = AsyncLoading<PageBasedPagingData<T>>();
 
-      state = await state.guardPreservingPreviousOnError(
+      final result = await state.guardPreservingPreviousOnError(
         () async {
           final next = await fetch(page: value.currentPage + 1);
 
@@ -79,6 +79,10 @@ abstract class PageBasedPagingAsyncNotifier<T>
           );
         },
       );
+      if (!ref.mounted) {
+        return;
+      }
+      state = result;
     }
   }
 }

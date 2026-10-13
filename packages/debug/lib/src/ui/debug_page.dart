@@ -42,7 +42,7 @@ class DebugPage extends ConsumerWidget {
     ref.listen<AsyncValue<String>>(
       exceptionGeneratorApiProvider,
       (_, value) {
-        if (value.hasError) {
+        if (!value.isLoading && value.hasError) {
           SnackBarManager.showSnackBar(
             'An error occurred: ${value.error}',
           );

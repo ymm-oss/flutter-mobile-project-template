@@ -36,7 +36,7 @@ final class ExceptionGeneratorApiProvider
 }
 
 String _$exceptionGeneratorApiHash() =>
-    r'09f70b6f480042b414a4a6969429d48f071ac670';
+    r'a2d64e48f8235709d090b87159d664408d57295b';
 
 abstract class _$ExceptionGeneratorApi extends $AsyncNotifier<String> {
   FutureOr<String> build();

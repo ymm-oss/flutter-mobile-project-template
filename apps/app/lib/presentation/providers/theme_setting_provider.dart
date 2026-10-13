@@ -15,6 +15,9 @@ class ThemeSettingNotifier extends _$ThemeSettingNotifier {
   Future<void> changeThemeSetting(ThemeSetting theme) async {
     final repository = ref.read(themeSettingRepositoryProvider);
     await repository.saveThemeSetting(theme);
+    if (!ref.mounted) {
+      return;
+    }
     state = theme;
   }
 }
