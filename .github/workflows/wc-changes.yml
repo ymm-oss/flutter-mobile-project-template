@@ -5,8 +5,6 @@ on:
     outputs:
       gen:
         value: ${{ jobs.changes.outputs.gen }}
-      lint:
-        value: ${{ jobs.changes.outputs.lint }}
       any:
         value: ${{ jobs.changes.outputs.any }}
       actions:
@@ -34,7 +32,6 @@ jobs:
       actions: ${{ steps.filter.outputs.actions }}
       dprint: ${{ steps.filter.outputs.dprint }}
       gen: ${{ steps.filter.outputs.gen }}
-      lint: ${{ steps.filter.outputs.lint }}
       markdown: ${{ steps.filter.outputs.markdown }}
       src: ${{ steps.filter.outputs.src }}
       spell: ${{ steps.filter.outputs.spell }}
@@ -66,11 +63,6 @@ jobs:
               - "**.dart"
               - "**.yaml"
               - "**/pubspec.lock"
-            lint:
-              - "**.dart"
-              - "**.yaml"
-              - "**/pubspec.lock"
-              - "scripts/report-custom-lint-ci.sh"
             markdown:
               - "**.md"
             src:
