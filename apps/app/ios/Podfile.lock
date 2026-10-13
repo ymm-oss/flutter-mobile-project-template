@@ -1,21 +1,15 @@
 PODS:
   - Flutter (1.0.0)
-  - shake_gesture_ios (0.0.1):
-    - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
-  - shake_gesture_ios (from `.symlinks/plugins/shake_gesture_ios/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
-  shake_gesture_ios:
-    :path: ".symlinks/plugins/shake_gesture_ios/ios"
 
 SPEC CHECKSUMS:
   Flutter: 71a624a5bc0c04062bf19101d501e466baf2fb47
-  shake_gesture_ios: 85dce5e26785da11cf73e0234a5f4028f69afeef
 
 PODFILE CHECKSUM: 0e525152e3ec397947996fbf92d176f885bd8b2a
 
