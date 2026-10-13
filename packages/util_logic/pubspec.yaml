@@ -9,4 +9,4 @@ environment:
 resolution: workspace
 
 dev_dependencies:
-  test: ^1.25.15
+  test: ^1.31.1

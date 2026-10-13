@@ -8,22 +8,58 @@ part of 'theme_setting_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(ThemeSettingNotifier)
+final themeSettingProvider = ThemeSettingNotifierProvider._();
+
+final class ThemeSettingNotifierProvider
+    extends $NotifierProvider<ThemeSettingNotifier, ThemeSetting> {
+  ThemeSettingNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'themeSettingProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$themeSettingNotifierHash();
+
+  @$internal
+  @override
+  ThemeSettingNotifier create() => ThemeSettingNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ThemeSetting value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ThemeSetting>(value),
+    );
+  }
+}
+
 String _$themeSettingNotifierHash() =>
     r'1df6e97b60e20d7dc7bd507f2730253f4290852b';
 
-/// See also [ThemeSettingNotifier].
-@ProviderFor(ThemeSettingNotifier)
-final themeSettingNotifierProvider =
-    AutoDisposeNotifierProvider<ThemeSettingNotifier, ThemeSetting>.internal(
-      ThemeSettingNotifier.new,
-      name: r'themeSettingNotifierProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$themeSettingNotifierHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$ThemeSettingNotifier = AutoDisposeNotifier<ThemeSetting>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$ThemeSettingNotifier extends $Notifier<ThemeSetting> {
+  ThemeSetting build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<ThemeSetting, ThemeSetting>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<ThemeSetting, ThemeSetting>,
+              ThemeSetting,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

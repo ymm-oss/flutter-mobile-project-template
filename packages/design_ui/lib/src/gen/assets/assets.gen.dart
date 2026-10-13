@@ -29,9 +29,7 @@ class $ResAssetsGen {
   List<AssetGenImage> get values => [yumemiLogo];
 }
 
-class Assets {
-  const Assets._();
-
+abstract final class Assets {
   static const String package = 'internal_design_ui';
 
   static const $ResGen res = $ResGen();
