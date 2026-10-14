@@ -322,6 +322,9 @@ class ThemeSettingNotifier extends _$ThemeSettingNotifier {
   Future<void> changeThemeSetting(ThemeSetting theme) async {
     final useCase = ref.read(changeThemeSettingUseCaseProvider);
     await useCase.call(theme);
+    if (!ref.mounted) {
+      return;
+    }
     state = theme;
   }
 }
@@ -330,11 +333,11 @@ class ThemeSettingNotifier extends _$ThemeSettingNotifier {
 class SettingPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeSetting = ref.watch(themeSettingNotifierProvider);
+    final themeSetting = ref.watch(themeSettingProvider);
 
     return ElevatedButton(
       onPressed: () {
-        ref.read(themeSettingNotifierProvider.notifier)
+        ref.read(themeSettingProvider.notifier)
             .changeThemeSetting(ThemeSetting.light);
       },
       child: Text('テーマ変更: ${themeSetting.name}'),
