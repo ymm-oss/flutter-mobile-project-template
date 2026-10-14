@@ -48,7 +48,7 @@ class SettingPage extends ConsumerWidget {
               child: Column(
                 children: [
                   for (final themeSetting in ThemeSetting.values)
-                    RadioListTile(
+                    RadioListTile<ThemeSetting>(
                       value: themeSetting,
                       title: Text(themeSetting.name),
                     ),
