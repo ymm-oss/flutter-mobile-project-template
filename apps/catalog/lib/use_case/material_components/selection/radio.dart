@@ -15,34 +15,30 @@ Widget radio(BuildContext context) {
   return StatefulBuilder(
     builder: (context, setState) {
       return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            ListTile(
-              title: const Text('Lafayette'),
-              leading: Radio<_SingingCharacter>(
-                value: _SingingCharacter.lafayette,
-                groupValue: character,
-                onChanged: (value) {
-                  setState(() {
-                    character = value;
-                  });
-                },
+        child: RadioGroup<_SingingCharacter>(
+          groupValue: character,
+          onChanged: (value) {
+            setState(() {
+              character = value;
+            });
+          },
+          child: const Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                title: Text('Lafayette'),
+                leading: Radio<_SingingCharacter>(
+                  value: _SingingCharacter.lafayette,
+                ),
               ),
-            ),
-            ListTile(
-              title: const Text('Thomas Jefferson'),
-              leading: Radio<_SingingCharacter>(
-                value: _SingingCharacter.jefferson,
-                groupValue: character,
-                onChanged: (value) {
-                  setState(() {
-                    character = value;
-                  });
-                },
+              ListTile(
+                title: Text('Thomas Jefferson'),
+                leading: Radio<_SingingCharacter>(
+                  value: _SingingCharacter.jefferson,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     },
