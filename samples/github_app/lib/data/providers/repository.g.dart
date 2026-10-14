@@ -6,197 +6,100 @@ part of 'repository.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$listOrganizationRepositoriesHash() =>
-    r'e563eea8496b6e4cfd966f0ea714319e646cf3d1';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// See also [listOrganizationRepositories].
 @ProviderFor(listOrganizationRepositories)
-const listOrganizationRepositoriesProvider =
-    ListOrganizationRepositoriesFamily();
+final listOrganizationRepositoriesProvider =
+    ListOrganizationRepositoriesFamily._();
 
-/// See also [listOrganizationRepositories].
-class ListOrganizationRepositoriesFamily
-    extends Family<AsyncValue<GitHubRepositoryResult>> {
-  /// See also [listOrganizationRepositories].
-  const ListOrganizationRepositoriesFamily();
-
-  /// See also [listOrganizationRepositories].
-  ListOrganizationRepositoriesProvider call({
-    int page = 1,
-    int perPage = 30,
-    String org = 'yumemi-inc',
-  }) {
-    return ListOrganizationRepositoriesProvider(
-      page: page,
-      perPage: perPage,
-      org: org,
-    );
-  }
-
-  @override
-  ListOrganizationRepositoriesProvider getProviderOverride(
-    covariant ListOrganizationRepositoriesProvider provider,
-  ) {
-    return call(
-      page: provider.page,
-      perPage: provider.perPage,
-      org: provider.org,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'listOrganizationRepositoriesProvider';
-}
-
-/// See also [listOrganizationRepositories].
-class ListOrganizationRepositoriesProvider
-    extends AutoDisposeFutureProvider<GitHubRepositoryResult> {
-  /// See also [listOrganizationRepositories].
-  ListOrganizationRepositoriesProvider({
-    int page = 1,
-    int perPage = 30,
-    String org = 'yumemi-inc',
-  }) : this._internal(
-         (ref) => listOrganizationRepositories(
-           ref as ListOrganizationRepositoriesRef,
-           page: page,
-           perPage: perPage,
-           org: org,
-         ),
-         from: listOrganizationRepositoriesProvider,
+final class ListOrganizationRepositoriesProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<GitHubRepositoryResult>,
+          GitHubRepositoryResult,
+          FutureOr<GitHubRepositoryResult>
+        >
+    with
+        $FutureModifier<GitHubRepositoryResult>,
+        $FutureProvider<GitHubRepositoryResult> {
+  ListOrganizationRepositoriesProvider._({
+    required ListOrganizationRepositoriesFamily super.from,
+    required ({int page, int perPage, String org}) super.argument,
+  }) : super(
+         retry: null,
          name: r'listOrganizationRepositoriesProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$listOrganizationRepositoriesHash,
-         dependencies: ListOrganizationRepositoriesFamily._dependencies,
-         allTransitiveDependencies:
-             ListOrganizationRepositoriesFamily._allTransitiveDependencies,
-         page: page,
-         perPage: perPage,
-         org: org,
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
        );
 
-  ListOrganizationRepositoriesProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.page,
-    required this.perPage,
-    required this.org,
-  }) : super.internal();
-
-  final int page;
-  final int perPage;
-  final String org;
+  @override
+  String debugGetCreateSourceHash() => _$listOrganizationRepositoriesHash();
 
   @override
-  Override overrideWith(
-    FutureOr<GitHubRepositoryResult> Function(
-      ListOrganizationRepositoriesRef provider,
-    )
-    create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: ListOrganizationRepositoriesProvider._internal(
-        (ref) => create(ref as ListOrganizationRepositoriesRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        page: page,
-        perPage: perPage,
-        org: org,
-      ),
-    );
+  String toString() {
+    return r'listOrganizationRepositoriesProvider'
+        ''
+        '$argument';
   }
 
+  @$internal
   @override
-  AutoDisposeFutureProviderElement<GitHubRepositoryResult> createElement() {
-    return _ListOrganizationRepositoriesProviderElement(this);
+  $FutureProviderElement<GitHubRepositoryResult> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<GitHubRepositoryResult> create(Ref ref) {
+    final argument = this.argument as ({int page, int perPage, String org});
+    return listOrganizationRepositories(
+      ref,
+      page: argument.page,
+      perPage: argument.perPage,
+      org: argument.org,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return other is ListOrganizationRepositoriesProvider &&
-        other.page == page &&
-        other.perPage == perPage &&
-        other.org == org;
+        other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, page.hashCode);
-    hash = _SystemHash.combine(hash, perPage.hashCode);
-    hash = _SystemHash.combine(hash, org.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin ListOrganizationRepositoriesRef
-    on AutoDisposeFutureProviderRef<GitHubRepositoryResult> {
-  /// The parameter `page` of this provider.
-  int get page;
+String _$listOrganizationRepositoriesHash() =>
+    r'e563eea8496b6e4cfd966f0ea714319e646cf3d1';
 
-  /// The parameter `perPage` of this provider.
-  int get perPage;
+final class ListOrganizationRepositoriesFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<GitHubRepositoryResult>,
+          ({int page, int perPage, String org})
+        > {
+  ListOrganizationRepositoriesFamily._()
+    : super(
+        retry: null,
+        name: r'listOrganizationRepositoriesProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-  /// The parameter `org` of this provider.
-  String get org;
+  ListOrganizationRepositoriesProvider call({
+    int page = 1,
+    int perPage = 30,
+    String org = 'yumemi-inc',
+  }) => ListOrganizationRepositoriesProvider._(
+    argument: (page: page, perPage: perPage, org: org),
+    from: this,
+  );
+
+  @override
+  String toString() => r'listOrganizationRepositoriesProvider';
 }
-
-class _ListOrganizationRepositoriesProviderElement
-    extends AutoDisposeFutureProviderElement<GitHubRepositoryResult>
-    with ListOrganizationRepositoriesRef {
-  _ListOrganizationRepositoriesProviderElement(super.provider);
-
-  @override
-  int get page => (origin as ListOrganizationRepositoriesProvider).page;
-  @override
-  int get perPage => (origin as ListOrganizationRepositoriesProvider).perPage;
-  @override
-  String get org => (origin as ListOrganizationRepositoriesProvider).org;
-}
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:utils_pagination/src/extension/async_value.dart';
 import 'package:utils_pagination/src/model/paging_data.dart';
 
 /// An abstract notifier for paging logic, handling asynchronous data fetching
@@ -10,12 +9,15 @@ import 'package:utils_pagination/src/model/paging_data.dart';
 /// T: The type of the paginated data structure being managed.
 /// U: The type of the items within the paginated data.
 abstract class PagingAsyncNotifier<T extends PagingData<U>, U>
-    extends AutoDisposeAsyncNotifier<T> {
+    extends AsyncNotifier<T> {
   Future<void> loadNext();
 
+  /// Re-fetches from the first page.
+  ///
+  /// Shows the loading state when there is no data (e.g. after an initial
+  /// load failure). Existing data stays visible while re-fetching.
   void forceRefresh() {
-    state = AsyncLoading<T>();
-    ref.invalidateSelf();
+    ref.invalidateSelf(asReload: true);
   }
 }
 
@@ -60,15 +62,22 @@ abstract class PageBasedPagingAsyncNotifier<T>
 
   @override
   Future<void> loadNext() async {
-    final value = state.valueOrNull;
+    // Skips while loading the next page or refreshing.
+    if (state.isLoading) {
+      return;
+    }
+
+    final value = state.value;
     if (value == null) {
       return;
     }
 
     if (value.hasMore) {
-      state = AsyncLoading<PageBasedPagingData<T>>().copyWithPrevious(state);
+      // Captures the current Ref to detect a rebuild during the fetch.
+      final ref = this.ref;
+      state = AsyncLoading<PageBasedPagingData<T>>();
 
-      state = await state.guardPreservingPreviousOnError(
+      final result = await AsyncValue.guard(
         () async {
           final next = await fetch(page: value.currentPage + 1);
 
@@ -78,7 +87,14 @@ abstract class PageBasedPagingAsyncNotifier<T>
             hasMore: next.hasMore,
           );
         },
+        // Captures only exceptions; errors are rethrown.
+        (e) => e is Exception,
       );
+      // Discards the result if the provider was rebuilt or disposed.
+      if (!ref.mounted) {
+        return;
+      }
+      state = result;
     }
   }
 }

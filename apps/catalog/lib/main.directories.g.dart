@@ -10,6 +10,7 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+
 import 'package:catalog/use_case/internal_design_ui/components/list_tiles.dart'
     as _catalog_use_case_internal_design_ui_components_list_tiles;
 import 'package:catalog/use_case/material_components/actions/common_buttons.dart'
@@ -84,14 +85,16 @@ final directories = <_widgetbook.WidgetbookNode>[
           _widgetbook.WidgetbookFolder(
             name: 'Common',
             children: [
-              _widgetbook.WidgetbookLeafComponent(
+              _widgetbook.WidgetbookComponent(
                 name: 'ElevatedButton',
-                useCase: _widgetbook.WidgetbookUseCase(
-                  name: 'ElevatedButton',
-                  builder:
-                      _catalog_use_case_material_components_actions_common_buttons
-                          .elevatedButton,
-                ),
+                useCases: [
+                  _widgetbook.WidgetbookUseCase(
+                    name: 'ElevatedButton',
+                    builder:
+                        _catalog_use_case_material_components_actions_common_buttons
+                            .elevatedButton,
+                  ),
+                ],
               ),
               _widgetbook.WidgetbookComponent(
                 name: 'FilledButton',
@@ -110,34 +113,40 @@ final directories = <_widgetbook.WidgetbookNode>[
                   ),
                 ],
               ),
-              _widgetbook.WidgetbookLeafComponent(
+              _widgetbook.WidgetbookComponent(
                 name: 'OutlinedButton',
-                useCase: _widgetbook.WidgetbookUseCase(
-                  name: 'OutlinedButton',
-                  builder:
-                      _catalog_use_case_material_components_actions_common_buttons
-                          .outlinedButton,
-                ),
+                useCases: [
+                  _widgetbook.WidgetbookUseCase(
+                    name: 'OutlinedButton',
+                    builder:
+                        _catalog_use_case_material_components_actions_common_buttons
+                            .outlinedButton,
+                  ),
+                ],
               ),
-              _widgetbook.WidgetbookLeafComponent(
+              _widgetbook.WidgetbookComponent(
                 name: 'TextButton',
-                useCase: _widgetbook.WidgetbookUseCase(
-                  name: 'TextButton',
-                  builder:
-                      _catalog_use_case_material_components_actions_common_buttons
-                          .textButton,
-                ),
+                useCases: [
+                  _widgetbook.WidgetbookUseCase(
+                    name: 'TextButton',
+                    builder:
+                        _catalog_use_case_material_components_actions_common_buttons
+                            .textButton,
+                  ),
+                ],
               ),
             ],
           ),
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'FloatingActionButton',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'FloatingActionButton',
-              builder:
-                  _catalog_use_case_material_components_actions_floating_action_button
-                      .floatingActionButton,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'FloatingActionButton',
+                builder:
+                    _catalog_use_case_material_components_actions_floating_action_button
+                        .floatingActionButton,
+              ),
+            ],
           ),
           _widgetbook.WidgetbookComponent(
             name: 'IconButton',
@@ -168,27 +177,32 @@ final directories = <_widgetbook.WidgetbookNode>[
               ),
             ],
           ),
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'SegmentedButton',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'SegmentedButton',
-              builder:
-                  _catalog_use_case_material_components_actions_segmented_button
-                      .segmentedButton,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'SegmentedButton',
+                builder:
+                    _catalog_use_case_material_components_actions_segmented_button
+                        .segmentedButton,
+              ),
+            ],
           ),
         ],
       ),
       _widgetbook.WidgetbookFolder(
         name: 'Communication',
         children: [
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'Badge',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'Badge',
-              builder: _catalog_use_case_material_components_communication_badge
-                  .badge,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'Badge',
+                builder:
+                    _catalog_use_case_material_components_communication_badge
+                        .badge,
+              ),
+            ],
           ),
           _widgetbook.WidgetbookFolder(
             name: 'ProgressIndicator',
@@ -210,25 +224,29 @@ final directories = <_widgetbook.WidgetbookNode>[
                   ),
                 ],
               ),
-              _widgetbook.WidgetbookLeafComponent(
+              _widgetbook.WidgetbookComponent(
                 name: 'LinearProgressIndicator',
-                useCase: _widgetbook.WidgetbookUseCase(
-                  name: 'LinearProgressIndicator',
-                  builder:
-                      _catalog_use_case_material_components_communication_progress_indicator
-                          .linearProgressIndicator,
-                ),
+                useCases: [
+                  _widgetbook.WidgetbookUseCase(
+                    name: 'LinearProgressIndicator',
+                    builder:
+                        _catalog_use_case_material_components_communication_progress_indicator
+                            .linearProgressIndicator,
+                  ),
+                ],
               ),
             ],
           ),
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'SnackBar',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'SnackBar',
-              builder:
-                  _catalog_use_case_material_components_communication_snack_bar
-                      .snackBar,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'SnackBar',
+                builder:
+                    _catalog_use_case_material_components_communication_snack_bar
+                        .snackBar,
+              ),
+            ],
           ),
         ],
       ),
@@ -252,14 +270,16 @@ final directories = <_widgetbook.WidgetbookNode>[
               ),
             ],
           ),
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'BottomSheet',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'BottomSheet',
-              builder:
-                  _catalog_use_case_material_components_containment_bottom_sheet
-                      .bottomSheet,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'BottomSheet',
+                builder:
+                    _catalog_use_case_material_components_containment_bottom_sheet
+                        .bottomSheet,
+              ),
+            ],
           ),
           _widgetbook.WidgetbookComponent(
             name: 'Card',
@@ -320,120 +340,149 @@ final directories = <_widgetbook.WidgetbookNode>[
       _widgetbook.WidgetbookFolder(
         name: 'Navigation',
         children: [
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'AppBar',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'Default',
-              builder: _catalog_use_case_material_components_navigation_app_bar
-                  .appBar,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'Default',
+                builder:
+                    _catalog_use_case_material_components_navigation_app_bar
+                        .appBar,
+              ),
+            ],
           ),
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'BottomAppBar',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'BottomAppBar',
-              builder:
-                  _catalog_use_case_material_components_navigation_bottom_app_bar
-                      .bottomAppBar,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'BottomAppBar',
+                builder:
+                    _catalog_use_case_material_components_navigation_bottom_app_bar
+                        .bottomAppBar,
+              ),
+            ],
           ),
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'NavigationBar',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'NavigationBar',
-              builder:
-                  _catalog_use_case_material_components_navigation_navigation_bar
-                      .navigationBar,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'NavigationBar',
+                builder:
+                    _catalog_use_case_material_components_navigation_navigation_bar
+                        .navigationBar,
+              ),
+            ],
           ),
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'NavigationDrawer',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'NavigationDrawer',
-              builder:
-                  _catalog_use_case_material_components_navigation_navigation_drawer
-                      .navigationDrawer,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'NavigationDrawer',
+                builder:
+                    _catalog_use_case_material_components_navigation_navigation_drawer
+                        .navigationDrawer,
+              ),
+            ],
           ),
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'NavigationRail',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'NavigationRail',
-              builder:
-                  _catalog_use_case_material_components_navigation_navigation_rail
-                      .navigationRail,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'NavigationRail',
+                builder:
+                    _catalog_use_case_material_components_navigation_navigation_rail
+                        .navigationRail,
+              ),
+            ],
           ),
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'TabBar',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'TabBar',
-              builder: _catalog_use_case_material_components_navigation_tab_bar
-                  .tabBar,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'TabBar',
+                builder:
+                    _catalog_use_case_material_components_navigation_tab_bar
+                        .tabBar,
+              ),
+            ],
           ),
         ],
       ),
       _widgetbook.WidgetbookFolder(
         name: 'Selection',
         children: [
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'Checkbox',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'Default',
-              builder: _catalog_use_case_material_components_selection_check_box
-                  .checkbox,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'Default',
+                builder:
+                    _catalog_use_case_material_components_selection_check_box
+                        .checkbox,
+              ),
+            ],
           ),
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'Chip',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'Chip',
-              builder:
-                  _catalog_use_case_material_components_selection_chip.chip,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'Chip',
+                builder:
+                    _catalog_use_case_material_components_selection_chip.chip,
+              ),
+            ],
           ),
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'DatePickerDialog',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'DatePicker',
-              builder:
-                  _catalog_use_case_material_components_selection_date_picker
-                      .datePicker,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'DatePicker',
+                builder:
+                    _catalog_use_case_material_components_selection_date_picker
+                        .datePicker,
+              ),
+            ],
           ),
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'DateRangePickerDialog',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'DateRangePicker',
-              builder:
-                  _catalog_use_case_material_components_selection_date_range_picker
-                      .dateRangePicker,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'DateRangePicker',
+                builder:
+                    _catalog_use_case_material_components_selection_date_range_picker
+                        .dateRangePicker,
+              ),
+            ],
           ),
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'MenuAnchor',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'Menu',
-              builder:
-                  _catalog_use_case_material_components_selection_menu.menu,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'Menu',
+                builder:
+                    _catalog_use_case_material_components_selection_menu.menu,
+              ),
+            ],
           ),
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'Radio',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'Radio',
-              builder:
-                  _catalog_use_case_material_components_selection_radio.radio,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'Radio',
+                builder:
+                    _catalog_use_case_material_components_selection_radio.radio,
+              ),
+            ],
           ),
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'Slider',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'Slider',
-              builder:
-                  _catalog_use_case_material_components_selection_slider.slider,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'Slider',
+                builder: _catalog_use_case_material_components_selection_slider
+                    .slider,
+              ),
+            ],
           ),
           _widgetbook.WidgetbookComponent(
             name: 'Switch',
@@ -450,37 +499,44 @@ final directories = <_widgetbook.WidgetbookNode>[
               ),
             ],
           ),
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'TimePickerDialog',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'TimePicker',
-              builder:
-                  _catalog_use_case_material_components_selection_time_picker
-                      .timePicker,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'TimePicker',
+                builder:
+                    _catalog_use_case_material_components_selection_time_picker
+                        .timePicker,
+              ),
+            ],
           ),
         ],
       ),
       _widgetbook.WidgetbookFolder(
         name: 'Style',
         children: [
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'ColorScheme',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'Default',
-              builder: _catalog_use_case_material_components_style_color_scheme
-                  .buildThemeColorSchemeUseCase,
-              designLink: 'https://m3.material.io/styles/color/overview',
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'Default',
+                builder:
+                    _catalog_use_case_material_components_style_color_scheme
+                        .buildThemeColorSchemeUseCase,
+                designLink: 'https://m3.material.io/styles/color/overview',
+              ),
+            ],
           ),
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'TextTheme',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'Default',
-              builder: _catalog_use_case_material_components_style_typography
-                  .buildThemeTypographyUseCase,
-              designLink: 'https://m3.material.io/styles/typography/overview',
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'Default',
+                builder: _catalog_use_case_material_components_style_typography
+                    .buildThemeTypographyUseCase,
+                designLink: 'https://m3.material.io/styles/typography/overview',
+              ),
+            ],
           ),
         ],
       ),
@@ -514,14 +570,16 @@ final directories = <_widgetbook.WidgetbookNode>[
       _widgetbook.WidgetbookFolder(
         name: 'list_tiles',
         children: [
-          _widgetbook.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookComponent(
             name: 'TextListTile',
-            useCase: _widgetbook.WidgetbookUseCase(
-              name: 'TextListTile',
-              builder:
-                  _catalog_use_case_internal_design_ui_components_list_tiles
-                      .textListTile,
-            ),
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'TextListTile',
+                builder:
+                    _catalog_use_case_internal_design_ui_components_list_tiles
+                        .textListTile,
+              ),
+            ],
           ),
         ],
       ),

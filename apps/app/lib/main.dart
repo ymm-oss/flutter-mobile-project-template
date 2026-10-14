@@ -41,6 +41,8 @@ void main() async {
     ProviderScope(
       overrides: overrideProviders,
       observers: overrideObservers,
+      // 失敗した Provider を自動でリトライしない
+      retry: (_, _) => null,
       child: TranslationProvider(child: const MainApp()),
     ),
   );
@@ -52,12 +54,12 @@ class MainApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
-    final themeSetting = ref.watch(themeSettingNotifierProvider);
+    final themeSetting = ref.watch(themeSettingProvider);
 
     final enableAccessibilityTools =
         kDebugMode && ref.watch(enableAccessibilityToolsProvider);
 
-    ref.listen(forceUpdatePolicyNotifierProvider, (
+    ref.listen(forceUpdatePolicyProvider, (
       _,
       forceUpdatePolicy,
     ) {
@@ -75,7 +77,7 @@ class MainApp extends ConsumerWidget {
       }
 
       SnackBarManager.showSnackBar(message);
-      ref.read(forceUpdatePolicyNotifierProvider.notifier).disable();
+      ref.read(forceUpdatePolicyProvider.notifier).disable();
     });
 
     return MaterialApp.router(
