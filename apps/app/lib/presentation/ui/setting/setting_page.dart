@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/gen/assets/assets.gen.dart';
 import 'package:flutter_app/presentation/providers/build_config_provider.dart';
@@ -36,14 +38,16 @@ class SettingPage extends ConsumerWidget {
           SliverToBoxAdapter(
             child: RadioGroup<ThemeSetting>(
               groupValue: currentThemeSetting,
-              onChanged: (newThemeSetting) async {
+              onChanged: (newThemeSetting) {
                 if (newThemeSetting == null) {
                   return;
                 }
 
-                await ref
-                    .read(themeSettingProvider.notifier)
-                    .changeThemeSetting(newThemeSetting);
+                unawaited(
+                  ref
+                      .read(themeSettingProvider.notifier)
+                      .changeThemeSetting(newThemeSetting),
+                );
               },
               child: Column(
                 children: [
