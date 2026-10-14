@@ -1,4 +1,5 @@
 import java.util.Base64
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("com.android.application")
@@ -69,6 +70,6 @@ flutter {
 
 kotlin {
     compilerOptions {
-        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
+        jvmTarget = JvmTarget.JVM_11
     }
 }
