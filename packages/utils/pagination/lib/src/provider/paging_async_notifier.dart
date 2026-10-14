@@ -63,12 +63,19 @@ abstract class PageBasedPagingAsyncNotifier<T>
 
   @override
   Future<void> loadNext() async {
+    // Skips while loading the next page or refreshing.
+    if (state.isLoading) {
+      return;
+    }
+
     final value = state.value;
     if (value == null) {
       return;
     }
 
     if (value.hasMore) {
+      // Captures the current Ref to detect a rebuild during the fetch.
+      final ref = this.ref;
       state = AsyncLoading<PageBasedPagingData<T>>();
 
       final result = await state.guardPreservingPreviousOnError(
@@ -82,6 +89,7 @@ abstract class PageBasedPagingAsyncNotifier<T>
           );
         },
       );
+      // Discards the result if the provider was rebuilt or disposed.
       if (!ref.mounted) {
         return;
       }
