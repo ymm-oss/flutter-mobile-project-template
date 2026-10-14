@@ -12,7 +12,7 @@ OSのバージョン指定は、アプリが利用できる機能や、ストア
 
 ### iOS
 
-- **iOS Deployment Target**: Xcodeプロジェクト設定で指定する、アプリが動作する最も古いiOSバージョンです。Flutterフレームワーク自体がサポートする最小iOSバージョン（例: iOS 12.0）より低いバージョンを指定すると、ビルドエラーや実行時エラーが発生する可能性があります。
+- **iOS Deployment Target**: Xcodeプロジェクト設定で指定する、アプリが動作する最も古いiOSバージョンです。Flutterフレームワーク自体がサポートする最小iOSバージョン（例: iOS 15.0）より低いバージョンを指定すると、ビルドエラーや実行時エラーが発生する可能性があります。
 
 <img src="https://github.com/user-attachments/assets/3e315659-e74e-4de7-ba9c-1bbb6761ce61" width="500" />
 
