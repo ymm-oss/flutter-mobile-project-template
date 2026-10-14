@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:utils_pagination/src/extension/async_value.dart';
 import 'package:utils_pagination/src/model/paging_data.dart';
 
 /// An abstract notifier for paging logic, handling asynchronous data fetching
@@ -78,7 +77,7 @@ abstract class PageBasedPagingAsyncNotifier<T>
       final ref = this.ref;
       state = AsyncLoading<PageBasedPagingData<T>>();
 
-      final result = await state.guardPreservingPreviousOnError(
+      final result = await AsyncValue.guard(
         () async {
           final next = await fetch(page: value.currentPage + 1);
 
@@ -88,6 +87,8 @@ abstract class PageBasedPagingAsyncNotifier<T>
             hasMore: next.hasMore,
           );
         },
+        // Captures only exceptions; errors are rethrown.
+        (e) => e is Exception,
       );
       // Discards the result if the provider was rebuilt or disposed.
       if (!ref.mounted) {

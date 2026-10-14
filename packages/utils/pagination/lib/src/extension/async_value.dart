@@ -1,19 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 extension AsyncValueExtension<T> on AsyncValue<T> {
-  /// Executes a future and returns its result as an [AsyncValue.data]. Captures
-  /// exceptions as [AsyncValue.error]. When the result is assigned to a
-  /// Notifier's `state`, the previous state is preserved automatically.
-  Future<AsyncValue<T>> guardPreservingPreviousOnError(
-    Future<T> Function() future,
-  ) async {
-    try {
-      return AsyncValue.data(await future());
-    } on Exception catch (err, stack) {
-      return AsyncValue<T>.error(err, stack);
-    }
-  }
-
   /// Extends the [when] method to handle async data states more effectively,
   /// especially when maintaining data integrity despite errors.
   ///
