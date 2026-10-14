@@ -47,13 +47,11 @@ class CommonPagingView<
   /// )
   /// ```
   const CommonPagingView({
-    required AutoDisposeAsyncNotifierProvider<N, D> provider,
-    required Widget Function(D data, Widget? endItem) contentBuilder,
-    required void Function(PagingException e) onError,
+    required this._provider,
+    required this._contentBuilder,
+    required this._onError,
     super.key,
-  }) : _contentBuilder = contentBuilder,
-       _provider = provider,
-       _onError = onError;
+  });
 
   /// Specifies the provider for a [PagingAsyncNotifier] implemented class.
   final AutoDisposeAsyncNotifierProvider<N, D> _provider;
@@ -165,8 +163,8 @@ class _ReloadingItem extends StatelessWidget {
 
 class _EndItem extends StatelessWidget {
   const _EndItem({
-    required void Function() onScrollEnd,
-  }) : _onScrollEnd = onScrollEnd;
+    required this._onScrollEnd,
+  });
   final VoidCallback _onScrollEnd;
 
   @override
@@ -190,10 +188,9 @@ class _EndItem extends StatelessWidget {
 
 class _ErrorItem extends StatelessWidget {
   const _ErrorItem({
-    required String errorMessage,
-    required VoidCallback onError,
-  }) : _errorMessage = errorMessage,
-       _onError = onError;
+    required this._errorMessage,
+    required this._onError,
+  });
 
   final String _errorMessage;
   final VoidCallback _onError;
@@ -224,8 +221,7 @@ class _LoadingItem extends StatelessWidget {
 }
 
 class _EndItemWhenError extends StatelessWidget {
-  const _EndItemWhenError({required void Function() onPressed})
-    : _onPressed = onPressed;
+  const _EndItemWhenError({required this._onPressed});
   final void Function() _onPressed;
 
   @override

@@ -6,8 +6,8 @@ import 'package:widgetbook_annotation/widgetbook_annotation.dart';
 
 class _SampleCard extends StatelessWidget {
   const _SampleCard({
-    required String name,
-  }) : _name = name;
+    required this._name,
+  });
 
   final String _name;
 

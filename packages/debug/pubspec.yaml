@@ -4,8 +4,8 @@ publish_to: "none"
 version: 0.0.1
 
 environment:
-  sdk: ^3.8.0
-  flutter: ^3.32.0
+  sdk: ^3.13.0
+  flutter: ^3.47.0
 
 resolution: workspace
 
@@ -20,7 +20,8 @@ dependencies:
     path: ../util_ui
   path: ^1.9.1
   riverpod_annotation: ^2.6.1
-  shake_gesture: ^1.2.0
+  # 2.2.0 以降は Android で AGP 9 と built-in Kotlin が必要なため 2.1 系に留める（#671 で上限を外す）
+  shake_gesture: ">=2.1.0 <2.2.0"
   talker_flutter: ^5.0.0
 
 dev_dependencies:
