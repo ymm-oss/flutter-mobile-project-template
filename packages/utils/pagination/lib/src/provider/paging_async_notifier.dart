@@ -13,9 +13,12 @@ abstract class PagingAsyncNotifier<T extends PagingData<U>, U>
     extends AsyncNotifier<T> {
   Future<void> loadNext();
 
+  /// Re-fetches from the first page.
+  ///
+  /// Shows the loading state when there is no data (e.g. after an initial
+  /// load failure). Existing data stays visible while re-fetching.
   void forceRefresh() {
-    state = AsyncLoading<T>();
-    ref.invalidateSelf();
+    ref.invalidateSelf(asReload: true);
   }
 }
 
