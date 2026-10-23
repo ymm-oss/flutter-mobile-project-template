@@ -8,98 +8,7 @@ part of 'router.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [
-  $debugPageRoute,
-  $mainPageShellRoute,
-  $maintenancePageRoute,
-];
-
-RouteBase get $debugPageRoute => GoRouteData.$route(
-  path: '/debug',
-
-  parentNavigatorKey: DebugPageRoute.$parentNavigatorKey,
-
-  factory: _$DebugPageRoute._fromState,
-  routes: [
-    GoRouteData.$route(
-      path: 'navigation_debug',
-
-      parentNavigatorKey: NavigationDebugPageRoute.$parentNavigatorKey,
-
-      factory: _$NavigationDebugPageRoute._fromState,
-    ),
-    GoRouteData.$route(
-      path: 'talker',
-
-      parentNavigatorKey: TalkerPageRoute.$parentNavigatorKey,
-
-      factory: _$TalkerPageRoute._fromState,
-    ),
-  ],
-);
-
-mixin _$DebugPageRoute on GoRouteData {
-  static DebugPageRoute _fromState(GoRouterState state) =>
-      const DebugPageRoute();
-
-  @override
-  String get location => GoRouteData.$location('/debug');
-
-  @override
-  void go(BuildContext context) => context.go(location);
-
-  @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  @override
-  void replace(BuildContext context) => context.replace(location);
-}
-
-mixin _$NavigationDebugPageRoute on GoRouteData {
-  static NavigationDebugPageRoute _fromState(GoRouterState state) =>
-      const NavigationDebugPageRoute();
-
-  @override
-  String get location => GoRouteData.$location('/debug/navigation_debug');
-
-  @override
-  void go(BuildContext context) => context.go(location);
-
-  @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  @override
-  void replace(BuildContext context) => context.replace(location);
-}
-
-mixin _$TalkerPageRoute on GoRouteData {
-  static TalkerPageRoute _fromState(GoRouterState state) =>
-      const TalkerPageRoute();
-
-  @override
-  String get location => GoRouteData.$location('/debug/talker');
-
-  @override
-  void go(BuildContext context) => context.go(location);
-
-  @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  @override
-  void replace(BuildContext context) => context.replace(location);
-}
+List<RouteBase> get $appRoutes => [$mainPageShellRoute, $maintenancePageRoute];
 
 RouteBase get $mainPageShellRoute => StatefulShellRouteData.$route(
   factory: $MainPageShellRouteExtension._fromState,
@@ -226,7 +135,7 @@ mixin _$MaintenancePageRoute on GoRouteData {
 // RiverpodGenerator
 // **************************************************************************
 
-String _$routerHash() => r'7f2c119c1ed13737bc4e35a5527ceed85f06309a';
+String _$routerHash() => r'f2499cff139647b264a269642beae8a7f921bb0a';
 
 /// See also [router].
 @ProviderFor(router)
