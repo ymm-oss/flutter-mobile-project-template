@@ -4,8 +4,8 @@ publish_to: "none"
 version: 0.0.1
 
 environment:
-  sdk: ^3.8.0
-  flutter: ^3.32.0
+  sdk: ^3.13.0
+  flutter: ^3.47.0
 
 resolution: workspace
 
@@ -35,7 +35,7 @@ dependencies:
     path: ../../packages/shared
   internal_util_ui:
     path: ../../packages/util_ui
-  intl: ^0.20.2
+  intl: ^0.20.3
   package_info_plus: ^8.3.1
   pub_semver: ^2.2.0
   riverpod_annotation: ^2.6.1
