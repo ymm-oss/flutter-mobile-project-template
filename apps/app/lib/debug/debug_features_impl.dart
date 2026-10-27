@@ -12,6 +12,7 @@ import 'package:flutter_app/presentation/providers/force_update_policy_notifier_
 import 'package:flutter_app/presentation/providers/maintenance_policy_notifier_provider.dart';
 import 'package:flutter_app/router/router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:internal_debug/ui.dart';
 import 'package:talker_flutter/talker_flutter.dart';
@@ -29,7 +30,7 @@ DebugFeatures createDebugFeatures() {
 }
 
 final class _DebugFeaturesImpl implements DebugFeatures {
-  _DebugFeaturesImpl({required Talker talker}) : _talker = talker;
+  _DebugFeaturesImpl({required this._talker});
 
   final Talker _talker;
 
