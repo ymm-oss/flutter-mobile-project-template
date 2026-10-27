@@ -42,8 +42,7 @@ abstract class PagingAsyncNotifier<T extends PagingData<U>, U>
 /// ```
 abstract class PageBasedPagingAsyncNotifier<T>
     extends PagingAsyncNotifier<PageBasedPagingData<T>, T> {
-  PageBasedPagingAsyncNotifier({int initialPage = 1})
-    : _initialPage = initialPage;
+  PageBasedPagingAsyncNotifier({this._initialPage = 1});
 
   final int _initialPage;
 

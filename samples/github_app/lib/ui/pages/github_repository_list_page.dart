@@ -79,16 +79,14 @@ class GitHubRepositoryListPage extends HookConsumerWidget {
     String repositoryName,
     String? description,
   ) {
-    unawaited(
-      Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (context) {
-            return GitHubRepositoryDetailPage(
-              repositoryName: repositoryName,
-              description: description,
-            );
-          },
-        ),
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) {
+          return GitHubRepositoryDetailPage(
+            repositoryName: repositoryName,
+            description: description,
+          );
+        },
       ),
     );
   }
