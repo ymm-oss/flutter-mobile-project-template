@@ -34,6 +34,22 @@ jobs:
           echo "Before: $BEFORE_SHA"
           echo "After: $AFTER_SHA"
 
+          # 新規ブランチの初回 push などでは before がゼロ SHA になる
+          ZERO_SHA="0000000000000000000000000000000000000000"
+          if [ "$BEFORE_SHA" = "$ZERO_SHA" ] || [ -z "$BEFORE_SHA" ]; then
+            echo "rebase=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # 旧先端が新先端の祖先なら、レビュー済みの履歴は残っている
+          if git merge-base --is-ancestor "$BEFORE_SHA" "$AFTER_SHA"; then
+            echo "rebase=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "rebase=true" >> "$GITHUB_OUTPUT"
+
+          # コメント用。真偽判定には使わない
           REBASED_COMMITS=""
 
           # Iterate through each commit between the before and after SHAs
@@ -46,26 +62,19 @@ jobs:
             # Check if this is a non-merge commit (has exactly one parent)
             if [ "$PARENT_COUNT" -le 1 ] && [ -n "$PARENTS" ]; then
               # Check if the parent is not in the ancestry of the before SHA
-              # This indicates the commit has been rebased or force-pushed
               if ! git merge-base --is-ancestor "$BEFORE_SHA" "$PARENTS"; then
                 COMMIT_MSG=$(git log -1 --pretty=format:"%s" "$commit")
                 # Add to the list of rebased commits
                 REBASED_COMMITS="$REBASED_COMMITS\n- $commit ($COMMIT_MSG)"
               fi
             fi
-          done < <(git rev-list $BEFORE_SHA..$AFTER_SHA)
+          done < <(git rev-list "$BEFORE_SHA..$AFTER_SHA")
 
-          if [ -n "$REBASED_COMMITS" ]; then
-            # If rebased commits were found, set output to true and store the list
-            {
-              echo "rebase=true"
-              echo "rebased_commits<<EOF"
-              echo -e "$REBASED_COMMITS"
-              echo "EOF"
-            } >> "$GITHUB_OUTPUT"
-          else
-            echo "rebase=false" >> "$GITHUB_OUTPUT"
-          fi
+          {
+            echo "rebased_commits<<EOF"
+            [ -n "$REBASED_COMMITS" ] && echo -e "$REBASED_COMMITS"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Post comment if rebased
         if: steps.check.outputs.rebase == 'true'
@@ -74,6 +83,7 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
             :warning: **Rebase or force-push detected in this push**
-            以下のコミットが非線形な履歴となっており、rebase または強制 push の可能性があります：
+            旧先端（push 前の HEAD）が現在の履歴に含まれないため、rebase または強制 push が行われた可能性があります。
+            関連するコミットは以下の通りです。
 
             ${{ steps.check.outputs.rebased_commits }}
