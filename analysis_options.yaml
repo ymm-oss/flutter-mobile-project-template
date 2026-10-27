@@ -7,4 +7,5 @@ analyzer:
 
 plugins:
   # https://pub.dev/packages/riverpod_lint#installing-riverpod_lint
-  riverpod_lint: ^3.1.9
+  # plugin は pubspec.lock で固定されないため、環境ごとに結果が変わらないよう完全なバージョンを指定する
+  riverpod_lint: 3.1.9
