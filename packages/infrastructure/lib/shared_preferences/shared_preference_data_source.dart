@@ -3,7 +3,7 @@ import 'package:internal_infrastructure/shared_preferences/shared_preferences_ke
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferenceDataSource {
-  const SharedPreferenceDataSource(this._sharedPreferences);
+  const new(this._sharedPreferences);
 
   final SharedPreferences _sharedPreferences;
 

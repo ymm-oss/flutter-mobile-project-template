@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 typedef InitializedValues = ({List<Override> overrideProviders});
 
 final class AppInitializer {
-  AppInitializer._();
+  new _();
 
   static Future<InitializedValues> initialize() async {
     LoggerManager.instance.initialize(isDebugMode: kDebugMode);

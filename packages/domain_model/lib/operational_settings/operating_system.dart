@@ -4,9 +4,9 @@ enum OperatingSystem {
   ios,
   android;
 
-  const OperatingSystem();
+  new();
 
-  factory OperatingSystem.platform() {
+  factory platform() {
     final os = Platform.operatingSystem;
 
     return switch (os) {

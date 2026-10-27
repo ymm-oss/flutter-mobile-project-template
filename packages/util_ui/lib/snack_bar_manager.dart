@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SnackBarManager {
-  SnackBarManager._();
+  new _();
 
   static final rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 

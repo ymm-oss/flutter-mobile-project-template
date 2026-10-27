@@ -30,7 +30,7 @@ DebugFeatures createDebugFeatures() {
 }
 
 final class _DebugFeaturesImpl implements DebugFeatures {
-  _DebugFeaturesImpl({required this._talker});
+  new({required this._talker});
 
   final Talker _talker;
 
@@ -53,7 +53,7 @@ final class _DebugFeaturesImpl implements DebugFeatures {
 }
 
 class _DebugApp extends ConsumerWidget {
-  const _DebugApp({required this.child});
+  const new({required this.child});
 
   final Widget child;
 

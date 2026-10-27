@@ -15,7 +15,7 @@ typedef SettingPageNavigator = ({
 });
 
 class SettingPage extends ConsumerWidget {
-  const SettingPage({
+  const new({
     required this._navigator,
     super.key,
   });

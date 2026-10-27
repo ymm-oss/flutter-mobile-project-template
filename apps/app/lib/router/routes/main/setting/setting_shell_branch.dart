@@ -14,11 +14,11 @@ const settingShellBranch = TypedStatefulShellBranch<SettingShellBranch>(
 );
 
 class SettingShellBranch extends StatefulShellBranchData {
-  const SettingShellBranch();
+  const new();
 }
 
 class SettingPageRoute extends GoRouteData with $SettingPageRoute {
-  const SettingPageRoute();
+  const new();
 
   static const path = '/setting';
 
@@ -33,7 +33,7 @@ class SettingPageRoute extends GoRouteData with $SettingPageRoute {
 }
 
 class LicensePageRoute extends GoRouteData with $LicensePageRoute {
-  const LicensePageRoute();
+  const new();
 
   static const path = 'license';
 

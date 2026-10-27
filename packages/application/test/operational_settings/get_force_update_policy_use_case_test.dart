@@ -6,7 +6,7 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
 
 class MockOperationalSettingsRepository extends Mock
-    implements OperationalSettingsRepository {}
+    implements OperationalSettingsRepository;
 
 void main() {
   late GetForceUpdatePolicyUseCase useCase;

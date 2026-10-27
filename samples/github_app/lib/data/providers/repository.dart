@@ -27,7 +27,7 @@ Future<GitHubRepositoryResult> listOrganizationRepositories(
 }
 
 class GitHubRepositoryResult {
-  const GitHubRepositoryResult({
+  const new({
     required this.items,
     required this.hasMore,
   });

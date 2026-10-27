@@ -3,9 +3,9 @@ enum Kind {
   dev,
   direct;
 
-  const Kind();
+  new();
 
-  factory Kind.fromString(String value) {
+  factory fromString(String value) {
     for (final kind in Kind.values) {
       if (value == kind.name) {
         return kind;
@@ -30,9 +30,9 @@ extension ExtString on String {
 }
 
 class PackageInfo {
-  const PackageInfo({required this.packages});
+  const new({required this.packages});
 
-  factory PackageInfo.fromJson(Map<String, dynamic> data) => PackageInfo(
+  factory fromJson(Map<String, dynamic> data) => PackageInfo(
     packages: (data['packages'] as List<dynamic>)
         .map((e) => Package.fromJson(e as Map<String, dynamic>))
         .toList(),
@@ -46,7 +46,7 @@ class PackageInfo {
 }
 
 class Package {
-  const Package({
+  const new({
     required this.package,
     required this.kind,
     required this.isDiscontinued,
@@ -58,7 +58,7 @@ class Package {
     required this.latest,
   });
 
-  factory Package.fromJson(Map<String, dynamic> data) => Package(
+  factory fromJson(Map<String, dynamic> data) => Package(
     package: data['package'] as String,
     kind: Kind.fromString(data['kind'] as String),
     isDiscontinued: data['isDiscontinued'] as bool,
@@ -96,9 +96,9 @@ class Package {
 }
 
 class Version implements Comparable<Version> {
-  const Version({required this.version});
+  const new({required this.version});
 
-  factory Version.fromJson(Map<String, dynamic> data) => Version(
+  factory fromJson(Map<String, dynamic> data) => Version(
     version: data['version'] as String,
   );
 

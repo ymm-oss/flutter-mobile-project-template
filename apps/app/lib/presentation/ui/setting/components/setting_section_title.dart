@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 /// the settings screen.
 final class SettingSectionTitle extends StatelessWidget {
   /// You can set the text to be displayed as the title in `text`.
-  const SettingSectionTitle({
+  const new({
     required this._text,
     super.key,
   });

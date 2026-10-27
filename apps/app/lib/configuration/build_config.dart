@@ -9,7 +9,7 @@ part 'build_config.freezed.dart';
 
 @Freezed(map: FreezedMapOptions.none, when: FreezedWhenOptions.none)
 abstract class BuildConfig with _$BuildConfig {
-  const factory BuildConfig._init({
+  const factory _init({
     required String appName,
     required String packageName,
     required String version,
@@ -19,7 +19,7 @@ abstract class BuildConfig with _$BuildConfig {
     required String? installerStore,
   }) = _BuildConfig;
 
-  factory BuildConfig.fromPackageInfo(PackageInfo packageInfo) {
+  factory fromPackageInfo(PackageInfo packageInfo) {
     // ここに `~.fromEnvironment()` を集約する
     const flavor = String.fromEnvironment('flavor');
 

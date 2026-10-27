@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart';
 
 class _ExampleDestination {
-  const _ExampleDestination(this.label, this.icon, this.selectedIcon);
+  const new(this.label, this.icon, this.selectedIcon);
 
   final String label;
   final Widget icon;
@@ -31,7 +31,7 @@ const _destinations = <_ExampleDestination>[
 ];
 
 class _NavigationDrawerExample extends StatefulWidget {
-  const _NavigationDrawerExample();
+  const new();
 
   @override
   State<_NavigationDrawerExample> createState() =>

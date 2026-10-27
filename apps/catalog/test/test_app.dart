@@ -53,7 +53,7 @@ void goldenTestsGroup({
 }
 
 class TestScenario {
-  const TestScenario({
+  const new({
     required this.child,
     this.name = 'Default',
   });

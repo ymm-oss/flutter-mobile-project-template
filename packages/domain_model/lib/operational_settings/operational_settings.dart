@@ -6,12 +6,12 @@ part 'operational_settings.freezed.dart';
 
 @freezed
 abstract class OperationalSettings with _$OperationalSettings {
-  const factory OperationalSettings({
+  const factory({
     required MaintenancePolicy maintenancePolicy,
     required ForceUpdatePolicy forceUpdatePolicy,
   }) = _OperationalSettings;
 
-  const OperationalSettings._();
+  const new _();
 
   /// 強制アップデートが必要かどうかを判定する
   bool isForceUpdateRequired(Version currentVersion, OperatingSystem os) {
@@ -27,30 +27,30 @@ abstract class OperationalSettings with _$OperationalSettings {
 
 @freezed
 sealed class MaintenancePolicy with _$MaintenancePolicy {
-  const factory MaintenancePolicy.enabled({
+  const factory enabled({
     required String message,
   }) = MaintenanceEnabled;
 
-  const factory MaintenancePolicy.disabled() = MaintenanceDisabled;
+  const factory disabled() = MaintenanceDisabled;
 }
 
 @freezed
 sealed class ForceUpdatePolicy with _$ForceUpdatePolicy {
-  const factory ForceUpdatePolicy.enabled({
+  const factory enabled({
     required RequiredVersions minimumVersions,
   }) = ForceUpdateEnabled;
 
-  const factory ForceUpdatePolicy.disabled() = ForceUpdateDisabled;
+  const factory disabled() = ForceUpdateDisabled;
 }
 
 @freezed
 sealed class RequiredVersions with _$RequiredVersions {
-  const factory RequiredVersions({
+  const factory({
     required Version ios,
     required Version android,
   }) = _RequiredVersions;
 
-  const RequiredVersions._();
+  const new _();
 
   Version getMinimumFor(OperatingSystem os) {
     return switch (os) {

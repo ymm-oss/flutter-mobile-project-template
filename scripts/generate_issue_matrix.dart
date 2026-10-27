@@ -13,9 +13,9 @@ import 'package:yaml/yaml.dart';
 
 final class FileMetadata {
 
-  FileMetadata({required this.title, required this.labels});
+  new({required this.title, required this.labels});
 
-  factory FileMetadata.fromYaml(YamlMap yaml) {
+  factory fromYaml(YamlMap yaml) {
     return FileMetadata(
       title: yaml['title'] as String,
       labels: yaml['labels'],
@@ -28,7 +28,7 @@ final class FileMetadata {
 /// Matrix Strategy用のデータ
 final class MatrixItem {
 
-  MatrixItem({
+  new({
     required this.title,
     required this.contentFilepath,
     required this.labels,

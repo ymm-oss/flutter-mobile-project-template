@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart';
 
 class _BottomAppBarDemo extends StatefulWidget {
-  const _BottomAppBarDemo();
+  const new();
 
   @override
   State createState() => _BottomAppBarDemoState();
@@ -134,7 +134,7 @@ class _BottomAppBarDemoState extends State<_BottomAppBarDemo> {
 }
 
 class _DemoBottomAppBar extends StatelessWidget {
-  const _DemoBottomAppBar({
+  const new({
     required this.isElevated,
     required this.isVisible,
   });

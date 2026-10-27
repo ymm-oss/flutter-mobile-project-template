@@ -12,7 +12,7 @@ void main() {
 
 @App()
 class WidgetbookApp extends StatelessWidget {
-  const WidgetbookApp({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

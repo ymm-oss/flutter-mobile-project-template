@@ -9,11 +9,11 @@ const homeShellBranch = TypedStatefulShellBranch<HomeShellBranch>(
 );
 
 class HomeShellBranch extends StatefulShellBranchData {
-  const HomeShellBranch();
+  const new();
 }
 
 class HomePageRoute extends GoRouteData with $HomePageRoute {
-  const HomePageRoute();
+  const new();
 
   static const path = '/';
 

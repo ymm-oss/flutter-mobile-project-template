@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:internal_design_ui/i18n.dart';
 
 class MaintenancePage extends ConsumerWidget {
-  const MaintenancePage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

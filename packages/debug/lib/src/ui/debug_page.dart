@@ -35,7 +35,7 @@ class EnableAccessibilityTools extends _$EnableAccessibilityTools {
 
 @Dependencies([debugPageNavigator, debugPagePresenter])
 class DebugPage extends ConsumerWidget {
-  const DebugPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -100,7 +100,7 @@ class DebugPage extends ConsumerWidget {
 }
 
 class _FixSizedElevatedButton extends StatelessWidget {
-  const _FixSizedElevatedButton({
+  const new({
     required this._title,
     required this._onPressed,
   });

@@ -8,7 +8,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const new({super.key});
 
   // This widget is the root of your application.
   @override
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
 }
 
 class WebPage extends StatefulWidget {
-  const WebPage({required this._initialUrl, super.key});
+  const new({required this._initialUrl, super.key});
 
   final Uri _initialUrl;
 

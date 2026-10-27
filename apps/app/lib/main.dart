@@ -23,7 +23,7 @@ void main() async {
   });
 
   final (
-    overrideProviders: overrideProviders,
+    :overrideProviders,
   ) = await AppInitializer.initialize();
 
   // kDebugMode はコンパイル時定数のため、リリースビルドでは createDebugFeatures への
@@ -48,7 +48,7 @@ void main() async {
 }
 
 class MainApp extends ConsumerWidget {
-  const MainApp({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
