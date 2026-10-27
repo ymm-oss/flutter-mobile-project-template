@@ -25,16 +25,12 @@ final class _DebugPagePresenterImpl implements DebugPagePresenter {
 
   @override
   void enableForceUpdate() {
-    ref
-        .read(forceUpdatePolicyNotifierProvider.notifier)
-        .debugEnableForceUpdate();
+    ref.read(forceUpdatePolicyProvider.notifier).debugEnableForceUpdate();
   }
 
   @override
   void enableMaintenanceMode() {
-    ref
-        .read(maintenancePolicyNotifierProvider.notifier)
-        .debugEnableMaintenanceMode();
+    ref.read(maintenancePolicyProvider.notifier).debugEnableMaintenanceMode();
   }
 }
 
@@ -49,7 +45,7 @@ final class _DebugPagePresenterImpl implements DebugPagePresenter {
     ),
   ],
 )
-class DebugPageRoute extends GoRouteData with _$DebugPageRoute {
+class DebugPageRoute extends GoRouteData with $DebugPageRoute {
   const DebugPageRoute();
 
   static const path = '/debug';
@@ -73,7 +69,7 @@ class DebugPageRoute extends GoRouteData with _$DebugPageRoute {
 }
 
 class NavigationDebugPageRoute extends GoRouteData
-    with _$NavigationDebugPageRoute {
+    with $NavigationDebugPageRoute {
   const NavigationDebugPageRoute();
 
   static const path = 'navigation_debug';
@@ -86,7 +82,7 @@ class NavigationDebugPageRoute extends GoRouteData
   }
 }
 
-class TalkerPageRoute extends GoRouteData with _$TalkerPageRoute {
+class TalkerPageRoute extends GoRouteData with $TalkerPageRoute {
   const TalkerPageRoute();
 
   static const path = 'talker';

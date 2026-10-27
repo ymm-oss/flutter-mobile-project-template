@@ -139,33 +139,6 @@ jobs:
           echo "::error::flutter test failed. See the 'Run test' step for details."
           exit 1
 
-  # custom_lintが時間かかるのでcheckと並列させる
-  custom-lint:
-    needs:
-      - changes
-      - cache-dependencies
-    if: ${{ needs.changes.outputs.lint == 'true' }}
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
-
-    steps:
-      # https://github.com/actions/checkout
-      - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Setup Application Runtime
-        uses: ./.github/actions/setup-application-runtime
-
-      - name: Report custom_lint result
-        run: |
-          echo "::add-matcher::.github/problem_matchers/custom_lint.json"
-          melos run ci:report:custom_lint --no-select || result=$?
-          echo "::remove-matcher owner=custom_lint::"
-
-          if [ -n "$result" ]; then
-            exit 1
-          fi
-
   diff-gen:
     uses: ./.github/workflows/wc-check-diff.yaml
     with:
@@ -200,7 +173,6 @@ jobs:
     needs:
       - check-actions
       - check
-      - custom-lint
       - diff-gen
       - check-style-dprint
       - check-code-spell

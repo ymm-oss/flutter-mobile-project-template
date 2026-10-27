@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:github_app/data/providers/github_access_token.dart';
 import 'package:github_app/domain/models/exception.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'dio.g.dart';

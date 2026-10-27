@@ -12,29 +12,26 @@ List<RouteBase> get $appRoutes => [$debugPageRoute];
 
 RouteBase get $debugPageRoute => GoRouteData.$route(
   path: '/debug',
-
+  hasOverriddenOnExit: false,
   parentNavigatorKey: DebugPageRoute.$parentNavigatorKey,
-
-  factory: _$DebugPageRoute._fromState,
+  factory: $DebugPageRoute._fromState,
   routes: [
     GoRouteData.$route(
       path: 'navigation_debug',
-
+      hasOverriddenOnExit: false,
       parentNavigatorKey: NavigationDebugPageRoute.$parentNavigatorKey,
-
-      factory: _$NavigationDebugPageRoute._fromState,
+      factory: $NavigationDebugPageRoute._fromState,
     ),
     GoRouteData.$route(
       path: 'talker',
-
+      hasOverriddenOnExit: false,
       parentNavigatorKey: TalkerPageRoute.$parentNavigatorKey,
-
-      factory: _$TalkerPageRoute._fromState,
+      factory: $TalkerPageRoute._fromState,
     ),
   ],
 );
 
-mixin _$DebugPageRoute on GoRouteData {
+mixin $DebugPageRoute on GoRouteData {
   static DebugPageRoute _fromState(GoRouterState state) =>
       const DebugPageRoute();
 
@@ -55,7 +52,7 @@ mixin _$DebugPageRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$NavigationDebugPageRoute on GoRouteData {
+mixin $NavigationDebugPageRoute on GoRouteData {
   static NavigationDebugPageRoute _fromState(GoRouterState state) =>
       const NavigationDebugPageRoute();
 
@@ -76,7 +73,7 @@ mixin _$NavigationDebugPageRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$TalkerPageRoute on GoRouteData {
+mixin $TalkerPageRoute on GoRouteData {
   static TalkerPageRoute _fromState(GoRouterState state) =>
       const TalkerPageRoute();
 

@@ -6,22 +6,46 @@ part of 'github_access_token.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$gitHubAccessTokenHash() => r'258a0c31671267224adf5dad5099337af8bdcb51';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [gitHubAccessToken].
 @ProviderFor(gitHubAccessToken)
-final gitHubAccessTokenProvider = AutoDisposeProvider<String?>.internal(
-  gitHubAccessToken,
-  name: r'gitHubAccessTokenProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$gitHubAccessTokenHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final gitHubAccessTokenProvider = GitHubAccessTokenProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef GitHubAccessTokenRef = AutoDisposeProviderRef<String?>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+final class GitHubAccessTokenProvider
+    extends $FunctionalProvider<String?, String?, String?>
+    with $Provider<String?> {
+  GitHubAccessTokenProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'gitHubAccessTokenProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$gitHubAccessTokenHash();
+
+  @$internal
+  @override
+  $ProviderElement<String?> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  String? create(Ref ref) {
+    return gitHubAccessToken(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String?>(value),
+    );
+  }
+}
+
+String _$gitHubAccessTokenHash() => r'258a0c31671267224adf5dad5099337af8bdcb51';

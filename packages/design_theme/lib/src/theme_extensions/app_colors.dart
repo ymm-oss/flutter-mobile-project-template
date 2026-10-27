@@ -4,7 +4,7 @@ import 'package:theme_extensions_builder_annotation/theme_extensions_builder_ann
 part 'app_colors.g.theme.dart';
 
 @themeExtensions
-class AppColors extends ThemeExtension<AppColors> with _$ThemeExtensionMixin {
+class AppColors extends ThemeExtension<AppColors> with _$AppColors {
   const AppColors({
     required this.icon,
   });

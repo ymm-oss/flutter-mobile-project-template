@@ -4,8 +4,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 void main() {
   runApp(
-    const ProviderScope(
-      child: MainApp(),
+    ProviderScope(
+      // 失敗した Provider を自動でリトライしない
+      retry: (_, _) => null,
+      child: const MainApp(),
     ),
   );
 }
