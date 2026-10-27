@@ -36,6 +36,7 @@
 >
 > - Shared, Util レイヤーはどのレイヤーにも依存しておらず、Shared, Util 以外の全てのレイヤーから参照可能
 > - Debug レイヤーは全てのレイヤーに依存可能で、Presentation レイヤーからのみ参照される
+>   - リリースビルドから除外するため、`apps/app/lib/debug/debug_features_impl.dart` からのみ参照する（詳細は [internal_debug package](../packages/debug/README.md) を参照）
 
 ```mermaid
 flowchart TD

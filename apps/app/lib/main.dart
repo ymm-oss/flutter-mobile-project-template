@@ -1,22 +1,18 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_app/app_initializer.dart';
+import 'package:flutter_app/debug/debug_features_impl.dart';
+import 'package:flutter_app/presentation/providers/debug_features_provider.dart';
 import 'package:flutter_app/presentation/providers/force_update_policy_notifier_provider.dart';
 import 'package:flutter_app/presentation/providers/theme_setting_provider.dart';
 import 'package:flutter_app/router/router.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:internal_debug/ui.dart';
 import 'package:internal_design_theme/themes.dart';
 import 'package:internal_design_ui/i18n.dart';
 import 'package:internal_domain_model/operational_settings/operational_settings.dart';
 import 'package:internal_domain_model/theme_setting/theme_setting.dart';
 import 'package:internal_util_ui/snack_bar_manager.dart';
-import 'package:talker_flutter/talker_flutter.dart';
-import 'package:talker_riverpod_logger/talker_riverpod_logger_observer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,18 +25,21 @@ void main() async {
   final (
     overrideProviders: overrideProviders,
   ) = await AppInitializer.initialize();
-  final overrideObservers = <ProviderObserver>[];
 
-  if (kDebugMode) {
-    final talker = TalkerFlutter.init(settings: TalkerSettings());
-    overrideProviders.add(talkerProvider.overrideWithValue(talker));
-    overrideObservers.add(TalkerRiverpodObserver(talker: talker));
+  // kDebugMode はコンパイル時定数のため、リリースビルドでは createDebugFeatures への
+  // 参照ごと削除され、デバッグ機能は tree shaking によってバイナリから除外される。
+  final debugFeatures = kDebugMode ? createDebugFeatures() : null;
+  if (debugFeatures != null) {
+    overrideProviders.addAll([
+      debugFeaturesProvider.overrideWithValue(debugFeatures),
+      ...debugFeatures.overrides,
+    ]);
   }
 
   runApp(
     ProviderScope(
       overrides: overrideProviders,
-      observers: overrideObservers,
+      observers: [...?debugFeatures?.observers],
       child: TranslationProvider(child: const MainApp()),
     ),
   );
@@ -51,11 +50,8 @@ class MainApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final router = ref.watch(routerProvider);
     final themeSetting = ref.watch(themeSettingNotifierProvider);
-
-    final enableAccessibilityTools =
-        kDebugMode && ref.watch(enableAccessibilityToolsProvider);
+    final debugFeatures = ref.watch(debugFeaturesProvider);
 
     ref.listen(forceUpdatePolicyNotifierProvider, (
       _,
@@ -83,30 +79,11 @@ class MainApp extends ConsumerWidget {
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: AppLocaleUtils.supportedLocales,
       scaffoldMessengerKey: SnackBarManager.rootScaffoldMessengerKey,
-      builder: enableAccessibilityTools
-          ? (context, child) => AccessibilityTools(child: child)
-          : null,
+      builder: debugFeatures?.appBuilder,
       routerConfig: ref.watch(routerProvider),
       theme: lightTheme(),
       darkTheme: darkTheme(),
       themeMode: themeSetting.toThemeMode(),
-      shortcuts: kDebugMode
-          ? {
-              LogicalKeySet(
-                LogicalKeyboardKey.shift,
-                LogicalKeyboardKey.keyD,
-              ): const _DebugIntent(),
-            }
-          : null,
-      actions: kDebugMode
-          ? <Type, Action<Intent>>{
-              _DebugIntent: CallbackAction<_DebugIntent>(
-                onInvoke: (_) => unawaited(
-                  router.push(const DebugPageRoute().location),
-                ),
-              ),
-            }
-          : null,
     );
   }
 }
@@ -138,10 +115,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
       ''',
   );
-}
-
-class _DebugIntent extends Intent {
-  const _DebugIntent();
 }
 
 extension on ThemeSetting {
