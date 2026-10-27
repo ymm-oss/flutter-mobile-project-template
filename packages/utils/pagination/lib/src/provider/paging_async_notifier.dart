@@ -87,14 +87,17 @@ abstract class PageBasedPagingAsyncNotifier<T>
             hasMore: next.hasMore,
           );
         },
-        // Captures only exceptions; errors are rethrown.
-        (e) => e is Exception,
       );
       // Discards the result if the provider was rebuilt or disposed.
-      if (!ref.mounted) {
-        return;
+      if (ref.mounted) {
+        state = result;
       }
-      state = result;
+      // Rethrows errors other than exceptions after leaving the loading state
+      // so that loadNext can be retried.
+      if (result case AsyncError(:final error, :final stackTrace)
+          when error is! Exception) {
+        Error.throwWithStackTrace(error, stackTrace);
+      }
     }
   }
 }
