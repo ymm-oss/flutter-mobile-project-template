@@ -116,7 +116,7 @@ class CommonPagingView<
                 required isLoading,
               }) {
                 return RefreshIndicator(
-                  onRefresh: () async => ref.refresh(_provider.future),
+                  onRefresh: () => ref.refresh(_provider.future),
                   child: _contentBuilder(
                     // Displays EndItem to detect scroll end
                     // if more data is available and no errors.
