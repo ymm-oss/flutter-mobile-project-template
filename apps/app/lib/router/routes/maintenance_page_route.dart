@@ -4,7 +4,7 @@ part of 'package:flutter_app/router/router.dart';
   path: MaintenancePageRoute.path,
 )
 class MaintenancePageRoute extends GoRouteData with $MaintenancePageRoute {
-  const MaintenancePageRoute();
+  const new();
 
   static const path = '/maintenance';
 

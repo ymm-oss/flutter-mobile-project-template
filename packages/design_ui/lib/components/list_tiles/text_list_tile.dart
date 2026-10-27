@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 /// example component
 class TextListTile extends StatelessWidget {
-  const TextListTile({
+  const new({
     required this.text,
     required this.onTap,
     super.key,

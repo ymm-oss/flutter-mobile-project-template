@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shake_gesture/shake_gesture.dart';
 
 class ShakeDetection extends StatelessWidget {
-  const ShakeDetection({
+  const new({
     required this.onShake,
     required this.child,
     super.key,

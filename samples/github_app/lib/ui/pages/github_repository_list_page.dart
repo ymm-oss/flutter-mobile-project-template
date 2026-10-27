@@ -18,7 +18,7 @@ typedef GitHubRepositoryPagingView =
     >;
 
 class GitHubRepositoryListPage extends HookConsumerWidget {
-  const GitHubRepositoryListPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

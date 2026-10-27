@@ -44,7 +44,7 @@ abstract class PagingAsyncNotifier<T extends PagingData<U>, U>
 /// ```
 abstract class PageBasedPagingAsyncNotifier<T>
     extends PagingAsyncNotifier<PageBasedPagingData<T>, T> {
-  PageBasedPagingAsyncNotifier({this._initialPage = 1});
+  new({this._initialPage = 1});
 
   final int _initialPage;
 
@@ -103,7 +103,7 @@ abstract class PageBasedPagingAsyncNotifier<T>
 }
 
 class PageBasedFetchResult<T> {
-  const PageBasedFetchResult({
+  const new({
     required this.items,
     required this.hasMore,
   });

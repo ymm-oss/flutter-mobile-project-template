@@ -4,7 +4,7 @@ import 'package:internal_design_theme/theme_extensions.dart';
 import 'package:internal_design_ui/i18n.dart';
 
 class HomePage extends ConsumerWidget {
-  const HomePage({
+  const new({
     super.key,
   });
 

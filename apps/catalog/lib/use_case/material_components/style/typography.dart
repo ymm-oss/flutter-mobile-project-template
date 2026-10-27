@@ -85,7 +85,7 @@ Widget buildThemeTypographyUseCase(BuildContext context) {
 }
 
 class _TextStylePreviewTile extends StatelessWidget {
-  const _TextStylePreviewTile({
+  const new({
     required this._title,
     required this._textStyle,
   });

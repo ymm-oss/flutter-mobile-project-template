@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' as p;
 
 class NavigationDebugPage extends ConsumerWidget {
-  const NavigationDebugPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,7 +28,7 @@ class NavigationDebugPage extends ConsumerWidget {
 }
 
 final class RouteDropdownMenu extends HookWidget {
-  const RouteDropdownMenu({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

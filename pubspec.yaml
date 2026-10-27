@@ -28,7 +28,7 @@ dev_dependencies:
   path: ^1.9.1
   yaml: ^3.1.3
   yaml_edit: ^2.2.2
-  yumemi_lints: ^4.2.0
+  yumemi_lints: ^4.5.1
 
 dependency_overrides:
   file: ^7.0.1
@@ -71,7 +71,7 @@ melos:
         go_router_builder: ^4.5.0
         json_serializable: ^6.14.1
         riverpod_generator: ^4.0.9
-        yumemi_lints: ^4.2.0
+        yumemi_lints: ^4.5.1
         test: ^1.31.1
         theme_extensions_builder: ^7.5.0
         flutter_gen_runner: ^5.15.0

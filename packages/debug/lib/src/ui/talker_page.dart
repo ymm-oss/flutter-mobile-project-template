@@ -9,7 +9,7 @@ part 'talker_page.g.dart';
 Talker talker(Ref ref) => throw UnimplementedError();
 
 class TalkerPage extends ConsumerWidget {
-  const TalkerPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -5,7 +5,7 @@ import 'package:widgetbook_annotation/widgetbook_annotation.dart';
 /// https://api.flutter.dev/flutter/material/Card-class.html
 
 class _SampleCard extends StatelessWidget {
-  const _SampleCard({
+  const new({
     required this._name,
   });
 

@@ -46,7 +46,7 @@ class CommonPagingView<
   ///   onError: (e) => showErrorDialog(context, e),
   /// )
   /// ```
-  const CommonPagingView({
+  const new({
     required this._provider,
     required this._contentBuilder,
     required this._onError,
@@ -116,7 +116,7 @@ class CommonPagingView<
                 required isLoading,
               }) {
                 return RefreshIndicator(
-                  onRefresh: () async => ref.refresh(_provider.future),
+                  onRefresh: () => ref.refresh(_provider.future),
                   child: _contentBuilder(
                     // Displays EndItem to detect scroll end
                     // if more data is available and no errors.
@@ -152,7 +152,7 @@ class CommonPagingView<
 }
 
 class _ReloadingItem extends StatelessWidget {
-  const _ReloadingItem();
+  const new();
   @override
   Widget build(BuildContext context) {
     return const Center(
@@ -165,7 +165,7 @@ class _ReloadingItem extends StatelessWidget {
 }
 
 class _EndItem extends StatelessWidget {
-  const _EndItem({
+  const new({
     required this._onScrollEnd,
   });
   final VoidCallback _onScrollEnd;
@@ -190,7 +190,7 @@ class _EndItem extends StatelessWidget {
 }
 
 class _ErrorItem extends StatelessWidget {
-  const _ErrorItem({
+  const new({
     required this._errorMessage,
     required this._onError,
   });
@@ -216,7 +216,7 @@ class _ErrorItem extends StatelessWidget {
 }
 
 class _LoadingItem extends StatelessWidget {
-  const _LoadingItem();
+  const new();
 
   @override
   Widget build(BuildContext context) =>
@@ -224,7 +224,7 @@ class _LoadingItem extends StatelessWidget {
 }
 
 class _EndItemWhenError extends StatelessWidget {
-  const _EndItemWhenError({required this._onPressed});
+  const new({required this._onPressed});
   final void Function() _onPressed;
 
   @override

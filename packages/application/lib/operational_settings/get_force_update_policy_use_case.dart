@@ -2,7 +2,7 @@ import 'package:internal_domain_logic/operational_settings/operational_settings_
 import 'package:internal_domain_model/operational_settings/operational_settings.dart';
 
 class GetForceUpdatePolicyUseCase {
-  const GetForceUpdatePolicyUseCase({
+  const new({
     required this.operationalSettingsRepository,
   });
 

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 /// A widget that listens to the lifecycle of the app.
 /// Surround the widget you want to listen to with [CustomAppLifecycleListener].
 class CustomAppLifecycleListener extends StatefulWidget {
-  const CustomAppLifecycleListener({
+  const new({
     required this._child,
     this._onResume,
     this._onInactive,

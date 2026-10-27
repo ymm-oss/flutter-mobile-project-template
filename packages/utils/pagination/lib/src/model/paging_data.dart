@@ -19,10 +19,10 @@ abstract interface class PagingData<T> {
 abstract class PageBasedPagingData<T>
     with _$PageBasedPagingData<T>
     implements PagingData<T> {
-  const factory PageBasedPagingData({
+  const factory({
     required List<T> items,
     required int currentPage,
     required bool hasMore,
   }) = _PageBasedPagingData<T>;
-  const PageBasedPagingData._();
+  const new _();
 }

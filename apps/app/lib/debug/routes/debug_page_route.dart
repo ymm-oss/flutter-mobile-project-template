@@ -1,7 +1,7 @@
 part of 'package:flutter_app/debug/debug_features_impl.dart';
 
 final class _DebugPageNavigatorImpl implements DebugPageNavigator {
-  const _DebugPageNavigatorImpl();
+  const new();
 
   @override
   void goNavigationDebugPage(BuildContext context) {
@@ -19,7 +19,7 @@ final class _DebugPageNavigatorImpl implements DebugPageNavigator {
 }
 
 final class _DebugPagePresenterImpl implements DebugPagePresenter {
-  _DebugPagePresenterImpl(this.ref);
+  new(this.ref);
 
   final Ref ref;
 
@@ -46,7 +46,7 @@ final class _DebugPagePresenterImpl implements DebugPagePresenter {
   ],
 )
 class DebugPageRoute extends GoRouteData with $DebugPageRoute {
-  const DebugPageRoute();
+  const new();
 
   static const path = '/debug';
 
@@ -70,7 +70,7 @@ class DebugPageRoute extends GoRouteData with $DebugPageRoute {
 
 class NavigationDebugPageRoute extends GoRouteData
     with $NavigationDebugPageRoute {
-  const NavigationDebugPageRoute();
+  const new();
 
   static const path = 'navigation_debug';
 
@@ -83,7 +83,7 @@ class NavigationDebugPageRoute extends GoRouteData
 }
 
 class TalkerPageRoute extends GoRouteData with $TalkerPageRoute {
-  const TalkerPageRoute();
+  const new();
 
   static const path = 'talker';
 
