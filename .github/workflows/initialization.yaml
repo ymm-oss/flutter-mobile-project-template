@@ -28,7 +28,7 @@ jobs:
     steps:
       # https://github.com/actions/checkout
       - name: Fetch sources
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Generate Matrix Data
         id: matrix
@@ -50,10 +50,10 @@ jobs:
     steps:
       # https://github.com/actions/checkout
       - name: Fetch sources
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Create Issue from File
-        uses: peter-evans/create-issue-from-file@24452a72d85239eacf1468b0f1982a9f3fec4c94 # v5.0.0
+        uses: peter-evans/create-issue-from-file@fca9117c27cdc29c6c4db3b86c48e4115a786710 # v6.0.0
         with:
           title: ${{ matrix.title }}
           content-filepath: ${{ matrix.content-filepath }}
@@ -71,7 +71,7 @@ jobs:
     steps:
       # https://github.com/actions/checkout
       - name: Fetch sources
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Cleanup Copilot Settings
         uses: ./.github/actions/cleanup-copilot-settings
@@ -102,7 +102,7 @@ jobs:
 
       # https://github.com/ad-m/github-push-action
       - name: Push changes
-        uses: ad-m/github-push-action@d91a481090679876dfc4178fef17f286781251df # v0.8.0
+        uses: ad-m/github-push-action@4cc74773234f74829a8c21bc4d69dd4be9cfa599 # v1.1.0
         with:
           branch: main
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -114,4 +114,4 @@ jobs:
       #         This occurs when cleaning up a modified remote branch that remains in the stale state from `Fetch sources` step.
       - name: Check out latest state of original repository
         # https://github.com/actions/checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2

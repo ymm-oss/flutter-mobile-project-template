@@ -1,9 +1,11 @@
-include: package:yumemi_lints/flutter/3.32/recommended.yaml
+include: package:yumemi_lints/flutter/3.47/recommended.yaml
 
 analyzer:
-  plugins:
-    # https://riverpod.dev/docs/introduction/getting_started#enabling-riverpod_lintcustom_lint
-    - custom_lint
   errors:
     # https://pub.dev/packages/freezed#install
     invalid_annotation_target: ignore
+
+plugins:
+  # https://pub.dev/packages/riverpod_lint#installing-riverpod_lint
+  # plugin は pubspec.lock で固定されないため、環境ごとに結果が変わらないよう完全なバージョンを指定する
+  riverpod_lint: 3.1.9

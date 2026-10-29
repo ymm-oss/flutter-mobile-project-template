@@ -12,7 +12,7 @@ runs:
         echo "repository_name=$SNAKE_CASE" >> $GITHUB_OUTPUT
 
     - name: Fill the project name
-      uses: mikefarah/yq@f15500b20a1c991c8729870ba60a4dc3524b6a94 # v4.44.2
+      uses: mikefarah/yq@751d8ad57b84f1794661bc70c0afb92a22ad7b3c # v4.53.2
       with:
         cmd: |
           yq '.name = "${{ steps.convert_name.outputs.repository_name }}"' melos.yaml > melos.yaml.new

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/gen/assets/assets.gen.dart';
 import 'package:flutter_app/presentation/providers/build_config_provider.dart';
@@ -13,16 +15,16 @@ typedef SettingPageNavigator = ({
 });
 
 class SettingPage extends ConsumerWidget {
-  const SettingPage({
-    required SettingPageNavigator navigator,
+  const new({
+    required this._navigator,
     super.key,
-  }) : _navigator = navigator;
+  });
 
   final SettingPageNavigator _navigator;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentThemeSetting = ref.watch(themeSettingNotifierProvider);
+    final currentThemeSetting = ref.watch(themeSettingProvider);
     final buildConfig = ref.watch(buildConfigProvider);
     final t = Translations.of(context).setting;
 
@@ -33,26 +35,30 @@ class SettingPage extends ConsumerWidget {
       body: CustomScrollView(
         slivers: [
           SettingSectionTitle(text: t.themeSettingLabel),
-          SliverList.builder(
-            itemCount: ThemeSetting.values.length,
-            itemBuilder: (context, index) {
-              final themeSetting = ThemeSetting.values[index];
+          SliverToBoxAdapter(
+            child: RadioGroup<ThemeSetting>(
+              groupValue: currentThemeSetting,
+              onChanged: (newThemeSetting) {
+                if (newThemeSetting == null) {
+                  return;
+                }
 
-              return RadioListTile(
-                value: themeSetting,
-                groupValue: currentThemeSetting,
-                onChanged: (newThemeSetting) async {
-                  if (newThemeSetting == null) {
-                    return;
-                  }
-
-                  await ref
-                      .read(themeSettingNotifierProvider.notifier)
-                      .changeThemeSetting(newThemeSetting);
-                },
-                title: Text(themeSetting.name),
-              );
-            },
+                unawaited(
+                  ref
+                      .read(themeSettingProvider.notifier)
+                      .changeThemeSetting(newThemeSetting),
+                );
+              },
+              child: Column(
+                children: [
+                  for (final themeSetting in ThemeSetting.values)
+                    RadioListTile<ThemeSetting>(
+                      value: themeSetting,
+                      title: Text(themeSetting.name),
+                    ),
+                ],
+              ),
+            ),
           ),
           const SettingSectionSpacer(),
           SettingSectionTitle(text: t.aboutLabel),

@@ -5,28 +5,19 @@ import 'package:flutter/material.dart';
 /// A widget that listens to the lifecycle of the app.
 /// Surround the widget you want to listen to with [CustomAppLifecycleListener].
 class CustomAppLifecycleListener extends StatefulWidget {
-  const CustomAppLifecycleListener({
-    required Widget child,
-    VoidCallback? onResume,
-    VoidCallback? onInactive,
-    VoidCallback? onHide,
-    VoidCallback? onShow,
-    VoidCallback? onPause,
-    VoidCallback? onRestart,
-    VoidCallback? onDetach,
-    Future<AppExitResponse> Function()? onExitRequested,
-    void Function(AppLifecycleState state)? onStateChange,
+  const new({
+    required this._child,
+    this._onResume,
+    this._onInactive,
+    this._onHide,
+    this._onShow,
+    this._onPause,
+    this._onRestart,
+    this._onDetach,
+    this._onExitRequested,
+    this._onStateChange,
     super.key,
-  }) : _child = child,
-       _onResume = onResume,
-       _onInactive = onInactive,
-       _onHide = onHide,
-       _onShow = onShow,
-       _onPause = onPause,
-       _onRestart = onRestart,
-       _onDetach = onDetach,
-       _onExitRequested = onExitRequested,
-       _onStateChange = onStateChange;
+  });
 
   final Widget _child;
   final VoidCallback? _onResume;

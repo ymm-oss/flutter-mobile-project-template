@@ -1,7 +1,7 @@
 import 'package:simple_logger/simple_logger.dart';
 
 class LoggerManager {
-  LoggerManager._();
+  new _();
 
   static final instance = LoggerManager._();
 

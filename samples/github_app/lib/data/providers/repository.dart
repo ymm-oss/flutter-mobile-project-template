@@ -1,7 +1,6 @@
 import 'package:github_app/data/json_type.dart';
 import 'package:github_app/data/providers/dio.dart';
 import 'package:github_app/domain/models/github_repository.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'repository.g.dart';
@@ -28,7 +27,7 @@ Future<GitHubRepositoryResult> listOrganizationRepositories(
 }
 
 class GitHubRepositoryResult {
-  const GitHubRepositoryResult({
+  const new({
     required this.items,
     required this.hasMore,
   });

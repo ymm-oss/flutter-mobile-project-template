@@ -12,7 +12,7 @@ import 'package:widgetbook_annotation/widgetbook_annotation.dart';
 Widget navigationBar(BuildContext context) => const _NavigationExample();
 
 class _NavigationExample extends StatefulWidget {
-  const _NavigationExample();
+  const new();
 
   @override
   State<_NavigationExample> createState() => _NavigationExampleState();

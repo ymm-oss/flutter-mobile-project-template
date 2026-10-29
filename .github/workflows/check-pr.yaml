@@ -25,7 +25,7 @@ jobs:
     steps:
       # https://github.com/peter-evans/create-or-update-comment
       - name: Comment
-        uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4.0.0
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
@@ -43,10 +43,10 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       # https://github.com/marketplace/actions/actionlint-with-reviewdog
-      - uses: reviewdog/action-actionlint@4f8f9963ca57a41e5fd5b538dd79dbfbd3e0b38a # v1.54.0
+      - uses: reviewdog/action-actionlint@6fb7acc99f4a1008869fa8a0f09cfca740837d9d # v1.72.0
         with:
           actionlint_flags: -ignore 'SC2153'
           fail_on_error: true
@@ -63,7 +63,7 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: Checkout
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Setup Application Runtime
         uses: ./.github/actions/setup-application-runtime
@@ -78,20 +78,26 @@ jobs:
     permissions:
       contents: read
       checks: write
+      pull-requests: write
 
     steps:
       # https://github.com/actions/checkout
       - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Setup Application Runtime
         uses: ./.github/actions/setup-application-runtime
 
-      # https://github.com/invertase/github-action-dart-analyzer
-      - name: Report analyze
-        uses: invertase/github-action-dart-analyzer@e981b01a458d0bab71ee5da182e5b26687b7101b # v3.0.0
+      # https://github.com/reviewdog/action-setup
+      - name: Setup reviewdog
+        uses: reviewdog/action-setup@d8a7baabd7f3e8544ee4dbde3ee41d0011c3a93f # v1.5.0
         with:
-          fatal-infos: true
+          reviewdog_version: v0.21.2
+
+      - name: Report analyze
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ github.token }}
+        run: reviewdog -runners=dart-analyze -reporter=github-pr-review -filter-mode=nofilter -fail-level=info
 
       - name: Check format
         run: melos run format:check
@@ -99,22 +105,26 @@ jobs:
       - name: Check for circular dependencies
         run: melos list --cycles
 
+      - name: Check debug features are excluded from release build
+        run: melos run check:debug_tree_shaking
+
       - name: Run test
+        id: test
         run: melos run report:test --no-select
         continue-on-error: true
 
       # https://github.com/andstor/file-existence-action
       - name: Check file existence
         id: check_files
-        uses: andstor/file-existence-action@076e0072799f4942c8bc574a82233e1e4d13e9d6 # v3.0.0
+        uses: andstor/file-existence-action@558493d6c74bf472d87c84eab196434afc2fa029 # v3.1.0
         with:
           # https://github.com/isaacs/node-glob の形式
           files: "**/test_report.log"
 
       # https://github.com/dorny/test-reporter
       - name: Report test
-        if: steps.check_files.outputs.files_exists == 'true'
-        uses: dorny/test-reporter@eaa763f6ffc21c7a37837f56cd5f9737f27fc6c8 # v1.8.0
+        if: ${{ steps.check_files.outputs.files_exists == 'true' && github.event.pull_request.head.repo.full_name == github.repository }}
+        uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2 # v3.0.0
         with:
           name: "flutter test"
           # https://github.com/mrmlnc/fast-glob の形式
@@ -122,32 +132,12 @@ jobs:
           reporter: "flutter-json"
           fail-on-error: "true"
 
-  # custom_lintが時間かかるのでcheckと並列させる
-  custom-lint:
-    needs:
-      - changes
-      - cache-dependencies
-    if: ${{ needs.changes.outputs.lint == 'true' }}
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
-
-    steps:
-      # https://github.com/actions/checkout
-      - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-
-      - name: Setup Application Runtime
-        uses: ./.github/actions/setup-application-runtime
-
-      - name: Report custom_lint result
+      # fork からの PR ではレポートを作成できないため、テストの終了コードでジョブを失敗させる
+      - name: Fail on test failure (fork)
+        if: ${{ github.event.pull_request.head.repo.full_name != github.repository && steps.test.outcome == 'failure' }}
         run: |
-          echo "::add-matcher::.github/problem_matchers/custom_lint.json"
-          melos run ci:report:custom_lint --no-select || result=$?
-          echo "::remove-matcher owner=custom_lint::"
-
-          if [ -n "$result" ]; then
-            exit 1
-          fi
+          echo "::error::flutter test failed. See the 'Run test' step for details."
+          exit 1
 
   diff-gen:
     uses: ./.github/workflows/wc-check-diff.yaml
@@ -183,7 +173,6 @@ jobs:
     needs:
       - check-actions
       - check
-      - custom-lint
       - diff-gen
       - check-style-dprint
       - check-code-spell

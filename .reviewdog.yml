@@ -1,0 +1,5 @@
+runner:
+  dart-analyze:
+    cmd: dart analyze --fatal-infos
+    errorformat:
+      - " %#%t%*[a-z] %. %f:%l:%c %. %m"

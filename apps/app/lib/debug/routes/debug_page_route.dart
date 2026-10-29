@@ -1,7 +1,7 @@
-part of 'package:flutter_app/router/router.dart';
+part of 'package:flutter_app/debug/debug_features_impl.dart';
 
 final class _DebugPageNavigatorImpl implements DebugPageNavigator {
-  const _DebugPageNavigatorImpl();
+  const new();
 
   @override
   void goNavigationDebugPage(BuildContext context) {
@@ -19,22 +19,18 @@ final class _DebugPageNavigatorImpl implements DebugPageNavigator {
 }
 
 final class _DebugPagePresenterImpl implements DebugPagePresenter {
-  _DebugPagePresenterImpl(this.ref);
+  new(this.ref);
 
   final Ref ref;
 
   @override
   void enableForceUpdate() {
-    ref
-        .read(forceUpdatePolicyNotifierProvider.notifier)
-        .debugEnableForceUpdate();
+    ref.read(forceUpdatePolicyProvider.notifier).debugEnableForceUpdate();
   }
 
   @override
   void enableMaintenanceMode() {
-    ref
-        .read(maintenancePolicyNotifierProvider.notifier)
-        .debugEnableMaintenanceMode();
+    ref.read(maintenancePolicyProvider.notifier).debugEnableMaintenanceMode();
   }
 }
 
@@ -49,13 +45,12 @@ final class _DebugPagePresenterImpl implements DebugPagePresenter {
     ),
   ],
 )
-class DebugPageRoute extends GoRouteData with _$DebugPageRoute {
-  const DebugPageRoute();
+class DebugPageRoute extends GoRouteData with $DebugPageRoute {
+  const new();
 
   static const path = '/debug';
 
-  static final GlobalKey<NavigatorState> $parentNavigatorKey =
-      _rootNavigatorKey;
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -74,13 +69,12 @@ class DebugPageRoute extends GoRouteData with _$DebugPageRoute {
 }
 
 class NavigationDebugPageRoute extends GoRouteData
-    with _$NavigationDebugPageRoute {
-  const NavigationDebugPageRoute();
+    with $NavigationDebugPageRoute {
+  const new();
 
   static const path = 'navigation_debug';
 
-  static final GlobalKey<NavigatorState> $parentNavigatorKey =
-      _rootNavigatorKey;
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -88,13 +82,12 @@ class NavigationDebugPageRoute extends GoRouteData
   }
 }
 
-class TalkerPageRoute extends GoRouteData with _$TalkerPageRoute {
-  const TalkerPageRoute();
+class TalkerPageRoute extends GoRouteData with $TalkerPageRoute {
+  const new();
 
   static const path = 'talker';
 
-  static final GlobalKey<NavigatorState> $parentNavigatorKey =
-      _rootNavigatorKey;
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {

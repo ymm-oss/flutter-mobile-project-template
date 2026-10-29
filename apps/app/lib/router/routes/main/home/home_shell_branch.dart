@@ -9,11 +9,11 @@ const homeShellBranch = TypedStatefulShellBranch<HomeShellBranch>(
 );
 
 class HomeShellBranch extends StatefulShellBranchData {
-  const HomeShellBranch();
+  const new();
 }
 
-class HomePageRoute extends GoRouteData with _$HomePageRoute {
-  const HomePageRoute();
+class HomePageRoute extends GoRouteData with $HomePageRoute {
+  const new();
 
   static const path = '/';
 
@@ -26,21 +26,7 @@ class HomePageRoute extends GoRouteData with _$HomePageRoute {
       // By overriding the Provider in the Route build method, it is possible to
       // switch the implementation of Navigator based on the source of
       // navigation or the state.
-      child: kDebugMode
-          ? ShakeDetection(
-              onShake: () {
-                final isDebugRoute = GoRouter.of(
-                  context,
-                ).state.uri.path.contains(DebugPageRoute.path);
-                if (isDebugRoute) {
-                  return;
-                }
-
-                unawaited(const DebugPageRoute().push(context));
-              },
-              child: const ProviderScope(child: HomePage()),
-            )
-          : const ProviderScope(child: HomePage()),
+      child: const ProviderScope(child: HomePage()),
     );
   }
 }

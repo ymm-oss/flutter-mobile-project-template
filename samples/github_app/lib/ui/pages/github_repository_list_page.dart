@@ -18,12 +18,12 @@ typedef GitHubRepositoryPagingView =
     >;
 
 class GitHubRepositoryListPage extends HookConsumerWidget {
-  const GitHubRepositoryListPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scrollController = useScrollController();
-    ref.listen(scrollNotifierProvider, (_, _) async {
+    ref.listen(scrollProvider, (_, _) async {
       if (!context.mounted) {
         return;
       }
@@ -79,16 +79,14 @@ class GitHubRepositoryListPage extends HookConsumerWidget {
     String repositoryName,
     String? description,
   ) {
-    unawaited(
-      Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (context) {
-            return GitHubRepositoryDetailPage(
-              repositoryName: repositoryName,
-              description: description,
-            );
-          },
-        ),
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) {
+          return GitHubRepositoryDetailPage(
+            repositoryName: repositoryName,
+            description: description,
+          );
+        },
       ),
     );
   }

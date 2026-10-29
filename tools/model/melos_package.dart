@@ -10,7 +10,7 @@
 /// }
 /// ```
 final class MelosPackage {
-  MelosPackage({
+  new({
     required this.name,
     required this.version,
     required this.private,
@@ -18,7 +18,7 @@ final class MelosPackage {
     required this.type,
   });
 
-  factory MelosPackage.fromJson(Map<String, dynamic> json) => MelosPackage(
+  factory fromJson(Map<String, dynamic> json) => MelosPackage(
     name: json['name'] as String,
     version: json['version'] as String,
     private: json['private'] as bool,

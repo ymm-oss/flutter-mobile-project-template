@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:internal_design_ui/i18n.dart';
 
 class MainPage extends ConsumerWidget {
-  const MainPage({
+  const new({
     required this.navigationShell,
     super.key,
   });

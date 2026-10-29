@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'operational_settings.dart';
@@ -9,6 +9,7 @@ part of 'operational_settings.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $OperationalSettingsCopyWith<OperationalSettings> get copyWith => _$OperationalS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OperationalSettings&&(identical(other.maintenancePolicy, maintenancePolicy) || other.maintenancePolicy == maintenancePolicy)&&(identical(other.forceUpdatePolicy, forceUpdatePolicy) || other.forceUpdatePolicy == forceUpdatePolicy));
+  final _this = this as OperationalSettings;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OperationalSettings&&(identical(other.maintenancePolicy, _this.maintenancePolicy) || other.maintenancePolicy == _this.maintenancePolicy)&&(identical(other.forceUpdatePolicy, _this.forceUpdatePolicy) || other.forceUpdatePolicy == _this.forceUpdatePolicy));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,maintenancePolicy,forceUpdatePolicy);
+int get hashCode {
+  final _this = this as OperationalSettings;
+  return Object.hash(runtimeType,_this.maintenancePolicy,_this.forceUpdatePolicy);
+}
 
 @override
 String toString() {
-  return 'OperationalSettings(maintenancePolicy: $maintenancePolicy, forceUpdatePolicy: $forceUpdatePolicy)';
+  final _this = this as OperationalSettings;
+  return 'OperationalSettings(maintenancePolicy: ${_this.maintenancePolicy}, forceUpdatePolicy: ${_this.forceUpdatePolicy})';
 }
 
 
@@ -63,7 +69,7 @@ class _$OperationalSettingsCopyWithImpl<$Res>
 /// Create a copy of OperationalSettings
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? maintenancePolicy = null,Object? forceUpdatePolicy = null,}) {
-  return _then(_self.copyWith(
+  return _then(OperationalSettings(
 maintenancePolicy: null == maintenancePolicy ? _self.maintenancePolicy : maintenancePolicy // ignore: cast_nullable_to_non_nullable
 as MaintenancePolicy,forceUpdatePolicy: null == forceUpdatePolicy ? _self.forceUpdatePolicy : forceUpdatePolicy // ignore: cast_nullable_to_non_nullable
 as ForceUpdatePolicy,
@@ -241,16 +247,18 @@ _$OperationalSettingsCopyWith<_OperationalSettings> get copyWith => __$Operation
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OperationalSettings&&(identical(other.maintenancePolicy, maintenancePolicy) || other.maintenancePolicy == maintenancePolicy)&&(identical(other.forceUpdatePolicy, forceUpdatePolicy) || other.forceUpdatePolicy == forceUpdatePolicy));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _OperationalSettings&&(identical(other.maintenancePolicy, maintenancePolicy) || other.maintenancePolicy == maintenancePolicy)&&(identical(other.forceUpdatePolicy, forceUpdatePolicy) || other.forceUpdatePolicy == forceUpdatePolicy));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,maintenancePolicy,forceUpdatePolicy);
+int get hashCode {
+    return Object.hash(runtimeType,maintenancePolicy,forceUpdatePolicy);
+}
 
 @override
 String toString() {
-  return 'OperationalSettings(maintenancePolicy: $maintenancePolicy, forceUpdatePolicy: $forceUpdatePolicy)';
+    return 'OperationalSettings(maintenancePolicy: $maintenancePolicy, forceUpdatePolicy: $forceUpdatePolicy)';
 }
 
 
@@ -316,7 +324,7 @@ mixin _$MaintenancePolicy {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MaintenancePolicy);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is MaintenancePolicy);
 }
 
 
@@ -325,7 +333,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'MaintenancePolicy()';
+    return 'MaintenancePolicy()';
 }
 
 
@@ -486,16 +494,18 @@ $MaintenanceEnabledCopyWith<MaintenanceEnabled> get copyWith => _$MaintenanceEna
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MaintenanceEnabled&&(identical(other.message, message) || other.message == message));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is MaintenanceEnabled&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode {
+    return Object.hash(runtimeType,message);
+}
 
 @override
 String toString() {
-  return 'MaintenancePolicy.enabled(message: $message)';
+    return 'MaintenancePolicy.enabled(message: $message)';
 }
 
 
@@ -547,7 +557,7 @@ class MaintenanceDisabled implements MaintenancePolicy {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MaintenanceDisabled);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is MaintenanceDisabled);
 }
 
 
@@ -556,7 +566,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'MaintenancePolicy.disabled()';
+    return 'MaintenancePolicy.disabled()';
 }
 
 
@@ -574,7 +584,7 @@ mixin _$ForceUpdatePolicy {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ForceUpdatePolicy);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ForceUpdatePolicy);
 }
 
 
@@ -583,7 +593,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'ForceUpdatePolicy()';
+    return 'ForceUpdatePolicy()';
 }
 
 
@@ -744,16 +754,18 @@ $ForceUpdateEnabledCopyWith<ForceUpdateEnabled> get copyWith => _$ForceUpdateEna
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ForceUpdateEnabled&&(identical(other.minimumVersions, minimumVersions) || other.minimumVersions == minimumVersions));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ForceUpdateEnabled&&(identical(other.minimumVersions, minimumVersions) || other.minimumVersions == minimumVersions));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,minimumVersions);
+int get hashCode {
+    return Object.hash(runtimeType,minimumVersions);
+}
 
 @override
 String toString() {
-  return 'ForceUpdatePolicy.enabled(minimumVersions: $minimumVersions)';
+    return 'ForceUpdatePolicy.enabled(minimumVersions: $minimumVersions)';
 }
 
 
@@ -814,7 +826,7 @@ class ForceUpdateDisabled implements ForceUpdatePolicy {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ForceUpdateDisabled);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ForceUpdateDisabled);
 }
 
 
@@ -823,7 +835,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'ForceUpdatePolicy.disabled()';
+    return 'ForceUpdatePolicy.disabled()';
 }
 
 
@@ -846,16 +858,21 @@ $RequiredVersionsCopyWith<RequiredVersions> get copyWith => _$RequiredVersionsCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RequiredVersions&&(identical(other.ios, ios) || other.ios == ios)&&(identical(other.android, android) || other.android == android));
+  final _this = this as RequiredVersions;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RequiredVersions&&(identical(other.ios, _this.ios) || other.ios == _this.ios)&&(identical(other.android, _this.android) || other.android == _this.android));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,ios,android);
+int get hashCode {
+  final _this = this as RequiredVersions;
+  return Object.hash(runtimeType,_this.ios,_this.android);
+}
 
 @override
 String toString() {
-  return 'RequiredVersions(ios: $ios, android: $android)';
+  final _this = this as RequiredVersions;
+  return 'RequiredVersions(ios: ${_this.ios}, android: ${_this.android})';
 }
 
 
@@ -884,7 +901,7 @@ class _$RequiredVersionsCopyWithImpl<$Res>
 /// Create a copy of RequiredVersions
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? ios = null,Object? android = null,}) {
-  return _then(_self.copyWith(
+  return _then(RequiredVersions(
 ios: null == ios ? _self.ios : ios // ignore: cast_nullable_to_non_nullable
 as Version,android: null == android ? _self.android : android // ignore: cast_nullable_to_non_nullable
 as Version,
@@ -1038,16 +1055,18 @@ _$RequiredVersionsCopyWith<_RequiredVersions> get copyWith => __$RequiredVersion
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RequiredVersions&&(identical(other.ios, ios) || other.ios == ios)&&(identical(other.android, android) || other.android == android));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _RequiredVersions&&(identical(other.ios, ios) || other.ios == ios)&&(identical(other.android, android) || other.android == android));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,ios,android);
+int get hashCode {
+    return Object.hash(runtimeType,ios,android);
+}
 
 @override
 String toString() {
-  return 'RequiredVersions(ios: $ios, android: $android)';
+    return 'RequiredVersions(ios: $ios, android: $android)';
 }
 
 

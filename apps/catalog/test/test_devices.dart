@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 abstract class TestDevices {
-  const TestDevices();
+  const new();
 
   int get width;
   int get height;
@@ -16,7 +16,7 @@ abstract class TestDevices {
 }
 
 class IPhone16ProMax extends TestDevices {
-  const IPhone16ProMax();
+  const new();
 
   @override
   int get width => 1320;

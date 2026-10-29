@@ -145,11 +145,10 @@ Widget buildThemeColorSchemeUseCase(BuildContext context) {
 }
 
 class _ColorPreviewTile extends StatelessWidget {
-  const _ColorPreviewTile({
-    required Widget title,
-    required Color color,
-  }) : _title = title,
-       _color = color;
+  const new({
+    required this._title,
+    required this._color,
+  });
 
   final Widget _title;
   final Color _color;

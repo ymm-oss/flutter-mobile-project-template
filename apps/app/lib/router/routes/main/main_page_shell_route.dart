@@ -7,7 +7,7 @@ part of 'package:flutter_app/router/router.dart';
   ],
 )
 class MainPageShellRoute extends StatefulShellRouteData {
-  const MainPageShellRoute();
+  const new();
 
   @override
   Widget builder(

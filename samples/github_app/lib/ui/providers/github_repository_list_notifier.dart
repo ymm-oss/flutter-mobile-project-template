@@ -6,7 +6,7 @@ import 'package:utils_pagination/exception.dart';
 import 'package:utils_pagination/model.dart';
 import 'package:utils_pagination/provider.dart';
 
-final AutoDisposeAsyncNotifierProvider<
+final AsyncNotifierProvider<
   PageBasedGitHubRepositoryNotifier,
   GitHubRepositoryPageState
 >
@@ -30,7 +30,9 @@ class PageBasedGitHubRepositoryNotifier
       final res = await ref.read(
         listOrganizationRepositoriesProvider(page: page).future,
       );
-      ref.keepAlive();
+      if (ref.mounted) {
+        ref.keepAlive();
+      }
       return PageBasedFetchResult(
         items: res.items,
         hasMore: res.hasMore,

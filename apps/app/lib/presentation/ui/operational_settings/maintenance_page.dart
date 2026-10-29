@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:internal_design_ui/i18n.dart';
 
 class MaintenancePage extends ConsumerWidget {
-  const MaintenancePage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,7 +24,7 @@ class MaintenancePage extends ConsumerWidget {
             const SizedBox(height: 64),
             ElevatedButton(
               onPressed: () {
-                ref.read(maintenancePolicyNotifierProvider.notifier).disable();
+                ref.read(maintenancePolicyProvider.notifier).disable();
               },
               child: Text(t.disableButtonLabel),
             ),

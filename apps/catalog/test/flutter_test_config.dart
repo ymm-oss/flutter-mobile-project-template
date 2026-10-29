@@ -10,7 +10,7 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   // ignore: do_not_use_environment
   const isRunningInCi = bool.fromEnvironment('CI');
 
-  return AlchemistConfig.runWithConfig(
+  await AlchemistConfig.runWithConfig(
     config: AlchemistConfig(
       theme: lightTheme(),
       //
