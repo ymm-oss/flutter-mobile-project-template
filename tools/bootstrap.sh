@@ -77,16 +77,16 @@ fi
 ##
 ##############################################################################
 echo ""
-print_step "melos bootstrap"
-if type melos >/dev/null 2>&1; then
-  if melos bootstrap; then
-    print_result 0 "melos bootstrap"
+print_step "dart run melos bootstrap"
+if type dart >/dev/null 2>&1; then
+  if dart pub get && dart run melos bootstrap; then
+    print_result 0 "dart run melos bootstrap"
   else
-    print_result $? "melos bootstrap"
+    print_result $? "dart run melos bootstrap"
   fi
 else
-  echo -e "${YELLOW}[!] melos bootstrap: Skip because it could not be found.${NC}"
-  echo -e "${YELLOW}[!] See https://melos.invertase.dev/getting-started for installation.${NC}"
+  echo -e "${YELLOW}[!] dart run melos bootstrap: Skip because dart could not be found.${NC}"
+  echo -e "${YELLOW}[!] This may be due to mise installation not completed.${NC}"
 fi
 
 ##############################################################################
