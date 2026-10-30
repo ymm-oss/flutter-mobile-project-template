@@ -3,7 +3,7 @@ description: "Setup application runtime for Flutter"
 
 inputs:
   enforce-lockfile:
-    description: "pubspec.lock と異なる依存が解決された場合に失敗させるかどうか"
+    description: "Whether to fail if resolved dependencies differ from pubspec.lock"
     default: "true"
 
 runs:
