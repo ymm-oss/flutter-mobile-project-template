@@ -14,22 +14,6 @@ jobs:
       pull-requests: read
       contents: read
 
-  skip-comment:
-    runs-on: ubuntu-24.04
-    needs: changes
-    if: ${{ needs.changes.outputs.any == 'false' }}
-    permissions:
-      pull-requests: write
-    timeout-minutes: 5
-
-    steps:
-      # https://github.com/peter-evans/create-or-update-comment
-      - name: Comment
-        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            チェック対象ファイルの変更がなかったため、checkジョブをスキップしました
   check-actions:
     runs-on: ubuntu-24.04
     permissions:
