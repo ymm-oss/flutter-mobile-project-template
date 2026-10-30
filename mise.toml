@@ -12,7 +12,7 @@ alias = "bs"
 description = "Clean this workspace."
 run = [
   'bun run clean',
-  'melos clean',
+  'dart run melos clean',
 ]
 
 [tasks.cspell]
