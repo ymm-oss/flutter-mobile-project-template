@@ -13,6 +13,6 @@ runs:
 
     - name: Setup melos
       run: |
-        dart pub get
+        flutter pub get
         dart run melos bootstrap
       shell: bash
