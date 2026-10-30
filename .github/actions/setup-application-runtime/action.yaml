@@ -1,6 +1,11 @@
 name: "Setup Application Runtime"
 description: "Setup application runtime for Flutter"
 
+inputs:
+  enforce-lockfile:
+    description: "pubspec.lock と異なる依存が解決された場合に失敗させるかどうか"
+    default: "true"
+
 runs:
   using: "composite"
   steps:
@@ -11,8 +16,17 @@ runs:
       with:
         install_args: "flutter"
 
+    # dart run は pubspec.lock が古いと --enforce-lockfile なしで pub get を実行するため、
+    # 先に flutter pub get --enforce-lockfile でロックファイルとの一致を確認する
     - name: Setup melos
       run: |
-        flutter pub get
-        dart run melos bootstrap
+        if [[ "$ENFORCE_LOCKFILE" == "true" ]]; then
+          flutter pub get --enforce-lockfile
+          dart run melos bootstrap --enforce-lockfile
+        else
+          flutter pub get
+          dart run melos bootstrap
+        fi
       shell: bash
+      env:
+        ENFORCE_LOCKFILE: ${{ inputs.enforce-lockfile }}
