@@ -25,6 +25,12 @@
   ],
   "dictionaryDefinitions": [
     {
+      "name": "android-term",
+      "description": "Android related terms",
+      "path": "./.cspell/android-term.txt",
+      "addWords": true
+    },
+    {
       "name": "docs-term",
       "description": "Docs related terms",
       "path": "./.cspell/docs-term.txt",
@@ -68,6 +74,7 @@
     }
   ],
   "dictionaries": [
+    "android-term",
     "docs-term",
     "flutter-term",
     "git-term",
