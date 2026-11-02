@@ -85,6 +85,12 @@ VSCodeがサポートしている言語一覧
 3. Copilot for Xcodeアプリを開き、`Featureタブ`内の`Disable Suggestion Feature Globally`を有効化する
 4. 手順3の隣の`Exception List`をクリックして、Copilotを有効化したいプロジェクトパスを追加する
 
+## プロジェクトのスキル
+
+GitHub Copilot は、このリポジトリの `.agents/skills/` をプロジェクトのスキルとして読みます。配置先を追加する設定は不要です。スキルの追加方法と Claude Code 向けの symlink は [AI スキルの配置] を参照してください。
+
 ## 参考
 
 <https://docs.github.com/ja/copilot>
+
+[AI スキルの配置]: AI_SKILLS.md

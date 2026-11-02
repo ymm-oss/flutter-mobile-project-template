@@ -72,6 +72,14 @@ Please check:
 - [Visual Studio Code] の場合、`.vscode/launch.json` を確認してください。
 - [IntelliJ IDEA] または [Android Studio] の場合、`.idea/runConfigurations/~.xml` を確認してください。
 
+## AI コーディングツール
+
+Cursor、GitHub Copilot、Claude Code で共有するスキルは `.agents/skills/` に含まれています。スキルを追加または削除したときと、Windows で symlink がパス文字列のファイルとして checkout されたときは、次のスクリプトで Claude Code 用のリンクを同期します。手順と Windows での復元方法は [AI スキルの配置] を参照してください。
+
+```shell
+scripts/sync-ai-skills.sh
+```
+
 ## ワークスペースの設定
 
 ### `<workspace-name>.code-workspace` ファイルの作成
@@ -115,3 +123,4 @@ Please check:
 [melos]: https://melos.invertase.dev/
 [flutter-mobile-project-template]: https://github.com/ymm-oss/flutter-mobile-project-template/tree/main
 [flutter-mobile-project-docs-template]: https://github.com/ymm-oss/flutter-mobile-project-docs-template
+[AI スキルの配置]: AI_SKILLS.md
