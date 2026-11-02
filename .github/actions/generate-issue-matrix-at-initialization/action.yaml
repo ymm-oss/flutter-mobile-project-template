@@ -15,6 +15,11 @@ runs:
       with:
         install_args: "flutter"
 
+    # NOTE: workspace に Flutter SDK に依存するパッケージが含まれるため、dart pub get ではなく flutter pub get を使います。
+    - name: Install dependencies
+      shell: bash
+      run: flutter pub get
+
     - name: Generate matrix data
       id: generate
       shell: bash
