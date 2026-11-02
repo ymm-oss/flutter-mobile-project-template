@@ -92,6 +92,9 @@ jobs:
       # generate labels
       - name: Setup Application Runtime
         uses: ./.github/actions/setup-application-runtime
+        with:
+          # サンプルの削除で依存が変わり pubspec.lock を更新する必要があるため
+          enforce-lockfile: "false"
 
       - name: Commit files
         run: |
