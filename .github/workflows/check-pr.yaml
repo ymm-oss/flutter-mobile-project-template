@@ -168,6 +168,11 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.spell == 'true' }}
 
+  check-ai-skills:
+    uses: ./.github/workflows/wc-check-ai-skills.yaml
+    needs: changes
+    if: ${{ needs.changes.outputs.ai_skills == 'true' }}
+
   status-check:
     runs-on: ubuntu-24.04
     needs:
@@ -176,6 +181,7 @@ jobs:
       - diff-gen
       - check-style-dprint
       - check-code-spell
+      - check-ai-skills
     permissions: {}
     if: failure()
     steps:

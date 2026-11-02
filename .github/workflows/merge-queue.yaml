@@ -118,12 +118,18 @@ jobs:
       - cache-dependencies
     if: ${{ needs.changes.outputs.gen == 'true' }}
 
+  check-ai-skills:
+    uses: ./.github/workflows/wc-check-ai-skills.yaml
+    needs: changes
+    if: ${{ needs.changes.outputs.ai_skills == 'true' }}
+
   status-check:
     runs-on: ubuntu-24.04
     needs:
       - check-actions
       - check
       - diff-gen
+      - check-ai-skills
     permissions: {}
     if: failure()
     steps:

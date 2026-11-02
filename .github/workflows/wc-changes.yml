@@ -17,6 +17,8 @@ on:
         value: ${{ jobs.changes.outputs.src }}
       spell:
         value: ${{ jobs.changes.outputs.spell }}
+      ai_skills:
+        value: ${{ jobs.changes.outputs.ai_skills }}
       dependencies:
         value: ${{ jobs.changes.outputs.dependencies }}
 
@@ -35,6 +37,7 @@ jobs:
       markdown: ${{ steps.filter.outputs.markdown }}
       src: ${{ steps.filter.outputs.src }}
       spell: ${{ steps.filter.outputs.spell }}
+      ai_skills: ${{ steps.filter.outputs.ai_skills }}
       dependencies: ${{ steps.needs.outputs.dependencies }}
     steps:
       # https://github.com/marketplace/actions/checkout
@@ -76,6 +79,11 @@ jobs:
               - "**.yaml"
               - "**.yml"
               - "**.dart"
+            ai_skills:
+              - ".agents/**"
+              - ".claude/**"
+              - "scripts/sync-ai-skills.sh"
+              - ".github/workflows/wc-check-ai-skills.yaml"
 
       - name: Check for dependencies changes
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
