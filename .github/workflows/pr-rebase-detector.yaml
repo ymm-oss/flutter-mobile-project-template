@@ -41,6 +41,10 @@ jobs:
             exit 0
           fi
 
+          # force-push で外れた旧先端はどのブランチからも辿れない。
+          # fetch-depth: 0 でも clone に無く、コミット一覧が空になる。
+          git fetch origin "$BEFORE_SHA"
+
           # 旧先端が新先端の祖先なら、レビュー済みの履歴は残っている
           if git merge-base --is-ancestor "$BEFORE_SHA" "$AFTER_SHA"; then
             echo "rebase=false" >> "$GITHUB_OUTPUT"
