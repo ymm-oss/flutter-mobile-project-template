@@ -24,13 +24,16 @@ workspace:
   - packages/utils/pagination
 
 dev_dependencies:
-  melos: ^7.0.0-dev.7
+  melos: ^8.10.0
   path: ^1.9.1
   yaml: ^3.1.3
   yaml_edit: ^2.2.2
   yumemi_lints: ^4.5.1
 
 dependency_overrides:
+  # flutter_launcher_icons が cli_util ^0.4.1 に依存しており melos 8 と解決できないため上書きする
+  # https://github.com/fluttercommunity/flutter_launcher_icons/issues/675
+  cli_util: ^0.6.0
   file: ^7.0.1
   path: ^1.9.1
 
@@ -76,7 +79,7 @@ melos:
         theme_extensions_builder: ^7.5.0
         flutter_gen_runner: ^5.15.0
       hooks:
-        post: melos run bootstrap:post
+        post: dart run melos run bootstrap:post
 
   scripts:
     # bootstrap 後に実行する script 群
@@ -138,30 +141,30 @@ melos:
         - gen:build:diff:main
     gen:build:
       description: build_runner を使用してコードを生成します。
-      run: dart run build_runner build
       exec:
+        command: dart run build_runner build
         orderDependents: true
       packageFilters:
         dependsOn: build_runner
     gen:i18n:
       description: 多言語対応のためのローカライゼーションファイルを生成します。
-      run: dart run slang build
       exec:
+        command: dart run slang build
         orderDependents: true
       packageFilters:
         dependsOn: slang
     gen:build:diff:main:
       description: main ブランチと差分のあるパッケージのみ build_runner を使用してコードを生成します。
-      run: dart run build_runner build
       exec:
+        command: dart run build_runner build
         orderDependents: true
       packageFilters:
         dependsOn: build_runner
         diff: origin/main...HEAD
     gen:i18n:diff:main:
       description: main ブランチと差分のあるパッケージのみ 多言語対応のためのローカライゼーションファイルを生成します。
-      run: dart run slang build
       exec:
+        command: dart run slang build
         orderDependents: true
       packageFilters:
         dependsOn: slang
@@ -175,16 +178,16 @@ melos:
         - gen:i18n:diff:head
     gen:build:diff:head:
       description: 未コミットの差分パッケージのみ build_runner を使用してコードを生成します。
-      run: dart run build_runner build
       exec:
+        command: dart run build_runner build
         orderDependents: true
       packageFilters:
         dependsOn: build_runner
         diff: ""
     gen:i18n:diff:head:
       description: 未コミットの差分パッケージのみ ローカライゼーションファイル を生成します。
-      run: dart run slang build
       exec:
+        command: dart run slang build
         orderDependents: true
       packageFilters:
         dependsOn: slang
@@ -198,14 +201,14 @@ melos:
 
     upgrade:
       description: dart pub のバージョンアップを実施します。
-      run: dart pub upgrade
       exec:
+        command: dart pub upgrade
         concurrency: 1
         orderDependents: true
     upgrade:major:
       description: dart pub のメジャーバージョンアップを実施します。
-      run: dart pub upgrade --major-versions
       exec:
+        command: dart pub upgrade --major-versions
         concurrency: 1
         orderDependents: true
     update:yumemi_lints:
@@ -223,8 +226,8 @@ melos:
         - test:dart
     test:flutter:
       description: Flutter パッケージのテストを実行します。
-      run: flutter test
       exec:
+        command: flutter test
         concurrency: 1
       packageFilters:
         dependsOn: flutter_test
@@ -233,8 +236,8 @@ melos:
           - catalog
     test:dart:
       description: Dart パッケージのテストを実行します。
-      run: dart test
       exec:
+        command: dart test
         concurrency: 1
       packageFilters:
         dependsOn: test
@@ -249,8 +252,8 @@ melos:
         - report:test:dart
     report:test:flutter:
       description: Flutter パッケージのテストレポートを生成します。
-      run: flutter test --no-pub --machine > test_report.log
       exec:
+        command: flutter test --no-pub --machine > test_report.log
         concurrency: 1
       packageFilters:
         dependsOn: flutter_test
@@ -259,8 +262,8 @@ melos:
           - catalog
     report:test:dart:
       description: Dart パッケージのテストレポートを生成します。
-      run: dart test --file-reporter="json:test_report.log"
       exec:
+        command: dart test --file-reporter="json:test_report.log"
         concurrency: 1
       packageFilters:
         dependsOn: test
@@ -268,16 +271,16 @@ melos:
 
     golden_test:ci:
       description: golden_test を実行します。
-      run: flutter test --tags golden
       exec:
+        command: flutter test --tags golden
         failFast: true
       packageFilters:
         scope:
           - catalog
     golden_test:
       description: golden_test を実行し, ファイルを生成します。
-      run: flutter test --update-goldens
       exec:
+        command: flutter test --update-goldens
         failFast: true
       packageFilters:
         scope:

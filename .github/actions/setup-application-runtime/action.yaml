@@ -11,17 +11,8 @@ runs:
       with:
         install_args: "flutter"
 
-    # NOTE: 後述の melosコマンドが実行できないためPATHを通します。
-    # PUB_CACHE: $HOME/.pub-cache に設定
-    - name: Export PUB_CACHE
-      run: |
-        echo "PUB_CACHE=$HOME/.pub-cache" >> "$GITHUB_ENV"
-        echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
-      shell: bash
-
     - name: Setup melos
       run: |
-        MELOS_VERSION=$(cat pubspec.lock | yq ".packages.melos.version" -r)
-        dart pub global activate melos $MELOS_VERSION
-        melos bootstrap
+        flutter pub get
+        dart run melos bootstrap
       shell: bash

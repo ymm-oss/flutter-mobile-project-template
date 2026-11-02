@@ -14,7 +14,7 @@
 除外されていることは、次のコマンドで確認できます。CI でも実行しています。
 
 ```shell
-melos run check:debug_tree_shaking
+dart run melos run check:debug_tree_shaking
 ```
 
 ### 制約

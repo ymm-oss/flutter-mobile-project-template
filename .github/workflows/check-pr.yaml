@@ -100,17 +100,17 @@ jobs:
         run: reviewdog -runners=dart-analyze -reporter=github-pr-review -filter-mode=nofilter -fail-level=info
 
       - name: Check format
-        run: melos run format:check
+        run: dart run melos run format:check
 
       - name: Check for circular dependencies
-        run: melos list --cycles
+        run: dart run melos list --cycles
 
       - name: Check debug features are excluded from release build
-        run: melos run check:debug_tree_shaking
+        run: dart run melos run check:debug_tree_shaking
 
       - name: Run test
         id: test
-        run: melos run report:test --no-select
+        run: dart run melos run report:test --no-select
         continue-on-error: true
 
       # https://github.com/andstor/file-existence-action

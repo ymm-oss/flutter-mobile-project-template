@@ -39,9 +39,9 @@ jobs:
       - name: Regenerate code
         run: |
           if [ "${{ inputs.diff-packages }}" = "true" ]; then
-            melos run gen:diff:main
+            dart run melos run gen:diff:main
           else
-            melos run gen
+            dart run melos run gen
           fi
 
       - name: Check difference

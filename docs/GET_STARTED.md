@@ -25,13 +25,7 @@
   FLUTTER_VERSION=$(grep '^flutter =' mise.toml | awk -F'"' '{print $2}') && mise use -g flutter@$FLUTTER_VERSION
   ```
 
-- [melos] コマンドを有効にしてください。
-  - pubspec.lock ファイルを解析して melos コマンドのバージョンを取得するため、[yq] コマンドをインストールしてください。
-  - 以下のコマンドを実行して melos コマンドをグローバルに有効にしてください。
-
-    ```shell
-    MELOS_VERSION=$(cat pubspec.lock | yq ".packages.melos.version" -r) && dart pub global activate melos $MELOS_VERSION
-    ```
+- [melos] はルートの `pubspec.yaml` の dev_dependencies に含まれています。グローバルにインストールせず、`dart run melos` で実行してください。
 
 ## Mise を使用するように IDE を設定
 
@@ -119,6 +113,5 @@ Please check:
 [Xcode]: https://developer.apple.com/xcode/
 [mise]: https://mise.jdx.dev/
 [melos]: https://melos.invertase.dev/
-[yq]: https://github.com/mikefarah/yq
 [flutter-mobile-project-template]: https://github.com/ymm-oss/flutter-mobile-project-template/tree/main
 [flutter-mobile-project-docs-template]: https://github.com/ymm-oss/flutter-mobile-project-docs-template

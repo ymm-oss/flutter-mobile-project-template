@@ -8,8 +8,8 @@ List<MelosPackage> fetchMelosPackageList({
   void Function()? onFailure,
 }) {
   final melosPackageListString = run(
-    'melos',
-    arguments: ['list', '--json'],
+    'dart',
+    arguments: ['run', 'melos', 'list', '--json'],
     quiet: true,
   );
 
