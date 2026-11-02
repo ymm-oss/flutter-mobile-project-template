@@ -1,5 +1,5 @@
 name: "Fill project name"
-description: "Fill project name of melos.yaml and pubspec.yaml with the repository name"
+description: "Fill project name of pubspec.yaml with the repository name"
 
 runs:
   using: "composite"
@@ -15,15 +15,12 @@ runs:
       uses: mikefarah/yq@751d8ad57b84f1794661bc70c0afb92a22ad7b3c # v4.53.2
       with:
         cmd: |
-          yq '.name = "${{ steps.convert_name.outputs.repository_name }}"' melos.yaml > melos.yaml.new
           yq '.name = "${{ steps.convert_name.outputs.repository_name }}"' pubspec.yaml > pubspec.yaml.new
 
     - name: Keep empty lines
       # NOTE: https://github.com/mikefarah/yq/issues/515
       run: |
-        diff -U0 -w -b --ignore-blank-lines melos.yaml melos.yaml.new > melos.yaml.diff || true
         diff -U0 -w -b --ignore-blank-lines pubspec.yaml pubspec.yaml.new > pubspec.yaml.diff || true
-        patch melos.yaml < melos.yaml.diff
         patch pubspec.yaml < pubspec.yaml.diff
-        rm melos.yaml.{new,diff} pubspec.yaml.{new,diff}
+        rm pubspec.yaml.{new,diff}
       shell: bash
