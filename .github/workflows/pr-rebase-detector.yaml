@@ -8,9 +8,14 @@ concurrency:
   group: pr-rebase-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
+permissions: {}
+
 jobs:
   check-rebase:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: Checkout
