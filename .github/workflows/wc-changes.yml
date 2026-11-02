@@ -83,6 +83,7 @@ jobs:
               - ".agents/**"
               - ".claude/**"
               - "scripts/sync-ai-skills.sh"
+              - ".gitattributes"
               - ".github/workflows/wc-check-ai-skills.yaml"
 
       - name: Check for dependencies changes

@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 #
 # .agents/skills/ を共有スキルの実体とし、Claude Code 用の
-# .claude/skills/<name> を相対 symlink で同期する。
+# .claude/skills を ../.agents/skills への相対 symlink にする。
 #
 # Cursor と GitHub Copilot は .agents/skills/ を直接読むため、
 # それらの配置先には symlink を作らない。
 #
 # Usage:
-#   scripts/sync-ai-skills.sh           # 同期する
+#   scripts/sync-ai-skills.sh           # .claude/skills を復元する
 #   scripts/sync-ai-skills.sh --check   # 不一致なら終了コード 1（変更しない）
 #
 # 環境変数:
@@ -28,9 +28,19 @@ case "${1:-}" in
     ;;
 esac
 
+# Git Bash の ln -s は設定によって symlink の代わりにコピーを作るため、
+# symlink を作れないときは失敗させる。
+case "${MSYS:-}" in
+  *winsymlinks*) ;;
+  *) export MSYS="${MSYS:+$MSYS }winsymlinks:nativestrict" ;;
+esac
+
 root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 agents_dir="$root_dir/.agents/skills"
-claude_dir="$root_dir/.claude/skills"
+claude_link="$root_dir/.claude/skills"
+claude_path=".claude/skills"
+expected_target="../.agents/skills"
+copy_marker=".ai-skills-copy"
 link_mode="${AI_SKILLS_LINK_MODE:-auto}"
 failed=0
 
@@ -41,13 +51,14 @@ fail() {
 
 can_symlink() {
   local tmp
+  local ok=1
   tmp="$(mktemp -d)"
-  if ln -s "target" "$tmp/link" 2>/dev/null; then
-    rm -rf "$tmp"
-    return 0
+  mkdir "$tmp/target"
+  if ln -s "target" "$tmp/link" 2>/dev/null && [[ -L "$tmp/link" ]]; then
+    ok=0
   fi
   rm -rf "$tmp"
-  return 1
+  return "$ok"
 }
 
 resolve_link_mode() {
@@ -79,13 +90,18 @@ resolve_link_mode() {
 frontmatter_value() {
   local file="$1"
   local key="$2"
+  # CRLF で checkout された SKILL.md も読めるように、行末の \r を除く。
+  # 複数行の値（> や |）は 1 行で書くルールに反するため、値なしとして扱う。
   awk -v key="$key" '
+    { sub(/\r$/, "") }
     NR == 1 && $0 != "---" { exit 1 }
     NR == 1 { in_fm = 1; next }
     in_fm && $0 == "---" { exit 1 }
     in_fm && index($0, key ":") == 1 {
       line = $0
       sub("^" key ":[[:space:]]*", "", line)
+      sub(/[[:space:]]+$/, "", line)
+      if (line ~ /^[>|][-+]?$/) exit 1
       if (line ~ /^".*"$/ || line ~ /^'\''.*'\''$/) {
         line = substr(line, 2, length(line) - 2)
       }
@@ -109,10 +125,6 @@ is_skill_name() {
   esac
 }
 
-expected_target() {
-  printf '%s\n' "../../.agents/skills/$1"
-}
-
 list_names() {
   local dir="$1"
   local path name
@@ -132,7 +144,7 @@ list_names() {
 validate_skill() {
   local name="$1"
   local dir="$agents_dir/$name"
-  local skill_file value
+  local skill_file value chars
 
   if ! is_skill_name "$name"; then
     fail "$dir のディレクトリ名は小文字・数字・ハイフンだけにしてください。"
@@ -156,7 +168,8 @@ validate_skill() {
   if [[ -z "$value" ]]; then
     fail "$skill_file の description を 1 行で書いてください。"
   else
-    chars="$(printf '%s' "$value" | wc -m | tr -d '[:space:]')"
+    # ロケールに依存しないよう、UTF-8 の継続バイトを除いたバイト数を文字数とする。
+    chars="$(printf '%s' "$value" | LC_ALL=C tr -d '\200-\277' | wc -c | tr -d '[:space:]')"
     if [[ "$chars" -gt 1024 ]]; then
       fail "$skill_file の description は 1024 文字以内にしてください。"
     fi
@@ -175,125 +188,93 @@ validate_agents_skills() {
   done < <(list_names "$agents_dir")
 }
 
-skill_known() {
-  local needle="$1"
-  local name
-  while IFS= read -r name; do
-    [[ "$name" == "$needle" ]] && return 0
-  done < <(list_names "$agents_dir")
-  return 1
-}
-
-check_git_symlink() {
-  local name="$1"
-  local path=".claude/skills/$name"
-  local expected line mode oid recorded
-  expected="$(expected_target "$name")"
-  line="$(git -C "$root_dir" ls-files -s -- "$path")"
-  if [[ -z "$line" ]]; then
-    fail "$path が Git に登録されていません。scripts/sync-ai-skills.sh を実行してコミットしてください。"
+check_worktree_link() {
+  local current
+  if [[ ! -L "$claude_link" ]]; then
+    fail "$claude_path は $expected_target への symlink である必要があります。"
     return 0
   fi
-  mode="$(printf '%s\n' "$line" | awk '{print $1}')"
-  oid="$(printf '%s\n' "$line" | awk '{print $2}')"
-  if [[ "$mode" != "120000" ]]; then
-    fail "$path は Git 上で symlink (mode 120000) である必要があります (現在: $mode)。"
+  current="$(readlink "$claude_link")"
+  if [[ "$current" != "$expected_target" ]]; then
+    fail "$claude_path のリンク先は $expected_target である必要があります (現在: $current)。"
+    return 0
+  fi
+  if [[ ! -d "$claude_link" ]]; then
+    fail "$claude_path のリンク先が存在しません。"
+  fi
+}
+
+check_git_link() {
+  local entries mode oid path recorded
+  if ! entries="$(git -C "$root_dir" ls-files -s -- "$claude_path")"; then
+    fail "Git の作業ツリーで実行してください。"
+    return 0
+  fi
+  if [[ -z "$entries" ]]; then
+    fail "$claude_path が Git に登録されていません。scripts/sync-ai-skills.sh を実行してコミットしてください。"
+    return 0
+  fi
+  if [[ "$(printf '%s\n' "$entries" | wc -l | tr -d '[:space:]')" -ne 1 ]]; then
+    fail "$claude_path が Git 上でディレクトリとして登録されています。symlink 1 つにしてください。"
+    return 0
+  fi
+  mode="$(printf '%s\n' "$entries" | awk '{print $1}')"
+  oid="$(printf '%s\n' "$entries" | awk '{print $2}')"
+  path="$(printf '%s\n' "$entries" | cut -f 2)"
+  if [[ "$path" != "$claude_path" || "$mode" != "120000" ]]; then
+    fail "$claude_path は Git 上で symlink (mode 120000) である必要があります (現在: $mode $path)。"
     return 0
   fi
   recorded="$(git -C "$root_dir" cat-file -p "$oid")"
-  if [[ "$recorded" != "$expected" ]]; then
-    fail "$path の Git 上のリンク先は $expected である必要があります (現在: $recorded)。"
+  if [[ "$recorded" != "$expected_target" ]]; then
+    fail "$claude_path の Git 上のリンク先は $expected_target である必要があります (現在: $recorded)。"
   fi
 }
 
-check_worktree_link() {
-  local name="$1"
-  local path="$claude_dir/$name"
-  local expected current
-  expected="$(expected_target "$name")"
-  if [[ ! -L "$path" ]]; then
-    fail "$path は $expected への symlink である必要があります。"
+remove_claude_link() {
+  local physical agents_physical
+  # symlink とパス文字列のファイル（core.symlinks=false の checkout）は、リンク先をたどらずに消す。
+  if [[ -L "$claude_link" || -f "$claude_link" ]]; then
+    rm -f "$claude_link"
     return 0
   fi
-  current="$(readlink "$path")"
-  if [[ "$current" != "$expected" ]]; then
-    fail "$path のリンク先は $expected である必要があります (現在: $current)。"
+  if [[ ! -e "$claude_link" ]]; then
     return 0
   fi
-  if [[ ! -e "$path" ]]; then
-    fail "$path のリンク先が存在しません。"
+  physical="$(cd "$claude_link" && pwd -P)"
+  agents_physical="$(cd "$agents_dir" && pwd -P)"
+  if [[ "$physical" == "$agents_physical" ]]; then
+    fail "$claude_path が .agents/skills と同じ実体を指しています。親ディレクトリの symlink を確認してください。"
+    return 1
+  fi
+  # 消してよい実ディレクトリは、このスクリプトが作ったコピーと空のディレクトリだけにする。
+  if [[ -f "$claude_link/$copy_marker" ]]; then
+    rm -rf "$claude_link"
+  elif ! rmdir "$claude_link" 2>/dev/null; then
+    fail "$claude_path は実ディレクトリです。スキルは .agents/skills/ に移してから、ディレクトリを削除して再実行してください。"
+    return 1
   fi
 }
 
-check_links() {
-  local name
-  while IFS= read -r name; do
-    [[ -n "$name" ]] || continue
-    check_worktree_link "$name"
-    check_git_symlink "$name"
-  done < <(list_names "$agents_dir")
+apply_link() {
+  local actual_mode="$1"
 
-  while IFS= read -r name; do
-    [[ -n "$name" ]] || continue
-    if ! skill_known "$name"; then
-      fail ".claude/skills/$name は .agents/skills/ に対応するスキルがありません。"
-    fi
-  done < <(list_names "$claude_dir")
-}
-
-remove_claude_entry() {
-  local path="$1"
-  if [[ -L "$path" || -f "$path" ]]; then
-    rm -f "$path"
-  elif [[ -d "$path" ]]; then
-    rm -rf "$path"
-  else
-    rm -rf "$path"
-  fi
-}
-
-apply_one() {
-  local name="$1"
-  local actual_mode="$2"
-  local path="$claude_dir/$name"
-  local source="$agents_dir/$name"
-  local expected current
-
-  expected="$(expected_target "$name")"
-  mkdir -p "$claude_dir"
-
-  if [[ "$actual_mode" == "symlink" && -L "$path" ]]; then
-    current="$(readlink "$path")"
-    if [[ "$current" == "$expected" && -e "$path" ]]; then
+  if [[ "$actual_mode" == "symlink" && -L "$claude_link" ]]; then
+    if [[ "$(readlink "$claude_link")" == "$expected_target" ]]; then
       return 0
     fi
   fi
 
-  remove_claude_entry "$path"
+  mkdir -p "$(dirname "$claude_link")"
+  remove_claude_link || return 0
   if [[ "$actual_mode" == "symlink" ]]; then
-    ln -s "$expected" "$path"
-    echo "linked .claude/skills/$name -> $expected"
+    ln -s "$expected_target" "$claude_link"
+    echo "linked $claude_path -> $expected_target"
   else
-    cp -R "$source" "$path"
-    echo "warning: .claude/skills/$name をコピーしました。symlink を作れない環境の一時復元です。編集もコミットもしないでください。" >&2
+    cp -R "$agents_dir" "$claude_link"
+    : >"$claude_link/$copy_marker"
+    echo "copied .agents/skills to $claude_path"
   fi
-}
-
-apply_links() {
-  local actual_mode="$1"
-  local name
-  while IFS= read -r name; do
-    [[ -n "$name" ]] || continue
-    apply_one "$name" "$actual_mode"
-  done < <(list_names "$agents_dir")
-
-  while IFS= read -r name; do
-    [[ -n "$name" ]] || continue
-    if ! skill_known "$name"; then
-      remove_claude_entry "$claude_dir/$name"
-      echo "removed stale .claude/skills/$name"
-    fi
-  done < <(list_names "$claude_dir")
 }
 
 shopt -s nullglob
@@ -308,18 +289,25 @@ if [[ "$mode" == "check" ]]; then
     echo "error: この環境では symlink を検証できません。CI は symlink が使える環境で --check します。" >&2
     exit 1
   fi
-  check_links
+  check_worktree_link
+  check_git_link
   if [[ "$failed" -ne 0 ]]; then
     exit 1
   fi
-  echo "OK: AI skill symlinks are consistent."
+  echo "OK: $claude_path is a symlink to $expected_target."
   exit 0
 fi
 
 actual_mode="$(resolve_link_mode)"
-if [[ "$actual_mode" == "copy" ]]; then
-  echo "warning: symlink を作成できないため、.claude/skills/ をコピーで復元します。この結果はコミットしないでください。" >&2
-  echo "warning: Windows では開発者モードを有効にし、git config --global core.symlinks true にしたうえで clone し直すと symlink を使えます。" >&2
+apply_link "$actual_mode"
+if [[ "$failed" -ne 0 ]]; then
+  exit 1
 fi
-apply_links "$actual_mode"
-echo "OK: synced .claude/skills ($actual_mode)."
+if [[ "$actual_mode" == "copy" ]]; then
+  if [[ "$link_mode" == "auto" ]]; then
+    echo "warning: symlink を作成できないため、$claude_path をコピーで復元しました。" >&2
+  fi
+  echo "warning: コピーは編集もコミットもしないでください。スキルを変更したら、このスクリプトを再実行してください。" >&2
+  echo "warning: Windows で symlink を使うには、開発者モードを有効にし、このリポジトリで git config core.symlinks true を実行してから、このスクリプトを再実行してください。" >&2
+fi
+echo "OK: synced $claude_path ($actual_mode)."

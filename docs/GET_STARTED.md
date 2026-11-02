@@ -74,7 +74,7 @@ Please check:
 
 ## AI コーディングツール
 
-Cursor、GitHub Copilot、Claude Code で共有するスキルは `.agents/skills/` に含まれています。スキルを追加または削除したときと、Windows で symlink がパス文字列のファイルとして checkout されたときは、次のスクリプトで Claude Code 用のリンクを同期します。手順と Windows での復元方法は [AI スキルの配置] を参照してください。
+Cursor、GitHub Copilot、Claude Code で共有するスキルは `.agents/skills/` に含まれています。Claude Code は `.agents/skills/` への symlink である `.claude/skills` から読みます。Windows で symlink がパス文字列のファイルとして checkout されたときは、次のスクリプトで復元します。手順と Windows での設定は [AI スキルの配置] を参照してください。
 
 ```shell
 scripts/sync-ai-skills.sh
