@@ -1,6 +1,6 @@
 ---
-description: 
-globs: 
+description: 指示された内容を .cursor/memories/ に記憶として保存する
+globs:
 alwaysApply: false
 ---
 # 記憶を保存
