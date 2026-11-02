@@ -121,10 +121,17 @@ jobs:
   status-check:
     runs-on: ubuntu-24.04
     needs:
+      - changes
       - check-actions
+      - cache-dependencies
       - check
       - diff-gen
     permissions: {}
-    if: failure()
+    if: always()
     steps:
-      - run: exit 1
+      - name: Verify all checks passed
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          echo "$RESULTS"
+          echo "$RESULTS" | jq -e 'to_entries | all(.value.result == "success" or .value.result == "skipped")'
