@@ -54,8 +54,8 @@
 [**`.github/workflows/pr-rebase-detector.yaml`**](../.github/workflows/pr-rebase-detector.yaml) を利用して以下を自動的にチェックしています：
 
 1. PR が更新（synchronize イベント）されたとき
-2. Git の履歴が非線形（rebase や force-push の可能性）かどうか
-3. 非線形履歴が検出された場合、PR にコメントで警告
+2. push 前の先端が、push 後の履歴に残っているかどうか
+3. 残っていない場合、rebase または force-push の可能性があるとして PR にコメントで警告
 
 > [!NOTE]
 > 目的：
