@@ -1,7 +1,14 @@
+# Oldest mise release that can read mise.lock (lockfile_version = 3).
+min_version = "2026.9.16"
+
 [tools]
 bun = "1.2.10"
 flutter = "3.47.7"
 dprint = "0.49.1"
+
+[settings]
+# Platforms recorded in mise.lock: CI runners and developer Macs.
+lockfile_platforms = ["linux-x64", "linux-arm64", "macos-arm64"]
 
 [tasks.bootstrap]
 description = "Initialize the workspace."
