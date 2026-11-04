@@ -3,9 +3,8 @@
 1. `mise use flutter@<upgrade version>` を実行
    - 例: `mise use flutter@3.29.3`
 2. `mise use -g flutter@<upgrade version>` を実行
-3. ルートの `.vscode/settings.json` の `dart.flutterSdkPath`,`dart.sdkPath` を更新
-4. ルートの `pubspec.yaml` の `sdk` バージョンを更新
-5. `melos.yaml` の `bootstrap` にある `sdk`, `flutter` 部分のバージョンを更新
+3. ルートの `pubspec.yaml` の `sdk` バージョンを更新
+4. `melos.yaml` の `bootstrap` にある `sdk`, `flutter` 部分のバージョンを更新
 
 ```yaml
 command:
@@ -24,10 +23,10 @@ command:
 >
 > ただしyumemi_lints自体のバージョンが古くて最新Flutterバージョンに対応していない場合があるので、その場合はyumemi_lintsを更新してください。
 
-4. `dart run melos bootstrap`コマンドを実行
-5. iOS でアプリが起動できることを確認
-6. Android でアプリが起動できることを確認
-7. [Migration Guide](https://docs.flutter.dev/release/breaking-changes) に従い、必要に応じて deprecate 箇所を修正
+5. `dart run melos bootstrap`コマンドを実行
+6. iOS でアプリが起動できることを確認
+7. Android でアプリが起動できることを確認
+8. [Migration Guide](https://docs.flutter.dev/release/breaking-changes) に従い、必要に応じて deprecate 箇所を修正
 
 ### 注意ポイント
 
