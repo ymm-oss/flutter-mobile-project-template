@@ -1,3 +1,7 @@
 *.g.dart linguist-generated=true
 *.g.theme.dart linguist-generated=true
 *.freezed.dart linguist-generated=true
+
+# Windows の改行変換で SKILL.md とシェルスクリプトが CRLF にならないようにする。
+*.sh text eol=lf
+.agents/skills/**/*.md text eol=lf

@@ -65,7 +65,7 @@ GitHub MCP Server はAIアシスタントからGitHubリポジトリを操作す
 
 ### PR の作成
 
-Cursor の Chat より [pr-creation.rule.mdc] を Context に追加し PR を作成してください。
+Cursor の Chat でプルリクエストの作成を依頼してください。手順は [pr-creation] スキルにあります。
 
 ## git Model Context Protocol (MCP) Server
 
@@ -98,6 +98,6 @@ Git MCP Server はAIアシスタントからGitコマンドを操作するため
 [mcp.sample.json]: ../.cursor/mcp.sample.json
 [GitHub's official MCP Server]: https://github.com/github/github-mcp-server
 [個人用アクセス トークンを管理する]: https://docs.github.com/ja/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
-[pr-creation.rule.mdc]: ../.cursor/rules/pr-creation-rule.mdc
+[pr-creation]: ../.agents/skills/pr-creation/SKILL.md
 [2025.4.24]: https://github.com/modelcontextprotocol/servers/releases/tag/2025.4.24
 [git README]: https://github.com/modelcontextprotocol/servers/tree/2025.4.24/src/git

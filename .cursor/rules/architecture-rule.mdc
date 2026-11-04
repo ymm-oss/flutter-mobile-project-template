@@ -1,7 +1,6 @@
 ---
-description:
-globs:
-alwaysApply: false
+description: レイヤー責務と依存方向を守って実装する
+alwaysApply: true
 ---
 # アーキテクチャルールガイド
 

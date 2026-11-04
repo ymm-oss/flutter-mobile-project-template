@@ -1,5 +1,5 @@
 ---
-description:
+description: ブランチの切り方と命名規則に従う
 globs:
 alwaysApply: false
 ---
