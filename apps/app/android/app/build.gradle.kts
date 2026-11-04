@@ -33,6 +33,11 @@ tasks.named("preBuild") {
 
 android {
     namespace = "jp.co.yumemi.flutter_app"
+    // AGP 9 では resValue が既定で無効。アプリ名を dart-defines から埋めている。
+    buildFeatures {
+        resValues = true
+    }
+
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
