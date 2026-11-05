@@ -3,6 +3,7 @@
 ///
 // coverage:ignore-file
 // ignore_for_file: type=lint, unused_import
+// dart format off
 
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
@@ -10,25 +11,26 @@ import 'package:slang/generated.dart';
 import 'strings.g.dart';
 
 // Path: <root>
-class TranslationsEn implements Translations {
+class TranslationsEn with BaseTranslations<AppLocale, Translations> implements Translations {
 	/// You can call this constructor and build your own translation instance of this locale.
 	/// Constructing via the enum [AppLocale.build] is preferred.
 	TranslationsEn({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
 		: assert(overrides == null, 'Set "translation_overrides: true" in order to enable this feature.'),
-		  $meta = meta ?? TranslationMetadata(
+		  _meta = meta ?? TranslationMetadata(
 		    locale: AppLocale.en,
 		    overrides: overrides ?? {},
 		    cardinalResolver: cardinalResolver,
 		    ordinalResolver: ordinalResolver,
 		  ) {
-		$meta.setFlatMapFunction(_flatMapFunction);
+		_meta.setFlatMapFunction(_flatMapFunction);
 	}
 
 	/// Metadata for the translations of <en>.
-	@override final TranslationMetadata<AppLocale, Translations> $meta;
+	final TranslationMetadata<AppLocale, Translations> _meta;
+	@override TranslationMetadata<AppLocale, Translations> get $meta => _meta;
 
 	/// Access flat map
-	@override dynamic operator[](String key) => $meta.getTranslation(key);
+	@override dynamic operator[](String key) => _meta.getTranslation(key);
 
 	late final TranslationsEn _root = this; // ignore: unused_field
 
@@ -36,15 +38,15 @@ class TranslationsEn implements Translations {
 	TranslationsEn $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => TranslationsEn(meta: meta ?? this.$meta);
 
 	// Translations
-	@override late final _TranslationsBottomTabEn bottomTab = _TranslationsBottomTabEn._(_root);
-	@override late final _TranslationsHomeEn home = _TranslationsHomeEn._(_root);
-	@override late final _TranslationsMaintenanceEn maintenance = _TranslationsMaintenanceEn._(_root);
-	@override late final _TranslationsSettingEn setting = _TranslationsSettingEn._(_root);
+	@override late final _Translations$bottomTab$en bottomTab = _Translations$bottomTab$en._(_root);
+	@override late final _Translations$home$en home = _Translations$home$en._(_root);
+	@override late final _Translations$maintenance$en maintenance = _Translations$maintenance$en._(_root);
+	@override late final _Translations$setting$en setting = _Translations$setting$en._(_root);
 }
 
 // Path: bottomTab
-class _TranslationsBottomTabEn implements TranslationsBottomTabJa {
-	_TranslationsBottomTabEn._(this._root);
+class _Translations$bottomTab$en implements Translations$bottomTab$ja {
+	_Translations$bottomTab$en._(this._root);
 
 	final TranslationsEn _root; // ignore: unused_field
 
@@ -54,8 +56,8 @@ class _TranslationsBottomTabEn implements TranslationsBottomTabJa {
 }
 
 // Path: home
-class _TranslationsHomeEn implements TranslationsHomeJa {
-	_TranslationsHomeEn._(this._root);
+class _Translations$home$en implements Translations$home$ja {
+	_Translations$home$en._(this._root);
 
 	final TranslationsEn _root; // ignore: unused_field
 
@@ -65,8 +67,8 @@ class _TranslationsHomeEn implements TranslationsHomeJa {
 }
 
 // Path: maintenance
-class _TranslationsMaintenanceEn implements TranslationsMaintenanceJa {
-	_TranslationsMaintenanceEn._(this._root);
+class _Translations$maintenance$en implements Translations$maintenance$ja {
+	_Translations$maintenance$en._(this._root);
 
 	final TranslationsEn _root; // ignore: unused_field
 
@@ -77,8 +79,8 @@ class _TranslationsMaintenanceEn implements TranslationsMaintenanceJa {
 }
 
 // Path: setting
-class _TranslationsSettingEn implements TranslationsSettingJa {
-	_TranslationsSettingEn._(this._root);
+class _Translations$setting$en implements Translations$setting$ja {
+	_Translations$setting$en._(this._root);
 
 	final TranslationsEn _root; // ignore: unused_field
 
@@ -91,26 +93,28 @@ class _TranslationsSettingEn implements TranslationsSettingJa {
 	@override String get versionLabel => 'Version';
 }
 
-/// Flat map(s) containing all translations.
+/// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
+///
+/// The Dart AOT compiler has issues with very large switch statements,
+/// so the map is split into smaller functions (512 entries each).
 extension on TranslationsEn {
 	dynamic _flatMapFunction(String path) {
-		switch (path) {
-			case 'bottomTab.home': return 'Home';
-			case 'bottomTab.settings': return 'Settings';
-			case 'home.title': return 'Home';
-			case 'home.appBarTitle': return 'Flutter Template';
-			case 'maintenance.appBarTitle': return 'Maintenance mode';
-			case 'maintenance.description': return 'Maintenance in progress.';
-			case 'maintenance.disableButtonLabel': return 'Disable maintenance mode';
-			case 'setting.appBarTitle': return 'Setting';
-			case 'setting.themeSettingLabel': return 'Theme Setting';
-			case 'setting.aboutLabel': return 'About FlutterMobileTemplate';
-			case 'setting.openSourceLicensesLabel': return 'Open source licenses';
-			case 'setting.librariesWeUseLabel': return 'Libraries we use';
-			case 'setting.versionLabel': return 'Version';
-			default: return null;
-		}
+		return switch (path) {
+			'bottomTab.home' => 'Home',
+			'bottomTab.settings' => 'Settings',
+			'home.title' => 'Home',
+			'home.appBarTitle' => 'Flutter Template',
+			'maintenance.appBarTitle' => 'Maintenance mode',
+			'maintenance.description' => 'Maintenance in progress.',
+			'maintenance.disableButtonLabel' => 'Disable maintenance mode',
+			'setting.appBarTitle' => 'Setting',
+			'setting.themeSettingLabel' => 'Theme Setting',
+			'setting.aboutLabel' => 'About FlutterMobileTemplate',
+			'setting.openSourceLicensesLabel' => 'Open source licenses',
+			'setting.librariesWeUseLabel' => 'Libraries we use',
+			'setting.versionLabel' => 'Version',
+			_ => null,
+		};
 	}
 }
-
