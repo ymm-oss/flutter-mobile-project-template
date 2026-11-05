@@ -125,6 +125,13 @@ is_skill_name() {
   esac
 }
 
+is_official_skill() {
+  case "$1" in
+    dart-* | flutter-*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 list_names() {
   local dir="$1"
   local path name
@@ -163,6 +170,11 @@ validate_skill() {
   value="$(frontmatter_value "$skill_file" name)" || value=""
   if [[ "$value" != "$name" ]]; then
     fail "$skill_file の name はディレクトリ名 $name と一致させてください。"
+  fi
+  # dart run skills@ が管理する公式スキルは上流の書式のまま取り込むため、
+  # description の書き方は検査しない。
+  if is_official_skill "$name"; then
+    return 0
   fi
   value="$(frontmatter_value "$skill_file" description)" || value=""
   if [[ -z "$value" ]]; then

@@ -21,7 +21,10 @@
     // 自動生成ファイル
     "*.*.dart",
     // ラベル定義（カラーコードで警告が出るため）
-    ".github/labels.yml"
+    ".github/labels.yml",
+    // dart run skills@ が管理する公式スキル
+    ".agents/skills/dart-*/**",
+    ".agents/skills/flutter-*/**"
   ],
   "dictionaryDefinitions": [
     {

@@ -8,7 +8,11 @@
   "yaml": {},
   "excludes": [
     "**/ios/Runner/",
-    "**/macos/Runner/"
+    "**/macos/Runner/",
+    // dart run skills@ が管理する公式スキルと台帳
+    ".agents/skills/dart-*/",
+    ".agents/skills/flutter-*/",
+    ".config/dart_skills/"
   ],
   "plugins": [
     "https://plugins.dprint.dev/json-0.20.0.wasm",
