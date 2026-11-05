@@ -34,7 +34,7 @@ dependencies:
   internal_util_ui:
     path: ../../packages/util_ui
   intl: ^0.20.3
-  package_info_plus: ^8.3.1
+  package_info_plus: ^10.2.2
   pub_semver: ^2.2.1
   riverpod_annotation: ^4.0.7
   shared_preferences: ^2.5.6
@@ -52,7 +52,7 @@ dev_dependencies:
   internal_debug:
     path: ../../packages/debug
   riverpod_generator: ^4.0.9
-  talker_flutter: ^5.1.16
+  talker_flutter: ^5.2.0
   talker_riverpod_logger: ^5.2.0
 
 flutter:

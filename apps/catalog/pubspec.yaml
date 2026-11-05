@@ -10,7 +10,7 @@ environment:
 resolution: workspace
 
 dependencies:
-  alchemist: ^0.12.1
+  alchemist: ^0.14.1
   flutter:
     sdk: flutter
   flutter_test:
