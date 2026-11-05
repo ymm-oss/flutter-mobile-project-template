@@ -17,9 +17,11 @@ labels:
 
 実機での確認の代わりにはなりません。ネイティブ UI・WebView・ソフトウェアキーボードは対象外です。
 
+この手順は multi_device_preview 1.3.0 以上を前提にしています（GlobalKey が共有されたときのログや、`init` が `ProviderScope`・`TranslationProvider` の中からルート Widget を見つける動作は 1.3.0 からです）。
+
 ## 1. アプリ側の GlobalKey を直す
 
-全端末が 1 つのプロセスで動くため、グローバル変数や static フィールドに置いた `GlobalKey` は全端末で共有されてしまいます。テンプレートには該当するキーが 2 つあるので、先に直してください（背景は #725）。直さないと、起動直後から `Multiple widgets used the same GlobalKey` と `ProviderScope was rebuilt with a different ProviderScope ancestor` が出続けます。
+全端末が 1 つのプロセスで動くため、グローバル変数や static フィールドに置いた `GlobalKey` は全端末で共有されてしまいます。テンプレートには該当するキーが 2 つあるので、先に直してください（背景は [ymm-oss/flutter-mobile-project-template#725](https://github.com/ymm-oss/flutter-mobile-project-template/issues/725)）。直さないと、起動直後から `Multiple widgets used the same GlobalKey` と `ProviderScope was rebuilt with a different ProviderScope ancestor` が出続けます。
 
 どちらの変更も、通常のアプリとしての動作は変わりません。
 
@@ -30,12 +32,7 @@ debug ルート（`/debug` 配下）はトップレベルのルートなので�
 - `apps/app/lib/router/router.dart`: `rootNavigatorKey` の定義と `navigatorKey: rootNavigatorKey` を削除する
 - `apps/app/lib/debug/routes/debug_page_route.dart`: 3 つの `static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;` を削除する
 
-コードを生成し直します（`*.g.dart` から `parentNavigatorKey` の指定が消えます）。
-
-```sh
-cd apps/app
-dart run build_runner build
-```
+コードの生成は、次の `SnackBarManager` の変更のあとにまとめて行います。
 
 shell の中のルートを全画面で出したいなどで、ルートの Navigator のキーが必要になったときは、グローバル変数ではなく `routerProvider` の中で作ってください。
 
@@ -60,9 +57,11 @@ GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey(Ref ref) =>
     GlobalKey<ScaffoldMessengerState>();
 ```
 
-`apps/app/lib/main.dart` で、このキーを使います。
+`apps/app/lib/main.dart` で、このキーを使います。`SnackBarManager` の import は不要になります。
 
 ```dart
+import 'package:flutter_app/presentation/providers/scaffold_messenger_key_provider.dart';
+
 // 強制アップデートの通知
 ref.read(scaffoldMessengerKeyProvider).currentState
   ?..hideCurrentSnackBar()
@@ -84,19 +83,33 @@ ScaffoldMessenger.of(context)
 
 ほかに呼び出し元がなければ、`packages/util_ui/lib/snack_bar_manager.dart` は削除して構いません。`scaffoldMessengerKey` の指定を外すだけだと SnackBar が出なくなるので注意してください。
 
+### コードを生成し直す
+
+2 つの変更を入れたら、コードを生成します。`scaffold_messenger_key_provider.g.dart` が作られ、go_router の `*.g.dart` から `parentNavigatorKey` の指定が消えます。生成するまでは `scaffoldMessengerKeyProvider` が無いため、コンパイルできません（`mise run bootstrap` では生成されません）。
+
+```sh
+cd apps/app
+dart run build_runner build
+```
+
 ## 2. ホストアプリを作る
 
 パッケージが推奨する「別ホストアプリ」の方式で導入します。`apps/app` には `macos/` を追加せず、`apps/app_preview` に macOS 専用のホストアプリを作ります。
 
 ```sh
 cd apps/app
-flutter pub add dev:multi_device_preview
+flutter pub add dev:multi_device_preview:^1.3.0
 dart run multi_device_preview:init --host ../app_preview
 ```
 
 `init` が行うこと:
 
-- `apps/app_preview` を作成する（`apps/app` に path で依存し、assets の宣言とシンボリックリンクも用意する）
+- `apps/app_preview` を作成する（assets の宣言とシンボリックリンクも用意する）
+- `apps/app_preview/pubspec.yaml` に次を書く
+  - `dependencies` に `flutter_app`（`apps/app` への path 依存）と `multi_device_preview`（`apps/app` の dev_dependencies と同じバージョン指定）。`apps/app` の dev_dependencies はホストからは見えないため、ホスト側の `dependencies` に入れる
+  - `apps/app` が使っている `flutter_riverpod`
+  - `resolution: workspace`（workspace のメンバーに必要）
+- `flutter create` が入れる `flutter_lints` と `analysis_options.yaml` を外し、workspace の lint 設定に従わせる
 - `lib/main.dart` にエントリポイントの雛形を書く
 - macOS の entitlements を設定する（sandbox 無効・ネットワーク・JIT）
 
@@ -108,15 +121,22 @@ dart run multi_device_preview:init --host ../app_preview
 workspace:
   # apps
   - apps/app
-  - apps/app_preview
+  - apps/app_preview # 追加
   - apps/catalog
+  # packages
+  # ...（ほかのメンバーはそのまま）
 ```
 
 ```sh
 mise run bootstrap
 ```
 
-bootstrap によって `.github/labeler.yml` と `.github/labels.yml` に `@apps/app_preview` が追加されます。CI の差分チェックで落ちないよう、この変更もコミットしてください。
+次の変更をコミットしてください。
+
+- `apps/app_preview/`
+- `apps/app/pubspec.yaml`（`multi_device_preview` の dev 依存）
+- ルートの `pubspec.yaml` と `pubspec.lock`（CI は `flutter pub get --enforce-lockfile` で依存を解決するため、ロックファイルがコミットされていないと失敗します）
+- `.github/labeler.yml` と `.github/labels.yml`（bootstrap で `@apps/app_preview` が追加されます。PR のラベル付けに使います）
 
 ## 4. エントリポイントを仕上げる
 
@@ -175,6 +195,11 @@ Future<void> main() async {
 cd apps/app_preview
 flutter pub add 'internal_design_ui:{"path":"../../packages/design_ui"}'
 ```
+
+`apps/app/lib/main.dart` との違いは次のとおりです。
+
+- `LicenseRegistry.addLicense` は、プレビューではライセンス画面を確認しないので省略している。必要なら同じ処理を足す
+- `createDebugFeatures()` を `kDebugMode` のガードなしで呼んでいる。`apps/app/lib/debug/debug_features.dart` は、リリースビルドから tree shaking で除外するために `kDebugMode` でガードして呼ぶ前提だが、このホストは `flutter run` でのプレビュー専用で、リリースビルドは作らないため
 
 `apps/app/lib/main.dart` で override や初期化を増やしたときは、このエントリポイントにも同じ変更を入れてください（入れないと、override が前提のプロバイダが `UnimplementedError` を投げます）。
 
