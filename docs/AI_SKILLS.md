@@ -27,7 +27,7 @@ Cursor は互換のため `.claude/skills/` も探索する。`.agents/skills/` 
 .agents/skills/<name>/SKILL.md    # 実体。編集はここだけ
 .agents/skills/dart-*/            # 公式の Dart スキル。dart run skills@ が管理する
 .agents/skills/flutter-*/         # 公式の Flutter スキル。dart run skills@ が管理する
-.config/dart_skills/              # 公式スキルの台帳。dart run skills@ が管理する
+.config/dart_skills/              # 公式スキルの設定ファイル。dart run skills@ が管理する
 .claude/skills                    # ../.agents/skills への symlink
 .cursor/rules/*.mdc               # Cursor に残す規約と Cursor 固有の手順
 ```
@@ -65,7 +65,7 @@ scripts/sync-ai-skills.sh
 
 確認だけ行う場合は `scripts/sync-ai-skills.sh --check` を使う。不一致があると終了コード 1 で終わり、ファイルは変更しない。CI は同じコマンドで、symlink と `SKILL.md` の `name` / `description` を検査する。
 
-公式の Dart / Flutter スキルを加えるときも、symlink の作業はいらない。`skills-lock.json` は使わない。導入したスキルの台帳は `.config/dart_skills/` が担う。
+公式の Dart / Flutter スキルを加えるときも、symlink の作業はいらない。`skills-lock.json` は使わない。導入したスキルは `.config/dart_skills/` の設定ファイルに記録される。
 
 ## 公式の Dart / Flutter スキル
 
@@ -78,11 +78,11 @@ Dart と Flutter の公式スキルは、依存パッケージに同梱されて
 
 取り込みと更新には、Dart SDK から実行できる [skills] パッケージを使う。`--agent generic` を指定すると `.agents/skills/` に配置される。
 
-### 台帳
+### 設定ファイル
 
-`.config/dart_skills/skills_config.json` は、どの取り込み元からどのスキルを入れ、どれを外したかの記録である。外したスキルは `"isInstalled": false` として残る。台帳がないと、次に `dart run skills@ get` したとき、外したスキルが未導入として再び候補に出る。そのため `.config/dart_skills/` もコミットし、gitignore しない。
+`.config/dart_skills/skills_config.json` は、どの取り込み元からどのスキルを入れ、どれを外したかの記録である。外したスキルは `"isInstalled": false` として残る。このファイルがないと、次に `dart run skills@ get` したとき、外したスキルが未導入として再び候補に出る。そのため `.config/dart_skills/` もコミットし、gitignore しない。
 
-台帳とスキル本体は手で編集しない。`contentHash` と内容がずれると、そのスキルは手元の編集として扱われ、更新を検出できなくなる。
+設定ファイルとスキル本体は手で編集しない。`contentHash` と内容がずれると、そのスキルは手元の編集として扱われ、更新を検出できなくなる。
 
 ### 更新
 
@@ -94,12 +94,12 @@ dart run skills@ get --agent generic
 
 出力には取り込み元ごとに次の状態が表示される。
 
-| 状態                 | 意味                                                       |
-| -------------------- | ---------------------------------------------------------- |
-| `Update available`   | 取り込んだスキルに上流の更新がある                         |
-| `New`                | 上流に新しいスキルが追加された。まだ取り込むか決めていない |
-| `Skipped previously` | 台帳で外したスキル。`--skill` で指定しない限り再び入らない |
-| `Local edits`        | 取り込んだスキルが手元で編集されている                     |
+| 状態                 | 意味                                                               |
+| -------------------- | ------------------------------------------------------------------ |
+| `Update available`   | 取り込んだスキルに上流の更新がある                                 |
+| `New`                | 上流に新しいスキルが追加された。まだ取り込むか決めていない         |
+| `Skipped previously` | 設定ファイルで外したスキル。`--skill` で指定しない限り再び入らない |
+| `Local edits`        | 取り込んだスキルが手元で編集されている                             |
 
 取り込むスキルを `--skill` で指定して更新する。
 
@@ -108,7 +108,7 @@ dart run skills@ get --agent generic --skill <name> --skill <name>
 ```
 
 - `--all` は使わない。外したスキルや、`flutter/skills` の `dart-*` まで取り込まれる。
-- `--skill` で指定しなかった `New` のスキルは、外したスキルとして台帳に記録される。取り込むかを決めてから実行する。
+- `--skill` で指定しなかった `New` のスキルは、外したスキルとして設定ファイルに記録される。取り込むかを決めてから実行する。
 - 依存パッケージが同梱するスキル（`package:melos` など）も候補に表示される。公式の Dart / Flutter スキル以外は、取り込む理由ができるまで入れない。
 
 更新したら、`.agents/skills/` と `.config/dart_skills/` の差分をまとめてプルリクエストにする。

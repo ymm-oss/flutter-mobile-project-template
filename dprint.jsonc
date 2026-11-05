@@ -9,7 +9,7 @@
   "excludes": [
     "**/ios/Runner/",
     "**/macos/Runner/",
-    // dart run skills@ が管理する公式スキルと台帳
+    // dart run skills@ が管理する公式スキルと設定ファイル
     ".agents/skills/dart-*/",
     ".agents/skills/flutter-*/",
     ".config/dart_skills/"
