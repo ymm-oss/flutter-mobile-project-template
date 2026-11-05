@@ -15,8 +15,8 @@ dependencies:
   flutter_gen_runner: ^5.15.0
   internal_design_theme:
     path: ../design_theme
-  slang: ^4.8.1
-  slang_flutter: ^4.8.0
+  slang: ^4.19.2
+  slang_flutter: ^4.19.0
 
 dev_dependencies:
   build_runner: ^2.16.1
