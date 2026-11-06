@@ -1,13 +1,38 @@
 // GitHubのテンプレート機能使用してリポジトリを作った際に、このファイルのコメントは削除されます
 {
-  // NOTE: miseの自動構成で`.vscode/mise-tools`配下にシンボリックリンクを作成し、それをツールのパスとして利用する機能を有効にします
+  // NOTE: miseで`.vscode/mise-tools`配下にシンボリックリンクを作成し、それをツールのパスとして利用します
+  // settings.jsonは書き換えさせず、インストール済みの拡張向けのリンクだけを作成します
+  "mise.configureExtensionsAutomatically": false,
   "mise.configureExtensionsUseSymLinks": true,
-  // NOTE: miseの自動構成では、以下の拡張に関するパスを絶対パスで設定するため無効化
-  "mise.configureExtensionsAutomaticallyIgnoreList": ["dart-code.flutter"],
+  // NOTE: プロジェクト外のツールまでリンクしないよう、グローバルなツールは含めません
+  "mise.configureExtensionsIncludeGlobalTools": false,
+  // NOTE: Flutter SDKの設定を読むのはDart拡張のため、Dart拡張向けにFlutter SDKのリンクを作成します
+  // https://hverlin.github.io/mise-vscode/guides/custom-extensions/
+  "mise.customFolderExtensions": [
+    {
+      "extensionId": "Dart-Code.dart-code",
+      "toolSources": ["flutter"],
+      "folderName": "flutter",
+      "vscodeSetting": { "key": "dart.flutterSdkPath" }
+    }
+  ],
+  // NOTE: dprintはmise-vscodeの対応拡張にないため、バイナリのリンクを作成します
+  "mise.customBinaryExtensions": [
+    {
+      "extensionId": "dprint.dprint",
+      "toolSources": ["dprint"],
+      "binName": "dprint",
+      "supportsShims": false,
+      "supportsSymlinks": true,
+      "vscodeSetting": { "key": "dprint.path" }
+    }
+  ],
+  // NOTE: Bun拡張はVS Codeの変数を展開するため`${workspaceFolder}`を使います
+  // Dart拡張とdprint拡張は`${workspaceFolder}`を展開しないため、ワークスペースからの相対パスで指定します
   "bun.runtime": "${workspaceFolder}/.vscode/mise-tools/bun",
-  "dart.flutterSdkPath": "~/.local/share/mise/installs/flutter/3.47.9-stable",
-  "dart.sdkPath": "~/.local/share/mise/installs/flutter/3.47.9-stable/bin/dart",
-  "dprint.path": "~/.local/share/mise/shims/dprint",
+  // NOTE: Dart SDKはFlutter SDK内の`bin/cache/dart-sdk`が使われるため、`dart.sdkPath`は指定しません
+  "dart.flutterSdkPath": ".vscode/mise-tools/flutter",
+  "dprint.path": ".vscode/mise-tools/dprint",
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
     "*.dart": "$(capture).g.dart, $(capture).freezed.dart",
