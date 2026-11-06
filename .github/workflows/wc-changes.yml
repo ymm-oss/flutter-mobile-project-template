@@ -79,6 +79,13 @@ jobs:
               - "**.yaml"
               - "**.yml"
               - "**.dart"
+              # cspell の設定や実行環境が変わったときも検証する
+              - "cspell.jsonc"
+              - ".cspell/**"
+              - "package.json"
+              - "bun.lock"
+              - "mise.toml"
+              - "mise.lock"
             ai_skills:
               - ".agents/**"
               - ".claude/**"
