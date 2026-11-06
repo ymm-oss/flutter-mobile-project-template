@@ -35,6 +35,14 @@ url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.10/bun-linux-x6
 checksum = "sha256:07895ef0fb661249b86b0b723b65b1cc4790c7f3685b63cda90122b00299972c"
 url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.10/bun-darwin-aarch64.zip"
 
+[tools.bun."platforms.macos-x64"]
+checksum = "sha256:3443df70c763665db70267c6e883d312c922ccb54a085a40645e7d5603ba9b59"
+url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.10/bun-darwin-x64.zip"
+
+[tools.bun."platforms.macos-x64-baseline"]
+checksum = "sha256:c2416d1dba3d3fcd1761ad72b695da50f1449496c6ad035e69d424a786441144"
+url = "https://github.com/oven-sh/bun/releases/download/bun-v1.2.10/bun-darwin-x64-baseline.zip"
+
 [[tools.dprint]]
 version = "0.49.1"
 backend = "aqua:dprint/dprint"
@@ -55,6 +63,11 @@ checksum = "sha256:e8d0da82dd56ea629519e250ad54f084c4a0a1c42cfc4680d73d9f31be21c
 url = "https://github.com/dprint/dprint/releases/download/0.49.1/dprint-aarch64-apple-darwin.zip"
 url_api = "https://api.github.com/repos/dprint/dprint/releases/assets/238584504"
 
+[tools.dprint."platforms.macos-x64"]
+checksum = "sha256:2d787c677d9c703a2df20895cde8fe2cfa2ad565926371433c90c12a6a0cf856"
+url = "https://github.com/dprint/dprint/releases/download/0.49.1/dprint-x86_64-apple-darwin.zip"
+url_api = "https://api.github.com/repos/dprint/dprint/releases/assets/238584510"
+
 [[tools.flutter]]
 version = "3.47.7"
 backend = "http:flutter"
@@ -67,3 +80,7 @@ url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/linu
 [tools.flutter."platforms.macos-arm64"]
 checksum = "sha256:dd9da574c3168460550117eb0e8dd0313ae934fabf64a82a6d557fff5fd1422e"
 url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_arm64_3.47.7-stable.zip"
+
+[tools.flutter."platforms.macos-x64"]
+checksum = "sha256:17d39b000a5d0681e3f7b61a105a36f6f31dd41ab9073f625fd466f38035f901"
+url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_3.47.7-stable.zip"
