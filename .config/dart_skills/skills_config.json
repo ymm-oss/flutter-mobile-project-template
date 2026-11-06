@@ -6,8 +6,8 @@
         "skills": [
           {
             "name": "flutter-implement-json-serialization",
-            "installedAt": "2026-11-05T00:27:16.182579Z",
-            "contentHash": "jC7hDMdTDD0frc0y0+kN0Q==",
+            "installedAt": "2026-11-06T09:14:24.466045Z",
+            "isInstalled": false,
             "path": "skills/flutter-implement-json-serialization"
           },
           {
@@ -18,14 +18,14 @@
           },
           {
             "name": "flutter-add-widget-test",
-            "installedAt": "2026-11-05T00:27:16.185409Z",
+            "installedAt": "2026-11-06T09:21:34.924611Z",
             "contentHash": "FzecKt4J27Rmhl/zaDbaWA==",
             "path": "skills/flutter-add-widget-test"
           },
           {
             "name": "flutter-use-http-package",
-            "installedAt": "2026-11-05T00:27:16.187843Z",
-            "contentHash": "k316EVUUi1d4WlV8e47w5Q==",
+            "installedAt": "2026-11-06T09:14:24.471240Z",
+            "isInstalled": false,
             "path": "skills/flutter-use-http-package"
           },
           {
@@ -36,8 +36,8 @@
           },
           {
             "name": "flutter-apply-architecture-best-practices",
-            "installedAt": "2026-11-05T00:27:16.194348Z",
-            "contentHash": "xR4gAYksQ6W4FvrjpvHV3A==",
+            "installedAt": "2026-11-06T09:21:34.924614Z",
+            "isInstalled": false,
             "path": "skills/flutter-apply-architecture-best-practices"
           },
           {
@@ -144,8 +144,8 @@
           },
           {
             "name": "flutter-setup-localization",
-            "installedAt": "2026-11-05T00:27:16.215086Z",
-            "contentHash": "yCerR0eEktC1qzgW8Zs6Uw==",
+            "installedAt": "2026-11-06T09:14:24.471246Z",
+            "isInstalled": false,
             "path": "skills/flutter-setup-localization"
           },
           {
