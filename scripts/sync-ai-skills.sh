@@ -171,7 +171,7 @@ validate_skill() {
   if [[ "$value" != "$name" ]]; then
     fail "$skill_file の name はディレクトリ名 $name と一致させてください。"
   fi
-  # dart run skills@ が管理する公式スキルは上流の書式のまま取り込むため、
+  # skills パッケージが管理する公式スキルは上流の書式のまま取り込むため、
   # description の書き方は検査しない。
   if is_official_skill "$name"; then
     return 0

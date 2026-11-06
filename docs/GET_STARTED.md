@@ -80,7 +80,7 @@ Cursor、GitHub Copilot、Claude Code で共有するスキルは `.agents/skill
 scripts/sync-ai-skills.sh
 ```
 
-公式の Dart / Flutter スキルも `.agents/skills/` に含まれているため、clone 後に追加の作業はいりません。更新するときは `dart run skills@ get` で差分を確認し、`.agents/skills/` と `.config/dart_skills/` の差分をプルリクエストにします。手順は [AI スキルの配置] を参照してください。
+公式の Dart / Flutter スキルも `.agents/skills/` に含まれているため、clone 後に追加の作業はいりません。更新するときは `dart run skills@1.0.4 get` で差分を確認し、`.agents/skills/` と `.config/dart_skills/` の差分をプルリクエストにします。手順は [AI スキルの配置] を参照してください。
 
 公式スキルとこのリポジトリのルールが異なる場合は、`.cursor/rules/` と [アーキテクチャ] を優先してください。
 

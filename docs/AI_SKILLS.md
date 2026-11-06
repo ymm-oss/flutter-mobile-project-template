@@ -25,9 +25,9 @@ Cursor は互換のため `.claude/skills/` も探索する。`.agents/skills/` 
 
 ```text
 .agents/skills/<name>/SKILL.md    # 実体。編集はここだけ
-.agents/skills/dart-*/            # 公式の Dart スキル。dart run skills@ が管理する
-.agents/skills/flutter-*/         # 公式の Flutter スキル。dart run skills@ が管理する
-.config/dart_skills/              # 公式スキルの設定ファイル。dart run skills@ が管理する
+.agents/skills/dart-*/            # 公式の Dart スキル。skills パッケージが管理する
+.agents/skills/flutter-*/         # 公式の Flutter スキル。skills パッケージが管理する
+.config/dart_skills/              # 公式スキルの設定ファイル。skills パッケージが管理する
 .claude/skills                    # ../.agents/skills への symlink
 .cursor/rules/*.mdc               # Cursor に残す規約と Cursor 固有の手順
 ```
@@ -78,11 +78,13 @@ Dart と Flutter の公式スキルは、依存パッケージに同梱されて
 
 `flutter/agent-plugins` は旧名の `flutter/skills` からリネームされた。設定ファイルには旧名の URL で記録されているため、次に取り込み直すときに揃える。
 
-取り込みと更新には、Dart SDK から実行できる [skills] パッケージを使う。`--agent generic` を指定すると `.agents/skills/` に配置される。
+取り込みと更新には、Dart SDK から実行できる [skills] パッケージを使う。`--agent generic` を指定すると `.agents/skills/` に配置される。実行のたびに同じ版が動くよう、`skills@1.0.4` のように版を固定して実行する。ツールの版を上げるときは、スキルの更新とは別のプルリクエストにする。
+
+[skills] パッケージは `package:unified_analytics` で利用状況を送る。送信するかは Dart / Flutter 共通のテレメトリー設定に従い、`dart --disable-analytics` で止められる。
 
 ### 設定ファイル
 
-`.config/dart_skills/skills_config.json` は、どの取り込み元からどのスキルを入れ、どれを外したかの記録である。外したスキルは `"isInstalled": false` として残る。このファイルがないと、次に `dart run skills@ get` したとき、外したスキルが未導入として再び候補に出る。そのため `.config/dart_skills/` もコミットし、gitignore しない。
+`.config/dart_skills/skills_config.json` は、どの取り込み元からどのスキルを入れ、どれを外したかの記録である。外したスキルは `"isInstalled": false` として残る。このファイルがないと、次に `dart run skills@1.0.4 get` したとき、外したスキルが未導入として再び候補に出る。そのため `.config/dart_skills/` もコミットし、gitignore しない。
 
 設定ファイルとスキル本体は手で編集しない。`contentHash` と内容がずれると、そのスキルは手元の編集として扱われ、更新を検出できなくなる。
 
@@ -91,7 +93,7 @@ Dart と Flutter の公式スキルは、依存パッケージに同梱されて
 リポジトリのルートで次を実行し、更新を確認する。このコマンドはファイルを変更しない。
 
 ```shell
-dart run skills@ get --agent generic
+dart run skills@1.0.4 get --agent generic
 ```
 
 出力には取り込み元ごとに次の状態が表示される。
@@ -106,7 +108,7 @@ dart run skills@ get --agent generic
 取り込むスキルを `--skill` で指定して更新する。
 
 ```shell
-dart run skills@ get --agent generic --skill <name> --skill <name>
+dart run skills@1.0.4 get --agent generic --skill <name> --skill <name>
 ```
 
 - `--all` は使わない。外したスキルや、`flutter/agent-plugins` の `dart-*` まで取り込まれる。
