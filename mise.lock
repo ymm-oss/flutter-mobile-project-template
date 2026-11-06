@@ -69,18 +69,18 @@ url = "https://github.com/dprint/dprint/releases/download/0.49.1/dprint-x86_64-a
 url_api = "https://api.github.com/repos/dprint/dprint/releases/assets/238584510"
 
 [[tools.flutter]]
-version = "3.47.7"
+version = "3.47.9"
 backend = "http:flutter"
-specifiers = ["3.47.7"]
+specifiers = ["3.47.9"]
 
 [tools.flutter."platforms.linux-x64"]
-checksum = "sha256:af7455f540df951184c7953fbe3cf884766e7541dacf8571f9f582db03dd6230"
-url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.47.7-stable.tar.xz"
+checksum = "sha256:25ed8c3c29d51a7353f2a944310b478af8214920639524b19c50a19e6c044c5a"
+url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.47.9-stable.tar.xz"
 
 [tools.flutter."platforms.macos-arm64"]
-checksum = "sha256:dd9da574c3168460550117eb0e8dd0313ae934fabf64a82a6d557fff5fd1422e"
-url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_arm64_3.47.7-stable.zip"
+checksum = "sha256:6545b85938745dc5070e9faf2adf70233c1811009d87fe6d27bfcda5a04b7698"
+url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_arm64_3.47.9-stable.zip"
 
 [tools.flutter."platforms.macos-x64"]
-checksum = "sha256:17d39b000a5d0681e3f7b61a105a36f6f31dd41ab9073f625fd466f38035f901"
-url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_3.47.7-stable.zip"
+checksum = "sha256:0dc38b4038a0b002a6258696a5b327a58473c175c9e334b9f329ef7d79a4fdcd"
+url = "https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_3.47.9-stable.zip"
