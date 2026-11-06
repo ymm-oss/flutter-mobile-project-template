@@ -25,5 +25,5 @@ run = [
 [tasks.cspell]
 description = "Run cspell to check spelling."
 run = [
-  'bun run cspell lint',
+  'bun --bun run cspell lint',
 ]

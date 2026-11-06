@@ -25,4 +25,4 @@ jobs:
         run: bun install --frozen-lockfile --ignore-scripts
 
       - name: Run spell check
-        run: bun run cspell lint
+        run: bun --bun run cspell lint
