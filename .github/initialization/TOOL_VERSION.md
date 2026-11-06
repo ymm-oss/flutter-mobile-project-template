@@ -50,11 +50,11 @@ labels: initialization
 以下のツールは `package.json` の `devDependencies` でバージョンが指定され、`bun install --ignore-scripts` コマンドでインストールされます。(一部抜粋)
 
 - **cspell (Spell Checker)**:
-  - 確認: `bun run cspell --version`
+  - 確認: `bun --bun run cspell --version`
   - 管理: `package.json`
   - 設定: `cspell.jsonc`
 - **commitlint (Commit Message Linter)**:
-  - 確認: `bun run commitlint --version`
+  - 確認: `bun --bun run commitlint --version`
   - 管理: `package.json`
   - 設定: `.commitlintrc.yaml`
 - **Husky (Git Hooks Manager)**:
