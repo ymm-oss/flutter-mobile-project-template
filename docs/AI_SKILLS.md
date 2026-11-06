@@ -121,19 +121,37 @@ dart run skills@1.0.4 get --agent generic --skill <name> --skill <name>
 - レビューでは、公式スキルの本文の差分も読む。公式スキルはエージェントが従う指示そのものである。`contentHash` は変更を検出するためのハッシュで、改ざんは防げない。
 - 公式スキルには `.gitattributes` で `linguist-generated` を付けない。付けるとプルリクエストの差分が折りたたまれ、レビューで読まれなくなる。
 
-### このリポジトリのルールとの優先順位
+### 外した公式スキル
 
-公式スキルは、一般的な Dart / Flutter プロジェクト向けに書かれている。公式スキルとこのリポジトリのルールが異なる場合は、[.cursor/rules/] と [アーキテクチャ] を優先する。たとえば `flutter-apply-architecture-best-practices` のレイヤー構成は、このリポジトリのパッケージ構成と一致しない。
+公式スキルは、一般的な Dart / Flutter プロジェクト向けに書かれている。エージェントは `description` を見てスキルを自動で使うため、このリポジトリの技術選定や構成と食い違うスキルは取り込まない。ルールで優先順位を書いても、ルールを読まないエージェントには届かない。
+
+| スキル                                      | 外した理由                                                   |
+| ------------------------------------------- | ------------------------------------------------------------ |
+| `flutter-use-http-package`                  | HTTP 通信には dio を使う                                     |
+| `flutter-implement-json-serialization`      | JSON の変換は freezed と json_serializable で生成する        |
+| `flutter-setup-localization`                | 多言語対応には slang を使う                                  |
+| `flutter-apply-architecture-best-practices` | レイヤー構成が [アーキテクチャ] のパッケージ構成と一致しない |
+
+取り込み済みのスキルを外すときは、`remove` で消したあと、残すスキルを 1 つ指定して `get` する。指定しなかったスキルが外したスキルとして設定ファイルに記録され、`Skipped previously` になる。
+
+```shell
+dart run skills@1.0.4 remove --agent generic --git <取り込み元の URL> --skill <外すスキル>
+dart run skills@1.0.4 get --agent generic --git <取り込み元の URL> --skill <残すスキル>
+```
+
+残した公式スキルとこのリポジトリのルールが異なる場合は、[.cursor/rules/] と [アーキテクチャ] を優先する。
 
 公式スキルはこのリポジトリに合わせて書き換えない。書き換えると上流の更新を取り込めなくなる。補足が必要な場合は、ルールかドキュメントに書く。
 
 ### 検査の対象外
 
-公式スキルは上流の書式のまま取り込む。そのため、次の検査からは `.agents/skills/dart-*/` と `.agents/skills/flutter-*/` を外す。
+公式スキルは上流の書式のまま取り込む。そのため、次の検査からは公式スキルを外す。
 
-- `scripts/sync-ai-skills.sh --check` の `description` の書式（`name` とディレクトリ名の一致は検査する）
-- dprint（`.config/dart_skills/` も含む）
-- cspell
+- `scripts/sync-ai-skills.sh --check` の `description` の書式。対象は設定ファイルに導入済みとして記録されたスキルで、`name` とディレクトリ名の一致は検査する
+- dprint（`.agents/skills/dart-*/`、`.agents/skills/flutter-*/`、`.config/dart_skills/`）
+- cspell（`.agents/skills/dart-*/`、`.agents/skills/flutter-*/`）
+
+代わりに、`scripts/sync-ai-skills.sh --check` は公式スキルの内容から `contentHash` を計算し、設定ファイルの値と照合する。手で編集した公式スキルや、設定ファイルにあってディレクトリが無いスキルはエラーになる。設定ファイルを読むために jq を使う。jq は `mise.toml` で管理している。
 
 Dart の例のファイルは、ドットで始まるディレクトリにあるため `dart analyze` の対象にならない。
 
