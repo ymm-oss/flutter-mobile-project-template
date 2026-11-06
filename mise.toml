@@ -1,5 +1,5 @@
-# Oldest mise release that can read mise.lock (lockfile_version = 3).
-min_version = "2026.9.16"
+# mise release used in CI when this was set; it enforces mise.lock checksums for every backend.
+min_version = "2026.10.25"
 
 [tools]
 bun = "1.2.10"

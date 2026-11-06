@@ -18,7 +18,7 @@ labels: initialization
 - **mise (Tool Version Manager)**:
   - 確認: `mise --version`
   - インストール: 各開発者の環境にインストールします（例: Homebrew, 公式インストーラー経由）。
-  - 管理: `mise.toml` の `min_version` で、このプロジェクトに必要な `mise` の下限を宣言します。これより古い `mise` では、更新を促すエラーで止まります。`mise.lock` の形式を読めるバージョン以上にしてください。
+  - 管理: `mise.toml` の `min_version` で、このプロジェクトに必要な `mise` の下限を宣言します。これより古い `mise` では、更新を促すエラーで止まります。`mise.lock` のチェックサムをすべての backend で強制するバージョン以上にしてください。
 
 ### ツールバージョン管理の方針
 
