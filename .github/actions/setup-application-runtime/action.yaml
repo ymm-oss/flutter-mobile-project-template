@@ -12,7 +12,7 @@ runs:
 
     # https://github.com/jdx/mise-action
     - name: Setup flutter
-      uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+      uses: jdx/mise-action@f5be966e4a917d54244728e6a5fdcd1d93a35e6c # v5.2.6
       with:
         install_args: "flutter"
 
