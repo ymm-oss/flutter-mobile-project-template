@@ -27,6 +27,8 @@
       "vscodeSetting": { "key": "dprint.path" }
     }
   ],
+  // NOTE: Bun拡張はVS Codeの変数を展開するため`${workspaceFolder}`を使います
+  // Dart拡張とdprint拡張は`${workspaceFolder}`を展開しないため、ワークスペースからの相対パスで指定します
   "bun.runtime": "${workspaceFolder}/.vscode/mise-tools/bun",
   // NOTE: Dart SDKはFlutter SDK内の`bin/cache/dart-sdk`が使われるため、`dart.sdkPath`は指定しません
   "dart.flutterSdkPath": ".vscode/mise-tools/flutter",
