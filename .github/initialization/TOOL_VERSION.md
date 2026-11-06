@@ -17,19 +17,21 @@ labels: initialization
 
 - **mise (Tool Version Manager)**:
   - 確認: `mise --version`
-  - 管理: 各開発者の環境にインストール（例: Homebrew, 公式インストーラー経由）。プロジェクトとして特定の `mise` バージョンを推奨する場合は、そのバージョンとインストール手順を開発ドキュメントに明記します。
+  - インストール: 各開発者の環境にインストールします（例: Homebrew, 公式インストーラー経由）。
+  - 管理: `mise.toml` の `min_version` で、このプロジェクトに必要な `mise` の下限を宣言します。これより古い `mise` では、更新を促すエラーで止まります。`mise.lock` のチェックサムをすべての backend で強制するバージョン以上にしてください。
 
 ### ツールバージョン管理の方針
 
 本プロジェクトでは、バージョン管理を以下のカテゴリに分けて行います。
 
-1. **`mise` で管理するグローバルなCLIツール**: プロジェクトルートの `.mise.toml` でバージョンを指定します。
+1. **`mise` で管理するグローバルなCLIツール**: プロジェクトルートの `mise.toml` でバージョンを指定します。
 2. **`package.json` で管理する Node.js パッケージ**: プロジェクトルートの `package.json` の `devDependencies` でバージョンを指定します。
 3. **プラットフォーム固有のツールとSDK**: 各プラットフォームの標準的な方法やプロジェクト固有のネイティブ設定ファイルで管理します。
 
 ## `mise` で管理するツール
 
-以下のツールは `.mise.toml` ファイルでバージョンが指定されます。
+以下のツールは `mise.toml` ファイルでバージョンが指定されます。
+取得物の URL とチェックサムは `mise.lock` に記録され、CI はこのファイルと一致するものだけをインストールします。
 `mise install` コマンドを実行することで、これらのツールが自動的に適切なバージョンでインストールされます。(一部抜粋)
 
 - **Flutter SDK** (Dart SDK を含む):
@@ -48,11 +50,11 @@ labels: initialization
 以下のツールは `package.json` の `devDependencies` でバージョンが指定され、`bun install --ignore-scripts` コマンドでインストールされます。(一部抜粋)
 
 - **cspell (Spell Checker)**:
-  - 確認: `bun run cspell --version`
+  - 確認: `bun --bun run cspell --version`
   - 管理: `package.json`
   - 設定: `cspell.jsonc`
 - **commitlint (Commit Message Linter)**:
-  - 確認: `bun run commitlint --version`
+  - 確認: `bun --bun run commitlint --version`
   - 管理: `package.json`
   - 設定: `.commitlintrc.yaml`
 - **Husky (Git Hooks Manager)**:
@@ -84,7 +86,8 @@ labels: initialization
 
 - 確認リスト
   - [ ] `mise` 自体のバージョン確認・推奨
-    - [ ] `.mise.toml` の確認・更新
+    - [ ] `mise.toml` の `min_version` の確認・更新
+    - [ ] `mise.toml` の `[tools]` の確認・更新と、`mise.lock` の更新
   - [ ] `package.json` の `devDependencies` 確認・更新:
   - [ ] Xcode バージョンの指定:
     - [ ] CocoaPods バージョンの指定
