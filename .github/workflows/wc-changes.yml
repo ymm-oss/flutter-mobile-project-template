@@ -89,6 +89,7 @@ jobs:
             ai_skills:
               - ".agents/**"
               - ".claude/**"
+              - ".config/dart_skills/**"
               - "scripts/sync-ai-skills.sh"
               - ".gitattributes"
               - ".github/workflows/wc-check-ai-skills.yaml"
