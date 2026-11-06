@@ -12,7 +12,7 @@ runs:
         echo "repository_name=$SNAKE_CASE" >> $GITHUB_OUTPUT
 
     - name: Fill the project name
-      uses: mikefarah/yq@751d8ad57b84f1794661bc70c0afb92a22ad7b3c # v4.53.2
+      uses: mikefarah/yq@504fc38780cc46be8444ea1b72fb55919fc0bfb0 # v4.54.1
       with:
         cmd: |
           yq '.name = "${{ steps.convert_name.outputs.repository_name }}"' pubspec.yaml > pubspec.yaml.new
