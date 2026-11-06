@@ -71,10 +71,12 @@ scripts/sync-ai-skills.sh
 
 Dart と Flutter の公式スキルは、依存パッケージに同梱されていないため、`.agents/skills/` に取り込んでコミットする。clone したメンバーは、追加の作業なしで同じスキルを使える。
 
-| 取り込み元                            | 取り込むスキル | 理由                                                                     |
-| ------------------------------------- | -------------- | ------------------------------------------------------------------------ |
-| <https://github.com/dart-lang/skills> | すべて         | Dart スキルの正本                                                        |
-| <https://github.com/flutter/skills>   | `flutter-*`    | 同じリポジトリの `dart-*` は Dart 側の写しで、修正が遅れることがあるため |
+| 取り込み元                                 | 取り込むスキル | 理由                                                                     |
+| ------------------------------------------ | -------------- | ------------------------------------------------------------------------ |
+| <https://github.com/dart-lang/skills>      | すべて         | Dart スキルの正本                                                        |
+| <https://github.com/flutter/agent-plugins> | `flutter-*`    | 同じリポジトリの `dart-*` は Dart 側の写しで、修正が遅れることがあるため |
+
+`flutter/agent-plugins` は旧名の `flutter/skills` からリネームされた。設定ファイルには旧名の URL で記録されているため、次に取り込み直すときに揃える。
 
 取り込みと更新には、Dart SDK から実行できる [skills] パッケージを使う。`--agent generic` を指定すると `.agents/skills/` に配置される。
 
@@ -107,7 +109,7 @@ dart run skills@ get --agent generic
 dart run skills@ get --agent generic --skill <name> --skill <name>
 ```
 
-- `--all` は使わない。外したスキルや、`flutter/skills` の `dart-*` まで取り込まれる。
+- `--all` は使わない。外したスキルや、`flutter/agent-plugins` の `dart-*` まで取り込まれる。
 - `--skill` で指定しなかった `New` のスキルは、外したスキルとして設定ファイルに記録される。取り込むかを決めてから実行する。
 - 依存パッケージが同梱するスキル（`package:melos` など）も候補に表示される。公式の Dart / Flutter スキル以外は、取り込む理由ができるまで入れない。
 
