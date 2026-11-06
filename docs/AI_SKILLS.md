@@ -117,6 +117,10 @@ dart run skills@1.0.4 get --agent generic --skill <name> --skill <name>
 
 更新したら、`.agents/skills/` と `.config/dart_skills/` の差分をまとめてプルリクエストにする。
 
+- プルリクエストの本文に、取り込み元ごとのコミット SHA を書く。設定ファイルには SHA を残す欄がないため、どの時点の上流を取り込んだかがリポジトリに残らない。SHA は `git ls-remote <取り込み元の URL> HEAD` で確認できる。
+- レビューでは、公式スキルの本文の差分も読む。公式スキルはエージェントが従う指示そのものである。`contentHash` は変更を検出するためのハッシュで、改ざんは防げない。
+- 公式スキルには `.gitattributes` で `linguist-generated` を付けない。付けるとプルリクエストの差分が折りたたまれ、レビューで読まれなくなる。
+
 ### このリポジトリのルールとの優先順位
 
 公式スキルは、一般的な Dart / Flutter プロジェクト向けに書かれている。公式スキルとこのリポジトリのルールが異なる場合は、[.cursor/rules/] と [アーキテクチャ] を優先する。たとえば `flutter-apply-architecture-best-practices` のレイヤー構成は、このリポジトリのパッケージ構成と一致しない。
