@@ -47,6 +47,8 @@ mise where flutter
 
 ### エディターの設定
 
+Visual Studio Code を使用する場合は、`.vscode/extensions.json` に列挙された推奨拡張機能をインストールしてください。
+
 このプロジェクトでは、コミットメッセージの一貫性を保つために、[Conventional Commits](https://www.conventionalcommits.org/) を使用しています。
 各エディターにおいて、コミットメッセージの形式をチェックするための拡張機能を導入することをお勧めします。
 
