@@ -76,8 +76,6 @@ Dart と Flutter の公式スキルは、依存パッケージに同梱されて
 | <https://github.com/dart-lang/skills>      | すべて         | Dart スキルの正本                                                        |
 | <https://github.com/flutter/agent-plugins> | `flutter-*`    | 同じリポジトリの `dart-*` は Dart 側の写しで、修正が遅れることがあるため |
 
-`flutter/agent-plugins` は旧名の `flutter/skills` からリネームされた。
-
 取り込みと更新には、Dart SDK から実行できる [skills] パッケージを使う。`--agent generic` を指定すると `.agents/skills/` に配置される。実行のたびに同じ版が動くよう、`skills@1.0.4` のように版を固定して実行する。ツールの版を上げるときは、スキルの更新とは別のプルリクエストにする。
 
 [skills] パッケージは `package:unified_analytics` で利用状況を送る。送信するかは Dart / Flutter 共通のテレメトリー設定に従い、`dart --disable-analytics` で止められる。
