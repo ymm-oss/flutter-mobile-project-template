@@ -12,4 +12,5 @@ srvaroa
 startswith
 webframeworks
 elif
+pipefail
 tonumber
