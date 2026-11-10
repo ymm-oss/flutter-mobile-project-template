@@ -157,6 +157,9 @@ jobs:
 
   check-code-spell:
     uses: ./.github/workflows/wc-check-code-spell.yaml
+    permissions:
+      contents: read
+      pull-requests: write
     needs: changes
     if: ${{ needs.changes.outputs.spell == 'true' }}
 
