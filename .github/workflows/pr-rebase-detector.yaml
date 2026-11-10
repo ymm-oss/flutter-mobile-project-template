@@ -22,10 +22,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           fetch-depth: 0
 
       - name: Detect rebase between pushes
         id: check
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           # Get the SHA of the commit before and after the push
           BEFORE_SHA="${{ github.event.before }}"
@@ -43,7 +46,7 @@ jobs:
 
           # force-push で外れた旧先端はどのブランチからも辿れない。
           # fetch-depth: 0 でも clone に無く、コミット一覧が空になる。
-          git fetch origin "$BEFORE_SHA"
+          git -c "http.extraheader=AUTHORIZATION: bearer ${GITHUB_TOKEN}" fetch origin "$BEFORE_SHA"
 
           # 旧先端が新先端の祖先なら、レビュー済みの履歴は残っている
           if git merge-base --is-ancestor "$BEFORE_SHA" "$AFTER_SHA"; then

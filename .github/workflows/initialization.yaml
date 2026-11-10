@@ -29,6 +29,8 @@ jobs:
       # https://github.com/actions/checkout
       - name: Fetch sources
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Generate Matrix Data
         id: matrix
@@ -51,6 +53,8 @@ jobs:
       # https://github.com/actions/checkout
       - name: Fetch sources
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Create Issue from File
         uses: peter-evans/create-issue-from-file@fca9117c27cdc29c6c4db3b86c48e4115a786710 # v6.0.0
@@ -72,6 +76,8 @@ jobs:
       # https://github.com/actions/checkout
       - name: Fetch sources
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Cleanup Copilot Settings
         uses: ./.github/actions/cleanup-copilot-settings
@@ -118,3 +124,5 @@ jobs:
       - name: Check out latest state of original repository
         # https://github.com/actions/checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false

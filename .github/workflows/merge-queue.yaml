@@ -27,6 +27,8 @@ jobs:
       # https://github.com/marketplace/actions/checkout
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       # https://github.com/marketplace/actions/actionlint-with-reviewdog
       - uses: reviewdog/action-actionlint@5d802a8ebdcb24d712925118c3a4596f571d8fcd # v1.81.0
@@ -47,6 +49,8 @@ jobs:
       # https://github.com/marketplace/actions/checkout
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Application Runtime
         uses: ./.github/actions/setup-application-runtime
@@ -66,6 +70,8 @@ jobs:
       # https://github.com/actions/checkout
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Application Runtime
         uses: ./.github/actions/setup-application-runtime
