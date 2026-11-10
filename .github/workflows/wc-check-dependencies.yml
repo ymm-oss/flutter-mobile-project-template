@@ -14,18 +14,32 @@ jobs:
       # https://github.com/marketplace/actions/checkout
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Application Runtime
         uses: ./.github/actions/setup-application-runtime
 
       - name: Check package dependencies
         id: dependencies
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LOCK_PATH: pubspec.lock
         run: |
           baseRefName="${{ github.base_ref }}"
 
           echo "The base branch is $baseRefName"
 
-          diff=$(dart run ./tools/diff_yaml.dart $baseRefName pubspec.yaml pubspec.lock)
+          # raw は 100MB 未満のファイルを返せる。lock ファイルはこの範囲に収まる。
+          base_lock="${RUNNER_TEMP}/base-pubspec.lock"
+          gh api \
+            --method GET \
+            -H "Accept: application/vnd.github.raw+json" \
+            "/repos/${GITHUB_REPOSITORY}/contents/${LOCK_PATH}" \
+            -f ref="$baseRefName" \
+            > "$base_lock"
+
+          diff=$(dart run ./tools/diff_yaml.dart "$base_lock" pubspec.yaml "$LOCK_PATH")
 
           if [ -z "$diff" ]; then
             echo "No change in pubspec.lock"
