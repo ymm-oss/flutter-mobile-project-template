@@ -109,13 +109,12 @@ jobs:
         run: dart run melos run check:debug_tree_shaking
 
       - name: Run test
-        id: test
         run: dart run melos run report:test --no-select
-        continue-on-error: true
 
       # https://github.com/andstor/file-existence-action
       - name: Check file existence
         id: check_files
+        if: ${{ !cancelled() }}
         uses: andstor/file-existence-action@558493d6c74bf472d87c84eab196434afc2fa029 # v3.1.0
         with:
           # https://github.com/isaacs/node-glob の形式
@@ -123,7 +122,7 @@ jobs:
 
       # https://github.com/dorny/test-reporter
       - name: Report test
-        if: ${{ steps.check_files.outputs.files_exists == 'true' && github.event.pull_request.head.repo.full_name == github.repository }}
+        if: ${{ !cancelled() && steps.check_files.outputs.files_exists == 'true' && github.event.pull_request.head.repo.full_name == github.repository }}
         uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2 # v3.0.0
         with:
           name: "flutter test"
@@ -131,13 +130,6 @@ jobs:
           path: "(apps|packages)/**/test_report.log"
           reporter: "flutter-json"
           fail-on-error: "true"
-
-      # レポートが作られない失敗（コンパイルエラーなど）や fork からの PR も検知するため、テストの終了コードでも判定する
-      - name: Fail on test failure
-        if: ${{ steps.test.outcome == 'failure' }}
-        run: |
-          echo "::error::flutter test failed. See the 'Run test' step for details."
-          exit 1
 
   diff-gen:
     uses: ./.github/workflows/wc-check-diff.yaml
