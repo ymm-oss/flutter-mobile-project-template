@@ -31,19 +31,7 @@ jobs:
         with:
           reviewdog_version: v0.21.2
 
-      # fork からの PR では GITHUB_TOKEN が read-only でレビューコメントを投稿できない。
-      # その場合は local reporter にし、cspell の終了コードで合否を決める。
       - name: Run spell check
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ github.token }}
-          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
-          THIS_REPO: ${{ github.repository }}
-        run: |
-          set -o pipefail
-          if [ "$HEAD_REPO" = "$THIS_REPO" ]; then
-            reporter=github-pr-review
-          else
-            reporter=local
-          fi
-          bun --bun run cspell lint 2>&1 \
-            | reviewdog -efm='%f:%l:%c - %m' -name=cspell -reporter="$reporter" -filter-mode=diff_context -level=error
+        run: reviewdog -runners=cspell -reporter=github-pr-review -filter-mode=nofilter -fail-level=error

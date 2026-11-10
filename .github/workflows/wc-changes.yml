@@ -82,6 +82,7 @@ jobs:
               # cspell の設定や実行環境が変わったときも検証する
               - "cspell.jsonc"
               - ".cspell/**"
+              - ".reviewdog.yml"
               - "package.json"
               - "bun.lock"
               - "mise.toml"

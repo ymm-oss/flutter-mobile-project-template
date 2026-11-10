@@ -3,3 +3,8 @@ runner:
     cmd: dart analyze --fatal-infos
     errorformat:
       - " %#%t%*[a-z] %. %f:%l:%c %. %m"
+  cspell:
+    cmd: bun --bun run cspell lint
+    errorformat:
+      - "%f:%l:%c - %m"
+    level: error
