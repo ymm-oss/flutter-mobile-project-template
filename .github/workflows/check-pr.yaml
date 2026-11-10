@@ -15,7 +15,7 @@ jobs:
       contents: read
 
   skip-comment:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     needs: changes
     if: ${{ needs.changes.outputs.any == 'false' }}
     permissions:
