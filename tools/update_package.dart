@@ -24,6 +24,26 @@ Future<void> main() async {
     jsonDecode(json) as Map<String, dynamic>,
   );
 
+  // 直接依存はどの解決結果にも含まれるため、resolvable が null なら解決そのものに失敗している。
+  // 更新なしと区別できなくなるので、パッケージ名を出して失敗させる。
+  final unresolvedPkg = [
+    for (final pkg in packageInfo.packages)
+      if (pkg case Package(
+        kind: != Kind.transitive,
+        current: _?,
+        resolvable: null,
+      ))
+        pkg.package,
+  ];
+
+  if (unresolvedPkg.isNotEmpty) {
+    stderr.writeln(
+      'Failed to resolve the latest versions of: ${unresolvedPkg.join(', ')}',
+    );
+    exitCode = 1;
+    return;
+  }
+
   // 依存関係で追加されたパッケージ以外 && パッケージが最新以外の内容を取得
   final shouldUpdatePkg = [
     for (final pkg in packageInfo.packages)
