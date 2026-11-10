@@ -72,7 +72,7 @@ Pull Request 作成時などに GitHub Actions によって自動的にスペル
 詳しい設定は以下のファイルをご覧ください。
 
 - [.github/workflows/check-pr.yaml]
-- [.github/workflows/wc-check-spell.yaml]
+- [.github/workflows/wc-check-code-spell.yaml]
 
 ## 手元でのスペルチェック
 
@@ -103,7 +103,7 @@ CSpell の開発企業 [Street Side Software] から VS Code 拡張機能が提�
 <!-- Links -->
 
 [CSpell]: https://cspell.org/
-[cspell.jsonc]: https://github.com/FlutterKaigi/2025/blob/main/cspell.jsonc
-[.github/workflows/check-pr.yaml]: https://github.com/FlutterKaigi/2025/blob/main/.github/workflows/check-pr.yaml
-[.github/workflows/wc-check-spell.yaml]: https://github.com/FlutterKaigi/2025/blob/main/.github/workflows/wc-check-spell.yaml
+[cspell.jsonc]: ../cspell.jsonc
+[.github/workflows/check-pr.yaml]: ../.github/workflows/check-pr.yaml
+[.github/workflows/wc-check-code-spell.yaml]: ../.github/workflows/wc-check-code-spell.yaml
 [Street Side Software]: https://streetsidesoftware.com/
