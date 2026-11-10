@@ -45,6 +45,10 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          # merge queue の paths-filter は base_sha を git で比較する。
+          # 全履歴を checkout 中に取るので、後続の git fetch は不要になる。
+          # 数値の 0 は式の中で偽になるため、深さは文字列で渡す。
+          fetch-depth: ${{ github.event_name == 'merge_group' && '0' || '1' }}
 
       # https://github.com/marketplace/actions/paths-changes-filter
       - name: Paths Changes Filter
