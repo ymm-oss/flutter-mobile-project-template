@@ -132,9 +132,9 @@ jobs:
           reporter: "flutter-json"
           fail-on-error: "true"
 
-      # fork からの PR ではレポートを作成できないため、テストの終了コードでジョブを失敗させる
-      - name: Fail on test failure (fork)
-        if: ${{ github.event.pull_request.head.repo.full_name != github.repository && steps.test.outcome == 'failure' }}
+      # レポートが作られない失敗（コンパイルエラーなど）や fork からの PR も検知するため、テストの終了コードでも判定する
+      - name: Fail on test failure
+        if: ${{ steps.test.outcome == 'failure' }}
         run: |
           echo "::error::flutter test failed. See the 'Run test' step for details."
           exit 1

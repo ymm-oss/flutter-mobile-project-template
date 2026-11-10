@@ -89,6 +89,7 @@ jobs:
         run: dart run melos run check:debug_tree_shaking
 
       - name: Run test
+        id: test
         run: dart run melos run report:test --no-select
         continue-on-error: true
 
@@ -110,6 +111,13 @@ jobs:
           path: "(apps|packages)/**/test_report.log"
           reporter: "flutter-json"
           fail-on-error: "true"
+
+      # レポートが作られない失敗（コンパイルエラーなど）も検知するため、テストの終了コードでも判定する
+      - name: Fail on test failure
+        if: ${{ steps.test.outcome == 'failure' }}
+        run: |
+          echo "::error::flutter test failed. See the 'Run test' step for details."
+          exit 1
 
   diff-gen:
     uses: ./.github/workflows/wc-check-diff.yaml
