@@ -75,3 +75,5 @@
 [ブランチ保護ルール]: https://docs.github.com/ja/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/managing-a-branch-protection-rule
 [check-pr.yaml]: ../../.github/workflows/check-pr.yaml
 [MERGE_QUEUE.md]: ./MERGE_QUEUE.md
+
+This line has a mispeled wordd for verification.
