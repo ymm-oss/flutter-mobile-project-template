@@ -34,7 +34,7 @@ jobs:
           path: |
             **/.dart_tool/build
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-${{ env.cache-name }}-
 
       - name: Regenerate code
         run: |
