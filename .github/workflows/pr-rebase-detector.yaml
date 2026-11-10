@@ -38,7 +38,7 @@ jobs:
           fi
 
           # 旧先端が新先端の祖先なら merge base は旧先端になる。
-          # コメント用の一覧は Compare API が返す最大 250 件。真偽判定には使わない。
+          # コメント用の一覧は Compare API が返す最新の最大 250 件。真偽判定には使わない。
           compare=$(gh api "/repos/${GITHUB_REPOSITORY}/compare/${BEFORE_SHA}...${AFTER_SHA}")
           merge_base=$(jq -r '.merge_base_commit.sha' <<< "$compare")
 
@@ -51,7 +51,15 @@ jobs:
 
           {
             echo "rebased_commits<<EOF"
-            jq -r '.commits[] | "- \(.sha) (\(.commit.message | split("\n")[0]))"' <<< "$compare"
+            # main の "Merge pull request #N" を載せると #N の PR に参照が記録されるため、
+            # 以前の実装と同じくマージコミットは除く
+            jq -r '
+              (.commits[] | select(.parents | length <= 1)
+                | "- \(.sha) (\(.commit.message | split("\n")[0]))"),
+              (if .total_commits > (.commits | length)
+                then "\nコミットが多いため、全 \(.total_commits) 件のうち最新の \(.commits | length) 件までを対象にしています。"
+                else empty end)
+            ' <<< "$compare"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 

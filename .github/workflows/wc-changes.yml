@@ -49,6 +49,9 @@ jobs:
           # 全履歴を checkout 中に取るので、後続の git fetch は不要になる。
           # 数値の 0 は式の中で偽になるため、深さは文字列で渡す。
           fetch-depth: ${{ github.event_name == 'merge_group' && '0' || '1' }}
+          # paths-filter は --no-renames --name-status で比較し、ファイルの中身を読まない。
+          # そのため履歴はコミットとツリーだけ取り、過去の blob は取らない。
+          filter: ${{ github.event_name == 'merge_group' && 'blob:none' || '' }}
 
       # https://github.com/marketplace/actions/paths-changes-filter
       - name: Paths Changes Filter

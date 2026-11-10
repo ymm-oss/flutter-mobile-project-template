@@ -24,6 +24,7 @@ jobs:
         id: dependencies
         env:
           GH_TOKEN: ${{ github.token }}
+          LOCK_PATH: pubspec.lock
         run: |
           baseRefName="${{ github.base_ref }}"
 
@@ -34,11 +35,11 @@ jobs:
           gh api \
             --method GET \
             -H "Accept: application/vnd.github.raw+json" \
-            "/repos/${GITHUB_REPOSITORY}/contents/pubspec.lock" \
+            "/repos/${GITHUB_REPOSITORY}/contents/${LOCK_PATH}" \
             -f ref="$baseRefName" \
             > "$base_lock"
 
-          diff=$(dart run ./tools/diff_yaml.dart "$base_lock" pubspec.yaml pubspec.lock)
+          diff=$(dart run ./tools/diff_yaml.dart "$base_lock" pubspec.yaml "$LOCK_PATH")
 
           if [ -z "$diff" ]; then
             echo "No change in pubspec.lock"
