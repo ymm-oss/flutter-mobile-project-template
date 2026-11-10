@@ -7,14 +7,15 @@
 3. VS Code を使っている場合は、ウィンドウをリロードする
    - mise-vscode が `.vscode/mise-tools/flutter` を新しい SDK に張り替え、リロード後に Dart 拡張がその SDK を読み込む
 4. ルートの `pubspec.yaml` の `sdk` バージョンを更新
-5. `melos.yaml` の `bootstrap` にある `sdk`, `flutter` 部分のバージョンを更新
+5. ルートの `pubspec.yaml` の `melos` > `command` > `bootstrap` > `environment` にある `sdk`, `flutter` のバージョンを更新
 
 ```yaml
-command:
-  bootstrap:
-    environment:
-      sdk: ^x.x.x
-      flutter: ^x.x.x
+melos:
+  command:
+    bootstrap:
+      environment:
+        sdk: ^x.x.x
+        flutter: ^x.x.x
 ```
 
 > [!NOTE]
