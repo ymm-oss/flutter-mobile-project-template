@@ -3,12 +3,13 @@
 ///
 // coverage:ignore-file
 // ignore_for_file: type=lint, unused_import
+// dart format off
 
 part of 'strings.g.dart';
 
 // Path: <root>
 typedef TranslationsJa = Translations; // ignore: unused_element
-class Translations implements BaseTranslations<AppLocale, Translations> {
+class Translations with BaseTranslations<AppLocale, Translations> {
 	/// Returns the current translations of the given [context].
 	///
 	/// Usage:
@@ -19,35 +20,36 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	/// Constructing via the enum [AppLocale.build] is preferred.
 	Translations({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver, TranslationMetadata<AppLocale, Translations>? meta})
 		: assert(overrides == null, 'Set "translation_overrides: true" in order to enable this feature.'),
-		  $meta = meta ?? TranslationMetadata(
+		  _meta = meta ?? TranslationMetadata(
 		    locale: AppLocale.ja,
 		    overrides: overrides ?? {},
 		    cardinalResolver: cardinalResolver,
 		    ordinalResolver: ordinalResolver,
 		  ) {
-		$meta.setFlatMapFunction(_flatMapFunction);
+		_meta.setFlatMapFunction(_flatMapFunction);
 	}
 
 	/// Metadata for the translations of <ja>.
-	@override final TranslationMetadata<AppLocale, Translations> $meta;
+	final TranslationMetadata<AppLocale, Translations> _meta;
+	@override TranslationMetadata<AppLocale, Translations> get $meta => _meta;
 
 	/// Access flat map
-	dynamic operator[](String key) => $meta.getTranslation(key);
+	dynamic operator[](String key) => _meta.getTranslation(key);
 
 	late final Translations _root = this; // ignore: unused_field
 
 	Translations $copyWith({TranslationMetadata<AppLocale, Translations>? meta}) => Translations(meta: meta ?? this.$meta);
 
 	// Translations
-	late final TranslationsBottomTabJa bottomTab = TranslationsBottomTabJa._(_root);
-	late final TranslationsHomeJa home = TranslationsHomeJa._(_root);
-	late final TranslationsMaintenanceJa maintenance = TranslationsMaintenanceJa._(_root);
-	late final TranslationsSettingJa setting = TranslationsSettingJa._(_root);
+	late final Translations$bottomTab$ja bottomTab = Translations$bottomTab$ja._(_root);
+	late final Translations$home$ja home = Translations$home$ja._(_root);
+	late final Translations$maintenance$ja maintenance = Translations$maintenance$ja._(_root);
+	late final Translations$setting$ja setting = Translations$setting$ja._(_root);
 }
 
 // Path: bottomTab
-class TranslationsBottomTabJa {
-	TranslationsBottomTabJa._(this._root);
+class Translations$bottomTab$ja {
+	Translations$bottomTab$ja._(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -61,8 +63,8 @@ class TranslationsBottomTabJa {
 }
 
 // Path: home
-class TranslationsHomeJa {
-	TranslationsHomeJa._(this._root);
+class Translations$home$ja {
+	Translations$home$ja._(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -76,8 +78,8 @@ class TranslationsHomeJa {
 }
 
 // Path: maintenance
-class TranslationsMaintenanceJa {
-	TranslationsMaintenanceJa._(this._root);
+class Translations$maintenance$ja {
+	Translations$maintenance$ja._(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -94,8 +96,8 @@ class TranslationsMaintenanceJa {
 }
 
 // Path: setting
-class TranslationsSettingJa {
-	TranslationsSettingJa._(this._root);
+class Translations$setting$ja {
+	Translations$setting$ja._(this._root);
 
 	final Translations _root; // ignore: unused_field
 
@@ -120,26 +122,28 @@ class TranslationsSettingJa {
 	String get versionLabel => 'バージョン';
 }
 
-/// Flat map(s) containing all translations.
+/// The flat map containing all translations for locale <ja>.
 /// Only for edge cases! For simple maps, use the map function of this library.
+///
+/// The Dart AOT compiler has issues with very large switch statements,
+/// so the map is split into smaller functions (512 entries each).
 extension on Translations {
 	dynamic _flatMapFunction(String path) {
-		switch (path) {
-			case 'bottomTab.home': return 'ホーム';
-			case 'bottomTab.settings': return '設定';
-			case 'home.title': return 'ホーム';
-			case 'home.appBarTitle': return 'Flutter テンプレート';
-			case 'maintenance.appBarTitle': return 'メンテナンスモード';
-			case 'maintenance.description': return 'メンテナンス中です.';
-			case 'maintenance.disableButtonLabel': return 'メンテナンスモードを無効にする';
-			case 'setting.appBarTitle': return '設定';
-			case 'setting.themeSettingLabel': return 'テーマ設定';
-			case 'setting.aboutLabel': return 'FlutterMobileTemplate について';
-			case 'setting.openSourceLicensesLabel': return 'オープンソースライセンス';
-			case 'setting.librariesWeUseLabel': return '使用しているライブラリ';
-			case 'setting.versionLabel': return 'バージョン';
-			default: return null;
-		}
+		return switch (path) {
+			'bottomTab.home' => 'ホーム',
+			'bottomTab.settings' => '設定',
+			'home.title' => 'ホーム',
+			'home.appBarTitle' => 'Flutter テンプレート',
+			'maintenance.appBarTitle' => 'メンテナンスモード',
+			'maintenance.description' => 'メンテナンス中です.',
+			'maintenance.disableButtonLabel' => 'メンテナンスモードを無効にする',
+			'setting.appBarTitle' => '設定',
+			'setting.themeSettingLabel' => 'テーマ設定',
+			'setting.aboutLabel' => 'FlutterMobileTemplate について',
+			'setting.openSourceLicensesLabel' => 'オープンソースライセンス',
+			'setting.librariesWeUseLabel' => '使用しているライブラリ',
+			'setting.versionLabel' => 'バージョン',
+			_ => null,
+		};
 	}
 }
-

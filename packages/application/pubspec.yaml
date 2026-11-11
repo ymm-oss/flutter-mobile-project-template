@@ -13,8 +13,8 @@ dependencies:
     path: ../domain_logic
   internal_domain_model:
     path: ../domain_model
-  pub_semver: ^2.2.0
+  pub_semver: ^2.2.1
 
 dev_dependencies:
-  mocktail: ^1.0.0
+  mocktail: ^1.0.5
   test: ^1.31.1
