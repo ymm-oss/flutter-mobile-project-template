@@ -39,6 +39,28 @@
   color: "0e8a16"
   description: "Packages that need to be updated"
 
+# Labels used by issue templates
+- name: "feature"
+  color: "1d76db"
+  description: "New feature request"
+
+- name: "improve"
+  color: "5319e7"
+  description: "Improvement to existing features"
+
+- name: "triage"
+  color: "fbca04"
+  description: "Needs to be triaged"
+
+# Labels used by initialization issues
+- name: "initialization"
+  color: "c5def5"
+  description: "Initial setup task for a project created from the template"
+
+- name: "optional"
+  color: "bfdadc"
+  description: "Optional initial setup task"
+
 # <!-- This is an auto-generated label -->
 - name: "@apps/catalog"
   color: d4f227
