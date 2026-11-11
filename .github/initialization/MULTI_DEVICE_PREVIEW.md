@@ -250,3 +250,17 @@ Future<void> main() async {
 - **グローバル変数や static フィールドに置いた `GlobalKey` は使えない**: 全端末で共有されてしまい、`Multiple widgets used the same GlobalKey` が出ます。どのキーが原因かと対処法はログに表示されます。手順 1 のあとにキーを追加するときも、アプリのインスタンスごと（Provider や `routerProvider` の中など）に作ってください
 - **永続化した状態は全端末で共有される**: SharedPreferences・Keychain・ファイル（テーマ設定・ログイン状態など）
 - **macOS 実装がないプラグインは呼び出しに失敗する**: 計測・クラッシュ収集・プッシュ通知などの SDK を追加したら、エントリポイントでは初期化しないか、`MissingPluginException` を握りつぶしてください
+
+## 不具合を見つけたら
+
+パッケージの不具合や要望は [multi_device_preview の Issue](https://github.com/K9i-0/multi_device_preview/issues) に報告してください。
+
+## 使うのをやめるとき
+
+アプリ本体に入るのは dev 依存だけで、プレビューは別パッケージのホストアプリにまとまっているため、次の作業で外せます。
+
+- `apps/app_preview/` を削除する
+- `apps/app/pubspec.yaml` の `dev_dependencies` から `multi_device_preview` を削除する
+- ルートの `pubspec.yaml` の `workspace:` から `apps/app_preview` を削除し、`mise run bootstrap` を実行する（`pubspec.lock` と、`.github/labeler.yml`・`.github/labels.yml` の `@apps/app_preview` が更新されます）
+
+手順 1 の GlobalKey の変更は戻さなくて構いません。`rootNavigatorKey` の削除は冗長な指定の整理で、SnackBar のキーを Provider に置く形も単体で問題なく動きます。
