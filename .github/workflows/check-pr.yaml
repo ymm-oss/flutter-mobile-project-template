@@ -7,6 +7,8 @@ concurrency:
   group: check-pr-${{ github.ref }}
   cancel-in-progress: true
 
+permissions: {}
+
 jobs:
   changes:
     uses: ./.github/workflows/wc-changes.yml
@@ -58,6 +60,8 @@ jobs:
 
   cache-dependencies:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     needs: changes
     if: ${{ needs.changes.outputs.dependencies == 'true' }}
     timeout-minutes: 10
@@ -122,6 +126,8 @@ jobs:
 
   diff-gen:
     uses: ./.github/workflows/wc-check-diff.yaml
+    permissions:
+      contents: read
     with:
       diff-packages: true
     needs:
@@ -141,6 +147,8 @@ jobs:
 
   check-style-dprint:
     uses: ./.github/workflows/wc-check-style-dprint.yaml
+    permissions:
+      contents: read
     needs: changes
     if: ${{ needs.changes.outputs.dprint == 'true' }}
 
@@ -154,6 +162,8 @@ jobs:
 
   check-ai-skills:
     uses: ./.github/workflows/wc-check-ai-skills.yaml
+    permissions:
+      contents: read
     needs: changes
     if: ${{ needs.changes.outputs.ai_skills == 'true' }}
 

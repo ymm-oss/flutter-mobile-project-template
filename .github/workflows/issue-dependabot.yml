@@ -67,19 +67,23 @@ jobs:
       - name: Get the latest issue comment
         id: latest
         run: |
-          comment=$(gh issue view "${{ steps.issue.outputs.number }}" --json comments -q '.comments | last.body')
+          comment=$(gh issue view "$ISSUE_NUMBER" --json comments -q '.comments | last.body')
 
           path="$GITHUB_WORKSPACE/comment_$(date +%Y%m%d%H%M%S)"
           echo "$comment" > "$path"
           echo "path=$path" >> "$GITHUB_OUTPUT"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
 
       - name: Check if the latest comment is the same as the current comment
         id: comment_check
+        env:
+          PACKAGE_COMMENT_PATH: ${{ steps.package.outputs.path }}
+          LATEST_COMMENT_PATH: ${{ steps.latest.outputs.path }}
         run: |
-          package_comment=$(cat "${{ steps.package.outputs.path }}")
-          latest_comment=$(cat "${{ steps.latest.outputs.path }}")
+          package_comment=$(cat "$PACKAGE_COMMENT_PATH")
+          latest_comment=$(cat "$LATEST_COMMENT_PATH")
 
           if [[ "$package_comment" == "$latest_comment" ]]; then
             echo "The latest comment is the same as the current comment"
@@ -91,6 +95,8 @@ jobs:
 
       - name: Comment
         if: ${{ steps.comment_check.outputs.changed == 'true' }}
-        run: gh issue comment "${{ steps.issue.outputs.number  }}" --body-file "${{ steps.package.outputs.path }}"
+        run: gh issue comment "$ISSUE_NUMBER" --body-file "$BODY_PATH"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+          BODY_PATH: ${{ steps.package.outputs.path }}

@@ -4,10 +4,13 @@ on:
   pull_request:
     types: [opened, ready_for_review]
 
+permissions: {}
+
 jobs:
   count-reviewers:
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-24.04
+    permissions: {}
     timeout-minutes: 5
     outputs:
       count: ${{ steps.extract.outputs.count }}
@@ -17,7 +20,7 @@ jobs:
         run: |
           # https://docs.github.com/en/webhooks/webhook-events-and-payloads?actionType=opened#pull_request
           # https://docs.github.com/en/webhooks/webhook-events-and-payloads?actionType=ready_for_review#pull_request
-          reviewers_count=$(jq '.pull_request.requested_reviewers | length' < "${{ github.event_path }}")
+          reviewers_count=$(jq '.pull_request.requested_reviewers | length' < "$GITHUB_EVENT_PATH")
           echo "count=${reviewers_count}" >> "$GITHUB_OUTPUT"
 
   request-reviewers:
@@ -36,11 +39,15 @@ jobs:
         with:
           client-id: ${{ secrets.CLIENT_ID_OF_YMM_OSS_TEAM_REVIEW_REQUESTER }}
           private-key: ${{ secrets.APP_PRIVATE_KEY_OF_YMM_OSS_TEAM_REVIEW_REQUESTER }}
+          # レビュー依頼に必要な権限だけをトークンに持たせる
+          permission-pull-requests: write
 
       - name: Request reviewers
         env:
           REVIEWERS: ${{ vars.REVIEWERS }}
           TEAM_REVIEWERS: ${{ vars.TEAM_REVIEWERS }}
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           reviewers=$(jq -R 'split(",")' <<< "${REVIEWERS:-}" | jq 'map(select(length > 0))')
           team_reviewers=$(jq -R 'split(",")' <<< "${TEAM_REVIEWERS:-}" | jq 'map(select(length > 0))')
@@ -48,9 +55,9 @@ jobs:
           curl -L --fail-with-body \
             -X POST \
             -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ steps.app-token.outputs.token }}" \
+            -H "Authorization: Bearer $APP_TOKEN" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/requested_reviewers" \
             -d "{ \"reviewers\": ${reviewers}, \"team_reviewers\": ${team_reviewers} }"
 
   request-assignees:
