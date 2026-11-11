@@ -120,6 +120,7 @@ jobs:
 
       # https://github.com/gitleaks/gitleaks
       # 範囲のコミットがないと gitleaks は 0 件の検査で成功するため、先に確かめる。
+      # git log -p はマージコミットの差分を出さないため、最初の親との差分を検査する。
       - name: Run gitleaks
         shell: bash
         env:
@@ -128,7 +129,7 @@ jobs:
         run: |
           git cat-file -e "$BASE_SHA^{commit}"
           git cat-file -e "$HEAD_SHA^{commit}"
-          gitleaks git --no-banner --redact --verbose --log-opts="$BASE_SHA..$HEAD_SHA" .
+          gitleaks git --no-banner --redact --verbose --log-opts="--diff-merges=first-parent $BASE_SHA..$HEAD_SHA" .
 
   cache-dependencies:
     runs-on: ubuntu-24.04
