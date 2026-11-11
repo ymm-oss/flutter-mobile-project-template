@@ -40,16 +40,13 @@ jobs:
           osv-scanner scan source --format markdown -L pubspec.lock -L bun.lock > "$path" || status=$?
           cat "$path"
 
-          if [ "$status" -eq 0 ]; then
-            exit 0
-          elif [ "$status" -ne 1 ]; then
+          if [ "$status" -eq 1 ]; then
+            echo "path=$path" >> "$GITHUB_OUTPUT"
+          elif [ "$status" -ne 0 ]; then
             exit "$status"
           fi
 
-          echo "path=$path" >> "$GITHUB_OUTPUT"
-
-      - name: Create or comment on the issue
-        if: ${{ steps.scan.outputs.path != '' }}
+      - name: Update the issue
         env:
           GH_TOKEN: ${{ github.token }}
           BODY_PATH: ${{ steps.scan.outputs.path }}
@@ -59,13 +56,24 @@ jobs:
           if [ "$(echo "$issue_number" | grep -c .)" -gt 1 ]; then
             echo "Multiple issues exist. Please check the issue."
             exit 1
-          elif [ -z "$issue_number" ]; then
+          fi
+
+          # 脆弱性が解消したら Issue を閉じる
+          if [ -z "$BODY_PATH" ]; then
+            if [ -n "$issue_number" ]; then
+              gh issue close "$issue_number" --comment "No vulnerabilities found."
+            fi
+            exit 0
+          fi
+
+          if [ -z "$issue_number" ]; then
             gh issue create --title "Fix vulnerabilities" --label "$ISSUE_LABEL" --body-file "$BODY_PATH"
             exit 0
           fi
 
-          # 前回の結果は最新のコメント、コメントがなければ Issue の本文にある
-          latest=$(gh issue view "$issue_number" --json body,comments --jq '(.comments | last.body) // .body')
+          # 前回の結果は Actions の最新のコメント、なければ Issue の本文にある
+          latest=$(gh issue view "$issue_number" --json body,comments \
+            --jq '([.comments[] | select(.author.login == "github-actions")] | last.body) // .body')
           if [ "$latest" == "$(cat "$BODY_PATH")" ]; then
             echo "The latest result is the same as the current result"
             exit 0
