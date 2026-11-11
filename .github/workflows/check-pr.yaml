@@ -97,6 +97,39 @@ jobs:
           zizmor --format sarif .github |
             reviewdog -f=sarif -name=zizmor -reporter=github-pr-review -filter-mode=nofilter -fail-level=any
 
+  check-secrets:
+    runs-on: ubuntu-slim
+    permissions:
+      contents: read
+    timeout-minutes: 5
+
+    steps:
+      # https://github.com/actions/checkout
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      # https://github.com/jdx/mise-action
+      - name: Install Mise dependencies
+        uses: jdx/mise-action@f5be966e4a917d54244728e6a5fdcd1d93a35e6c # v5.2.6
+        with:
+          install_args: "gitleaks"
+
+      # https://github.com/gitleaks/gitleaks
+      # 範囲のコミットがないと gitleaks は 0 件の検査で成功するため、先に確かめる。
+      - name: Run gitleaks
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          git cat-file -e "$BASE_SHA^{commit}"
+          git cat-file -e "$HEAD_SHA^{commit}"
+          gitleaks git --no-banner --redact --verbose --log-opts="$BASE_SHA..$HEAD_SHA" .
+
   cache-dependencies:
     runs-on: ubuntu-24.04
     permissions:
@@ -220,6 +253,7 @@ jobs:
       - skip-comment
       - check-actions
       - check-actions-security
+      - check-secrets
       - cache-dependencies
       - check
       - diff-gen
