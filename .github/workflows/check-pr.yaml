@@ -48,7 +48,7 @@ jobs:
           persist-credentials: false
 
       # https://github.com/marketplace/actions/actionlint-with-reviewdog
-      - uses: reviewdog/action-actionlint@5d802a8ebdcb24d712925118c3a4596f571d8fcd # v1.81.0
+      - uses: reviewdog/action-actionlint@619a81ec64ff8c0211cd6146eb2b21e8f1d7f440 # v1.81.1
         with:
           actionlint_flags: -ignore 'SC2153'
           fail_on_error: true
@@ -129,7 +129,7 @@ jobs:
       # https://github.com/dorny/test-reporter
       - name: Report test
         if: ${{ !cancelled() && steps.check_files.outputs.files_exists == 'true' && github.event.pull_request.head.repo.full_name == github.repository }}
-        uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2 # v3.0.0
+        uses: dorny/test-reporter@d1b5dff021aa968b288b02285a8bf47471c5928a # v3.2.0
         with:
           name: "flutter test"
           # https://github.com/mrmlnc/fast-glob の形式
