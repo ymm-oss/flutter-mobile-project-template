@@ -23,7 +23,7 @@ jobs:
   request-reviewers:
     needs:
       - count-reviewers
-    if: needs.count-reviewers.outputs.count == '0'
+    if: needs.count-reviewers.outputs.count == '0' && github.actor != 'dependabot[bot]'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
