@@ -189,7 +189,7 @@ Future<void> main() async {
 }
 ```
 
-エントリポイントが import するパッケージを `apps/app_preview/pubspec.yaml` の `dependencies` に追加します（`init` は `flutter_riverpod` だけを自動で追加します）。
+エントリポイントが import するパッケージのうち、`init` が追加しない `internal_design_ui` を `apps/app_preview/pubspec.yaml` の `dependencies` に追加します。
 
 ```sh
 cd apps/app_preview
