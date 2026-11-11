@@ -40,6 +40,8 @@ jobs:
           client-id: ${{ secrets.CLIENT_ID_OF_YMM_OSS_TEAM_REVIEW_REQUESTER }}
           private-key: ${{ secrets.APP_PRIVATE_KEY_OF_YMM_OSS_TEAM_REVIEW_REQUESTER }}
           # レビュー依頼に必要な権限だけをトークンに持たせる
+          # チームへのレビュー依頼では、チームを解決するために organization の members の読み取りが必要になる
+          permission-members: read
           permission-pull-requests: write
 
       - name: Request reviewers
