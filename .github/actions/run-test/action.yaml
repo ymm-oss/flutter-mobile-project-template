@@ -11,7 +11,7 @@ runs:
   steps:
 
     # composite action ではステップが失敗すると後続のステップが飛ばされるため、
-    # ここでは失敗させずに終了コードを記録し、レポートの後でジョブを失敗させる
+    # ここでは失敗させずに終了コードを記録し、最後のステップでジョブの成否を判定する
     - name: Run test
       id: test
       run: |
@@ -37,11 +37,10 @@ runs:
         # https://github.com/mrmlnc/fast-glob の形式
         path: "(apps|packages)/**/test_report.log"
         reporter: "flutter-json"
-        fail-on-error: "true"
+        fail-on-error: "false"
 
-    # コンパイルエラーなどで test_report.log が作られない場合も、終了コードで失敗を検知する
     - name: Fail on test failure
-      if: ${{ steps.test.outputs.exit-code != '0' }}
+      if: ${{ !cancelled() && steps.test.outputs.exit-code != '0' }}
       run: |
         echo "::error::Tests failed with exit code $EXIT_CODE"
         exit 1
