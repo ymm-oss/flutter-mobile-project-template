@@ -77,14 +77,14 @@ final class RouteDropdownMenu extends HookWidget {
             label: Text('Path'),
             border: OutlineInputBorder(),
           ),
+          keyboardType: TextInputType.url,
+          textInputAction: TextInputAction.go,
           maxLines: 2,
+          onSubmitted: router.go,
         ),
         const SizedBox.square(dimension: 16),
         ElevatedButton(
-          onPressed: () {
-            final path = pathEditController.text;
-            router.go(path);
-          },
+          onPressed: () => router.go(pathEditController.text),
           child: const Text('Go'),
         ),
       ],
