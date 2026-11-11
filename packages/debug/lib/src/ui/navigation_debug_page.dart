@@ -110,7 +110,7 @@ extension _ToPaths on List<RouteBase> {
             routes.addAll(childRouteBases.toPaths(path));
           }
         case ShellRoute() || StatefulShellRoute():
-          routes.addAll(routeBase.routes.toPaths());
+          routes.addAll(routeBase.routes.toPaths(parentPath));
       }
     }
     return routes;
