@@ -64,12 +64,10 @@ class Package {
     isDiscontinued: data['isDiscontinued'] as bool,
     isCurrentRetracted: data['isCurrentRetracted'] as bool,
     isCurrentAffectedByAdvisory: data['isCurrentAffectedByAdvisory'] as bool,
-    current: data['current'] == null
-        ? null
-        : Version.fromJson(data['current'] as Map<String, dynamic>),
-    upgradable: Version.fromJson(data['upgradable'] as Map<String, dynamic>),
-    resolvable: Version.fromJson(data['resolvable'] as Map<String, dynamic>),
-    latest: Version.fromJson(data['latest'] as Map<String, dynamic>),
+    current: Version.fromNullableJson(data['current']),
+    upgradable: Version.fromNullableJson(data['upgradable']),
+    resolvable: Version.fromNullableJson(data['resolvable']),
+    latest: Version.fromNullableJson(data['latest']),
   );
 
   final String package;
@@ -77,10 +75,13 @@ class Package {
   final bool isDiscontinued;
   final bool isCurrentRetracted;
   final bool isCurrentAffectedByAdvisory;
+
+  // dart pub outdated は、それぞれの解決結果にパッケージが含まれないときに null を返す。
+  // 例えば依存元の新しいバージョンがそのパッケージに依存しなくなると、upgradable や resolvable が null になる。
   final Version? current;
-  final Version upgradable;
-  final Version resolvable;
-  final Version latest;
+  final Version? upgradable;
+  final Version? resolvable;
+  final Version? latest;
 
   Map<String, dynamic> toJson() => {
     'package': package,
@@ -89,9 +90,9 @@ class Package {
     'isCurrentRetracted': isCurrentRetracted,
     'isCurrentAffectedByAdvisory': isCurrentAffectedByAdvisory,
     'current': current?.toJson(),
-    'upgradable': upgradable.toJson(),
-    'resolvable': resolvable.toJson(),
-    'latest': latest.toJson(),
+    'upgradable': upgradable?.toJson(),
+    'resolvable': resolvable?.toJson(),
+    'latest': latest?.toJson(),
   };
 }
 
@@ -101,6 +102,9 @@ class Version implements Comparable<Version> {
   factory fromJson(Map<String, dynamic> data) => Version(
     version: data['version'] as String,
   );
+
+  static Version? fromNullableJson(Object? data) =>
+      data == null ? null : Version.fromJson(data as Map<String, dynamic>);
 
   final String version;
 

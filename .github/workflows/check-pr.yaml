@@ -15,7 +15,7 @@ jobs:
       contents: read
 
   skip-comment:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     needs: changes
     if: ${{ needs.changes.outputs.any == 'false' }}
     permissions:
@@ -43,10 +43,12 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       # https://github.com/marketplace/actions/actionlint-with-reviewdog
-      - uses: reviewdog/action-actionlint@6fb7acc99f4a1008869fa8a0f09cfca740837d9d # v1.72.0
+      - uses: reviewdog/action-actionlint@5d802a8ebdcb24d712925118c3a4596f571d8fcd # v1.81.0
         with:
           actionlint_flags: -ignore 'SC2153'
           fail_on_error: true
@@ -63,7 +65,9 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Application Runtime
         uses: ./.github/actions/setup-application-runtime
@@ -83,7 +87,9 @@ jobs:
     steps:
       # https://github.com/actions/checkout
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Application Runtime
         uses: ./.github/actions/setup-application-runtime
@@ -109,13 +115,12 @@ jobs:
         run: dart run melos run check:debug_tree_shaking
 
       - name: Run test
-        id: test
         run: dart run melos run report:test --no-select
-        continue-on-error: true
 
       # https://github.com/andstor/file-existence-action
       - name: Check file existence
         id: check_files
+        if: ${{ !cancelled() }}
         uses: andstor/file-existence-action@558493d6c74bf472d87c84eab196434afc2fa029 # v3.1.0
         with:
           # https://github.com/isaacs/node-glob の形式
@@ -123,7 +128,7 @@ jobs:
 
       # https://github.com/dorny/test-reporter
       - name: Report test
-        if: ${{ steps.check_files.outputs.files_exists == 'true' && github.event.pull_request.head.repo.full_name == github.repository }}
+        if: ${{ !cancelled() && steps.check_files.outputs.files_exists == 'true' && github.event.pull_request.head.repo.full_name == github.repository }}
         uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2 # v3.0.0
         with:
           name: "flutter test"
@@ -131,13 +136,6 @@ jobs:
           path: "(apps|packages)/**/test_report.log"
           reporter: "flutter-json"
           fail-on-error: "true"
-
-      # fork からの PR ではレポートを作成できないため、テストの終了コードでジョブを失敗させる
-      - name: Fail on test failure (fork)
-        if: ${{ github.event.pull_request.head.repo.full_name != github.repository && steps.test.outcome == 'failure' }}
-        run: |
-          echo "::error::flutter test failed. See the 'Run test' step for details."
-          exit 1
 
   diff-gen:
     uses: ./.github/workflows/wc-check-diff.yaml
@@ -165,6 +163,9 @@ jobs:
 
   check-code-spell:
     uses: ./.github/workflows/wc-check-code-spell.yaml
+    permissions:
+      contents: read
+      pull-requests: write
     needs: changes
     if: ${{ needs.changes.outputs.spell == 'true' }}
 

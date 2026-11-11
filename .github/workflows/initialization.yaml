@@ -28,7 +28,9 @@ jobs:
     steps:
       # https://github.com/actions/checkout
       - name: Fetch sources
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Generate Matrix Data
         id: matrix
@@ -50,7 +52,9 @@ jobs:
     steps:
       # https://github.com/actions/checkout
       - name: Fetch sources
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Create Issue from File
         uses: peter-evans/create-issue-from-file@fca9117c27cdc29c6c4db3b86c48e4115a786710 # v6.0.0
@@ -71,7 +75,9 @@ jobs:
     steps:
       # https://github.com/actions/checkout
       - name: Fetch sources
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Cleanup Copilot Settings
         uses: ./.github/actions/cleanup-copilot-settings
@@ -105,7 +111,7 @@ jobs:
 
       # https://github.com/ad-m/github-push-action
       - name: Push changes
-        uses: ad-m/github-push-action@4cc74773234f74829a8c21bc4d69dd4be9cfa599 # v1.1.0
+        uses: ad-m/github-push-action@881a6320fdb16eb5318c5054f31c218aec2b324c # v1.3.0
         with:
           branch: main
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -117,4 +123,6 @@ jobs:
       #         This occurs when cleaning up a modified remote branch that remains in the stale state from `Fetch sources` step.
       - name: Check out latest state of original repository
         # https://github.com/actions/checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
