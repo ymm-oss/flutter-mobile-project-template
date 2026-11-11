@@ -22,4 +22,9 @@ if ! printf '%s\n' "$staged_files" | mise exec -- bun --bun run cspell lint --no
   result=1
 fi
 
+if ! mise exec -- gitleaks git --staged --no-banner --redact --verbose; then
+  echo "秘密情報が含まれています。コミットから取り除いてください。" >&2
+  result=1
+fi
+
 exit $result
