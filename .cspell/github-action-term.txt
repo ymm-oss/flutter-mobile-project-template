@@ -13,7 +13,6 @@ startswith
 webframeworks
 elif
 tonumber
-GHES
 sarif
 strenv
 zizmor
