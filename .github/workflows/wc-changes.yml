@@ -64,6 +64,7 @@ jobs:
               - '.github/actions/**/action.yaml'
               - '.github/workflows/*.yml'
               - '.github/workflows/*.yaml'
+              - '.github/zizmor.yml'
             dprint:
               - "**.json"
               - "**.jsonc"

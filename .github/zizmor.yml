@@ -1,0 +1,6 @@
+# https://docs.zizmor.sh/configuration/
+rules:
+  # `uses: $/...` の自己リポジトリ参照を勧める audit。
+  # actionlint（1.7.12 時点）は `$/...` を不正な形式として扱い、GHES でも使えないため、`./...` のままにする。
+  self-repository:
+    disable: true

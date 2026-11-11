@@ -58,6 +58,45 @@ jobs:
           level: error
           reporter: github-pr-review
 
+  check-actions-security:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write
+    needs: changes
+    if: ${{ needs.changes.outputs.actions == 'true' }}
+    timeout-minutes: 10
+
+    steps:
+      # https://github.com/actions/checkout
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # https://github.com/jdx/mise-action
+      - name: Install Mise dependencies
+        uses: jdx/mise-action@f5be966e4a917d54244728e6a5fdcd1d93a35e6c # v5.2.6
+        with:
+          install_args: "zizmor"
+
+      # https://github.com/reviewdog/action-setup
+      - name: Setup reviewdog
+        uses: reviewdog/action-setup@d8a7baabd7f3e8544ee4dbde3ee41d0011c3a93f # v1.5.0
+        with:
+          reviewdog_version: v0.21.2
+
+      # https://docs.zizmor.sh/
+      # 指摘の有無は reviewdog で判定するため、zizmor 自体は実行に失敗したときだけ落とす。
+      - name: Run zizmor
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ github.token }}
+        run: |
+          zizmor --format sarif --no-exit-codes .github |
+            reviewdog -f=sarif -name=zizmor -reporter=github-pr-review -filter-mode=nofilter -fail-level=any
+
   cache-dependencies:
     runs-on: ubuntu-24.04
     permissions:
@@ -173,6 +212,7 @@ jobs:
       - changes
       - skip-comment
       - check-actions
+      - check-actions-security
       - cache-dependencies
       - check
       - diff-gen
