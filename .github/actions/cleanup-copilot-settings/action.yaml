@@ -22,29 +22,40 @@ runs:
 
     - name: Install strip-json-comments-cli
       # https://www.npmjs.com/package/strip-json-comments-cli
-      run: npm install -g strip-json-comments-cli
+      # テンプレートから作ったリポジトリの初期化で一度だけ動き、この action ごと削除されるため、lockfile では管理しない
+      run: npm install -g strip-json-comments-cli@3.0.0 # zizmor: ignore[adhoc-packages]
       shell: sh
 
     - name: Strip comments from settings.json
-      run: strip-json-comments ${{ inputs.settings-json-path }} > ${{ inputs.temp-json-path }}
+      run: strip-json-comments "$SETTINGS_JSON_PATH" > "$TEMP_JSON_PATH"
       shell: sh
+      env:
+        SETTINGS_JSON_PATH: ${{ inputs.settings-json-path }}
+        TEMP_JSON_PATH: ${{ inputs.temp-json-path }}
 
     - name: Edit Json
       # https://github.com/jqlang/jq
       run: >
-        jq -n -f ${{ inputs.temp-json-path }} |
+        jq -n -f "$TEMP_JSON_PATH" |
         jq '
         ."github.copilot.enable" |= {"*": false} |
         ."github.copilot.editor.enableCodeActions" |= false |
         ."github.copilot.editor.enableAutoCompletions" |= false
         '
-        > ${{ inputs.settings-json-path }}
+        > "$SETTINGS_JSON_PATH"
       shell: sh
+      env:
+        SETTINGS_JSON_PATH: ${{ inputs.settings-json-path }}
+        TEMP_JSON_PATH: ${{ inputs.temp-json-path }}
 
     - name: Remove temp
-      run: rm ${{ inputs.temp-json-path }}
+      run: rm "$TEMP_JSON_PATH"
       shell: sh
+      env:
+        TEMP_JSON_PATH: ${{ inputs.temp-json-path }}
 
     - name: Show settings.json
-      run: cat ${{ inputs.settings-json-path }}
+      run: cat "$SETTINGS_JSON_PATH"
       shell: sh
+      env:
+        SETTINGS_JSON_PATH: ${{ inputs.settings-json-path }}
