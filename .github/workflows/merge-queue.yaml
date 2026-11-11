@@ -42,7 +42,7 @@ jobs:
           reporter: github-pr-review
 
   check-actions-security:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     permissions:
       contents: read
     needs: changes
