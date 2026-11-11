@@ -1,0 +1,30 @@
+name: Check vulnerabilities
+
+on:
+  workflow_call:
+
+jobs:
+  check-vulnerabilities:
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      # https://github.com/actions/checkout
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # https://github.com/jdx/mise-action
+      - name: Install Mise dependencies
+        uses: jdx/mise-action@f5be966e4a917d54244728e6a5fdcd1d93a35e6c # v5.2.6
+        with:
+          install_args: "osv-scanner"
+
+      # https://google.github.io/osv-scanner/
+      - name: Run OSV-Scanner
+        shell: bash
+        run: |
+          osv-scanner scan source --format markdown -L pubspec.lock -L bun.lock |
+            tee -a "$GITHUB_STEP_SUMMARY"

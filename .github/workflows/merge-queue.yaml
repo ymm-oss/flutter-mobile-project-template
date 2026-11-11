@@ -154,6 +154,13 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.ai_skills == 'true' }}
 
+  check-vulnerabilities:
+    uses: ./.github/workflows/wc-check-vulnerabilities.yaml
+    permissions:
+      contents: read
+    needs: changes
+    if: ${{ needs.changes.outputs.vulnerabilities == 'true' }}
+
   status-check:
     runs-on: ubuntu-24.04
     needs:
@@ -164,6 +171,7 @@ jobs:
       - check
       - diff-gen
       - check-ai-skills
+      - check-vulnerabilities
     permissions: {}
     if: always()
     steps:
