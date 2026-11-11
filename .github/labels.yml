@@ -39,6 +39,10 @@
   color: "0e8a16"
   description: "Packages that need to be updated"
 
+- name: "vulnerability"
+  color: "b60205"
+  description: "Packages with known vulnerabilities"
+
 # <!-- This is an auto-generated label -->
 - name: "@apps/catalog"
   color: d4f227
