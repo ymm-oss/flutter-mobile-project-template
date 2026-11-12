@@ -117,7 +117,7 @@ jobs:
       - name: Run test
         uses: ./.github/actions/run-test
         with:
-          # fork からの PR では checks: write がないため、レポートを飛ばす
+          # fork からの PR ではレポートを飛ばす
           report: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
 
   diff-gen:
