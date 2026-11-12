@@ -1,0 +1,73 @@
+name: Check vulnerabilities
+
+on:
+  workflow_call:
+
+jobs:
+  check-vulnerabilities:
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      # https://github.com/actions/checkout
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # 既存の脆弱性は週次の Issue で追うため、ベースにない脆弱性だけで落とす。
+      - name: Checkout base
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha }}
+          path: base
+          sparse-checkout: |
+            pubspec.lock
+            bun.lock
+            osv-scanner.toml
+          sparse-checkout-cone-mode: false
+
+      # https://github.com/jdx/mise-action
+      - name: Install Mise dependencies
+        uses: jdx/mise-action@f5be966e4a917d54244728e6a5fdcd1d93a35e6c # v5.2.6
+        with:
+          install_args: "osv-scanner"
+
+      # https://google.github.io/osv-scanner/output/#return-codes
+      - name: Run OSV-Scanner
+        shell: bash
+        run: |
+          scan() {
+            status=0
+            osv-scanner scan source --format json -L "$1/pubspec.lock" -L "$1/bun.lock" > "$2" || status=$?
+            if [ "$status" -gt 1 ]; then
+              exit "$status"
+            fi
+          }
+          scan base "$RUNNER_TEMP/base.json"
+          scan . "$RUNNER_TEMP/head.json"
+
+          new=$(jq -r --slurpfile base "$RUNNER_TEMP/base.json" '
+            def findings: [.results[]?.packages[]? | .package as $p | .vulnerabilities[]?
+              | {ecosystem: $p.ecosystem, name: $p.name, version: $p.version, id}];
+            ($base[0] | findings | map({ecosystem, name, id})) as $known
+            | findings[]
+            | select({ecosystem, name, id} as $k | any($known[]; . == $k) | not)
+            | "| \(.ecosystem) | \(.name) | \(.version) | [\(.id)](https://osv.dev/vulnerability/\(.id)) |"
+          ' "$RUNNER_TEMP/head.json")
+
+          if [ -z "$new" ]; then
+            echo "No new vulnerabilities found." | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          {
+            echo "## New vulnerabilities"
+            echo
+            echo "| Ecosystem | Package | Version | ID |"
+            echo "| --- | --- | --- | --- |"
+            echo "$new"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+          exit 1

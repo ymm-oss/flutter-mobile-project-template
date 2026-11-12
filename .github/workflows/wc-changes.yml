@@ -21,6 +21,8 @@ on:
         value: ${{ jobs.changes.outputs.ai_skills }}
       dependencies:
         value: ${{ jobs.changes.outputs.dependencies }}
+      vulnerabilities:
+        value: ${{ jobs.changes.outputs.vulnerabilities }}
 
 jobs:
   changes:
@@ -39,6 +41,7 @@ jobs:
       spell: ${{ steps.filter.outputs.spell }}
       ai_skills: ${{ steps.filter.outputs.ai_skills }}
       dependencies: ${{ steps.needs.outputs.dependencies }}
+      vulnerabilities: ${{ steps.filter.outputs.vulnerabilities }}
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: Checkout
@@ -107,6 +110,13 @@ jobs:
               - "scripts/sync-ai-skills.sh"
               - ".gitattributes"
               - ".github/workflows/wc-check-ai-skills.yaml"
+            vulnerabilities:
+              - "pubspec.lock"
+              - "bun.lock"
+              - "osv-scanner.toml"
+              - ".github/workflows/wc-check-vulnerabilities.yaml"
+              - "mise.toml"
+              - "mise.lock"
 
       - name: Check for dependencies changes
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0

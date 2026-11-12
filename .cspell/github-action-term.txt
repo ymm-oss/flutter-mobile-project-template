@@ -16,3 +16,4 @@ tonumber
 sarif
 strenv
 zizmor
+slurpfile

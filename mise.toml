@@ -7,6 +7,7 @@ flutter = "3.47.9"
 dprint = "0.49.1"
 jq = "1.8.2"
 zizmor = "1.32.0"
+osv-scanner = "2.7.1"
 
 [settings]
 # Platforms recorded in mise.lock: CI runners, Linux arm64, and Apple Silicon / Intel Macs.
