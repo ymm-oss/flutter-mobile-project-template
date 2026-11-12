@@ -115,6 +115,8 @@ jobs:
               - "bun.lock"
               - "osv-scanner.toml"
               - ".github/workflows/wc-check-vulnerabilities.yaml"
+              - "mise.toml"
+              - "mise.lock"
 
       - name: Check for dependencies changes
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
