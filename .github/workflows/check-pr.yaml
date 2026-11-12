@@ -115,27 +115,10 @@ jobs:
         run: dart run melos run check:debug_tree_shaking
 
       - name: Run test
-        run: dart run melos run report:test --no-select
-
-      # https://github.com/andstor/file-existence-action
-      - name: Check file existence
-        id: check_files
-        if: ${{ !cancelled() }}
-        uses: andstor/file-existence-action@558493d6c74bf472d87c84eab196434afc2fa029 # v3.1.0
+        uses: ./.github/actions/run-test
         with:
-          # https://github.com/isaacs/node-glob の形式
-          files: "**/test_report.log"
-
-      # https://github.com/dorny/test-reporter
-      - name: Report test
-        if: ${{ !cancelled() && steps.check_files.outputs.files_exists == 'true' && github.event.pull_request.head.repo.full_name == github.repository }}
-        uses: dorny/test-reporter@d1b5dff021aa968b288b02285a8bf47471c5928a # v3.2.0
-        with:
-          name: "flutter test"
-          # https://github.com/mrmlnc/fast-glob の形式
-          path: "(apps|packages)/**/test_report.log"
-          reporter: "flutter-json"
-          fail-on-error: "true"
+          # fork からの PR ではレポートを飛ばす
+          report: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
 
   diff-gen:
     uses: ./.github/workflows/wc-check-diff.yaml
