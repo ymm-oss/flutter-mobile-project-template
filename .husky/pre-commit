@@ -7,7 +7,7 @@ result=0
 dart_files=$(printf '%s\n' "$staged_files" | grep -E '\.dart$' | grep -vE '(^|/)gen/|\.(g|freezed|gen|g\.theme)\.dart$' || true)
 if [ -n "$dart_files" ]; then
   if ! printf '%s\n' "$dart_files" | tr '\n' '\0' | xargs -0 mise exec -- dart format --output=none --set-exit-if-changed; then
-    echo "dart format の違反があります。melos run format で直してください。" >&2
+    echo "dart format の違反があります。表示されたファイルを dart format で直してください。" >&2
     result=1
   fi
 fi
