@@ -23,6 +23,8 @@ env:
   DEPLOY_DIR: deploy
   CURRENT_BRANCH: ${{ github.head_ref || github.ref_name }}
 
+permissions: {}
+
 jobs:
   build:
     permissions:
