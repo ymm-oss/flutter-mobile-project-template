@@ -37,7 +37,7 @@ jobs:
         run: |
           path="$RUNNER_TEMP/vulnerabilities.md"
           status=0
-          osv-scanner scan source --format markdown -L pubspec.lock -L bun.lock > "$path" || status=$?
+          osv-scanner scan source --verbosity warn --format markdown -L pubspec.lock -L bun.lock > "$path" || status=$?
           cat "$path"
 
           if [ "$status" -eq 1 ]; then
