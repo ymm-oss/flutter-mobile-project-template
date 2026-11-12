@@ -10,8 +10,12 @@ runs:
   using: "composite"
   steps:
     - name: Show files to be removed
-      run: cat ${{ inputs.remove-txt-files-path }}
+      run: cat "$REMOVE_TXT_FILES_PATH"
       shell: bash
+      env:
+        REMOVE_TXT_FILES_PATH: ${{ inputs.remove-txt-files-path }}
     - name: Remove unnecessary files
-      run: cat ${{ inputs.remove-txt-files-path }} | xargs rm -rf
+      run: cat "$REMOVE_TXT_FILES_PATH" | xargs rm -rf
       shell: bash
+      env:
+        REMOVE_TXT_FILES_PATH: ${{ inputs.remove-txt-files-path }}

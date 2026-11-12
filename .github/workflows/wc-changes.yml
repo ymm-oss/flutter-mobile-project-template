@@ -64,6 +64,10 @@ jobs:
               - '.github/actions/**/action.yaml'
               - '.github/workflows/*.yml'
               - '.github/workflows/*.yaml'
+              - '.github/zizmor.yml'
+              # zizmor のバージョンを上げたときも検査する
+              - 'mise.toml'
+              - 'mise.lock'
             dprint:
               - "**.json"
               - "**.jsonc"
@@ -107,9 +111,11 @@ jobs:
       - name: Check for dependencies changes
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         id: needs
+        env:
+          CHANGES: ${{ steps.filter.outputs.changes }}
         with:
           script: |
-            const changes = ${{ steps.filter.outputs.changes }};
+            const changes = JSON.parse(process.env.CHANGES);
 
             // 依存関係の解決が必要な変更箇所
             const dependencies = [

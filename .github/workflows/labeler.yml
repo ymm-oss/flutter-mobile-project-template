@@ -1,11 +1,15 @@
 name: "Pull Request Labeler"
 
 on:
-  pull_request_target:
+  # fork からの PR にもラベルを付けるため、書き込み権限のあるトークンが使える pull_request_target で動かす。
+  # PR のコードは checkout も実行もせず、ラベルの設定はデフォルトブランチのものを読む。
+  pull_request_target: # zizmor: ignore[dangerous-triggers]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
+
+permissions: {}
 
 jobs:
   triage:

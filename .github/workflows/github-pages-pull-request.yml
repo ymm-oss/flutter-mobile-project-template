@@ -23,6 +23,8 @@ env:
   DEPLOY_DIR: deploy
   CURRENT_BRANCH: ${{ github.head_ref || github.ref_name }}
 
+permissions: {}
+
 jobs:
   build:
     permissions:
@@ -42,13 +44,15 @@ jobs:
         uses: ./.github/actions/setup-application-runtime
 
       - name: Build web
-        run: flutter build web --release --base-href /${{ github.event.repository.name }}/${{ env.CURRENT_BRANCH }}/
+        run: flutter build web --release --base-href "/$REPOSITORY_NAME/$CURRENT_BRANCH/"
         working-directory: ${{ env.PROJECT_DIR }}
+        env:
+          REPOSITORY_NAME: ${{ github.event.repository.name }}
 
       - name: Create & Copy combined deployment directory
         run: |
-          mkdir -p ${{ env.DEPLOY_DIR }}/${{ env.CURRENT_BRANCH }}/
-          cp -R ${{ env.PROJECT_DIR }}/build/web/. ${{ env.DEPLOY_DIR }}/${{ env.CURRENT_BRANCH }}/
+          mkdir -p "$DEPLOY_DIR/$CURRENT_BRANCH/"
+          cp -R "$PROJECT_DIR/build/web/." "$DEPLOY_DIR/$CURRENT_BRANCH/"
 
       - name: Calculate 3 days ago date (UTC)
         id: date_calc
@@ -57,17 +61,16 @@ jobs:
       - name: Get run IDs from the last 3 days for the triggering workflow
         id: get_run_ids
         run: |
-          START_DATE="${{ steps.date_calc.outputs.start_date }}"
-          echo "Fetching runs for workflow: '${{ github.workflow }}' created since $START_DATE"
+          echo "Fetching runs for workflow: '$GITHUB_WORKFLOW' created since $START_DATE"
 
           # gh run list で対象ワークフローの過去3日間の成功した実行IDを取得
           # 現在のデプロイワークフロー自身のrun_idは除外
           RUN_IDS=$(gh run list \
-            --workflow "${{ github.workflow }}" \
+            --workflow "$GITHUB_WORKFLOW" \
             --status success \
             --created ">=$START_DATE" \
             --json databaseId,headBranch,createdAt \
-            | jq  -r --arg current_branch "${{ env.CURRENT_BRANCH }}" '
+            | jq  -r --arg current_branch "$CURRENT_BRANCH" '
                 group_by(.headBranch) |
                 map(max_by(.createdAt)) |
                 map(select(.headBranch != $current_branch)) |
@@ -75,7 +78,7 @@ jobs:
           ')
 
           if [ -z "$RUN_IDS" ]; then
-            echo "No successful runs found in the last 3 days for workflow: '${{ github.workflow }}'."
+            echo "No successful runs found in the last 3 days for workflow: '$GITHUB_WORKFLOW'."
             exit 0 # 実行IDが見つからなければ、ジョブを成功として終了
           fi
           echo "Found run IDs and their branches:"
@@ -88,13 +91,14 @@ jobs:
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # gh CLI認証用
+          START_DATE: ${{ steps.date_calc.outputs.start_date }}
 
       - name: Download artifacts for each run ID
         run: |
           mkdir -p _site # GitHub Pagesのルートディレクトリ
 
           # 出力された各行 (run_id branch_name) をループ処理
-          echo '${{ steps.get_run_ids.outputs.run_data }}' | jq -r '.[] | "\(.run_id) \(.branch)"' | while read -r run_id branch; do
+          echo "$RUN_DATA" | jq -r '.[] | "\(.run_id) \(.branch)"' | while read -r run_id branch; do
             if [ -n "$run_id" ] && [ -n "$branch" ]; then
               echo "Downloading artifact for run ID: $run_id from branch: $branch"
               DOWNLOAD_PATH="dl_artifact/$branch"
@@ -109,7 +113,7 @@ jobs:
               # アーティファクトを解凍して展開
               if [ -f "$DOWNLOAD_PATH/github-pages/artifact.tar" ]; then
                 echo "Extracting artifact.tar to $DOWNLOAD_PATH"
-                tar -xf "$DOWNLOAD_PATH/github-pages/artifact.tar" -C "${{ env.DEPLOY_DIR }}"
+                tar -xf "$DOWNLOAD_PATH/github-pages/artifact.tar" -C "$DEPLOY_DIR"
                 rm -rf "$DOWNLOAD_PATH/github-pages" # 解凍後のtarファイルとディレクトリを削除
               else
                 echo "Warning: artifact.tar not found in $DOWNLOAD_PATH/github-pages/"
@@ -120,6 +124,7 @@ jobs:
           done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # gh CLI認証用
+          RUN_DATA: ${{ steps.get_run_ids.outputs.run_data }}
 
       # https://github.com/actions/upload-pages-artifact
       - name: Upload static files as artifact

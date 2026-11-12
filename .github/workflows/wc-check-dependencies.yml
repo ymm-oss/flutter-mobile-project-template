@@ -26,7 +26,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           LOCK_PATH: pubspec.lock
         run: |
-          baseRefName="${{ github.base_ref }}"
+          baseRefName="$GITHUB_BASE_REF"
 
           echo "The base branch is $baseRefName"
 
@@ -53,6 +53,8 @@ jobs:
 
       - name: Comment
         if: ${{ steps.dependencies.outputs.path != '' }}
-        run: gh pr comment "${{ github.event.pull_request.number }}" --body-file "${{ steps.dependencies.outputs.path }}"
+        run: gh pr comment "$PR_NUMBER" --body-file "$BODY_PATH"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BODY_PATH: ${{ steps.dependencies.outputs.path }}
