@@ -1,0 +1,82 @@
+name: Issue-Vulnerabilities
+
+on:
+  schedule:
+    - cron: "0 0 * * 1" # 日本標準時間 毎週月曜日の朝9:00
+  workflow_dispatch:
+
+permissions: {}
+
+env:
+  ISSUE_LABEL: vulnerability
+
+jobs:
+  vulnerabilities:
+    runs-on: ubuntu-slim
+    permissions:
+      contents: read
+      issues: write
+    timeout-minutes: 5
+    steps:
+      # https://github.com/actions/checkout
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # https://github.com/jdx/mise-action
+      - name: Install Mise dependencies
+        uses: jdx/mise-action@f5be966e4a917d54244728e6a5fdcd1d93a35e6c # v5.2.6
+        with:
+          install_args: "osv-scanner"
+
+      # https://google.github.io/osv-scanner/output/#return-codes
+      # 終了コード 1 は脆弱性が見つかったことを表すため、それ以外の失敗だけで落とす。
+      - name: Run OSV-Scanner
+        id: scan
+        run: |
+          path="$RUNNER_TEMP/vulnerabilities.md"
+          status=0
+          osv-scanner scan source --verbosity warn --format markdown -L pubspec.lock -L bun.lock > "$path" || status=$?
+          cat "$path"
+
+          if [ "$status" -eq 1 ]; then
+            echo "path=$path" >> "$GITHUB_OUTPUT"
+          elif [ "$status" -ne 0 ]; then
+            exit "$status"
+          fi
+
+      - name: Update the issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BODY_PATH: ${{ steps.scan.outputs.path }}
+        run: |
+          issue_number=$(gh issue list --label "$ISSUE_LABEL" --json number --jq '.[].number')
+
+          if [ "$(echo "$issue_number" | grep -c .)" -gt 1 ]; then
+            echo "Multiple issues exist. Please check the issue."
+            exit 1
+          fi
+
+          # 脆弱性が解消したら Issue を閉じる
+          if [ -z "$BODY_PATH" ]; then
+            if [ -n "$issue_number" ]; then
+              gh issue close "$issue_number" --comment "No vulnerabilities found."
+            fi
+            exit 0
+          fi
+
+          if [ -z "$issue_number" ]; then
+            gh issue create --title "Fix vulnerabilities" --label "$ISSUE_LABEL" --body-file "$BODY_PATH"
+            exit 0
+          fi
+
+          # 前回の結果は Actions の最新のコメント、なければ Issue の本文にある
+          latest=$(gh issue view "$issue_number" --json body,comments \
+            --jq '([.comments[] | select(.author.login == "github-actions")] | last.body) // .body')
+          if [ "$latest" == "$(cat "$BODY_PATH")" ]; then
+            echo "The latest result is the same as the current result"
+            exit 0
+          fi
+
+          gh issue comment "$issue_number" --body-file "$BODY_PATH"

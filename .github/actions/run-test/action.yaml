@@ -1,0 +1,34 @@
+name: "Run Test"
+description: "Run tests of all packages and report the results"
+
+inputs:
+  report:
+    description: "Whether to report the test results to the job summary"
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run test
+      run: dart run melos run report:test --no-select
+      shell: bash
+
+    # https://github.com/andstor/file-existence-action
+    - name: Check file existence
+      id: check_files
+      if: ${{ !cancelled() }}
+      uses: andstor/file-existence-action@558493d6c74bf472d87c84eab196434afc2fa029 # v3.1.0
+      with:
+        # https://github.com/isaacs/node-glob の形式
+        files: "**/test_report.log"
+
+    # https://github.com/dorny/test-reporter
+    - name: Report test
+      if: ${{ !cancelled() && inputs.report == 'true' && steps.check_files.outputs.files_exists == 'true' }}
+      uses: dorny/test-reporter@d1b5dff021aa968b288b02285a8bf47471c5928a # v3.2.0
+      with:
+        name: "flutter test"
+        # https://github.com/mrmlnc/fast-glob の形式
+        path: "(apps|packages)/**/test_report.log"
+        reporter: "flutter-json"
+        fail-on-error: "true"

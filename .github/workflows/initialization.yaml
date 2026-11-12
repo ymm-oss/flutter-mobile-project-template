@@ -5,15 +5,20 @@ on:
     branches:
       - main
 
+permissions: {}
+
 jobs:
   condition:
     runs-on: ubuntu-24.04
+    permissions: {}
     outputs:
       execute: ${{ steps.condition.outputs.execute }}
     steps:
       - id: condition
+        env:
+          REPOSITORY_NAME: ${{ github.event.repository.name }}
         run: |
-          if [[ "${{ github.event.repository.name }}" != "flutter-mobile-project-template" ]]; then
+          if [[ "$REPOSITORY_NAME" != "flutter-mobile-project-template" ]]; then
             echo "execute=true" >> "$GITHUB_OUTPUT"
           else
             echo "execute=false" >> "$GITHUB_OUTPUT"
@@ -21,6 +26,8 @@ jobs:
 
   generate-matrix:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     needs: condition
     if: needs.condition.outputs.execute == 'true'
     outputs:

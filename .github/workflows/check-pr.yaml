@@ -7,6 +7,8 @@ concurrency:
   group: check-pr-${{ github.ref }}
   cancel-in-progress: true
 
+permissions: {}
+
 jobs:
   changes:
     uses: ./.github/workflows/wc-changes.yml
@@ -48,7 +50,7 @@ jobs:
           persist-credentials: false
 
       # https://github.com/marketplace/actions/actionlint-with-reviewdog
-      - uses: reviewdog/action-actionlint@5d802a8ebdcb24d712925118c3a4596f571d8fcd # v1.81.0
+      - uses: reviewdog/action-actionlint@619a81ec64ff8c0211cd6146eb2b21e8f1d7f440 # v1.81.1
         with:
           actionlint_flags: -ignore 'SC2153'
           fail_on_error: true
@@ -56,8 +58,83 @@ jobs:
           level: error
           reporter: github-pr-review
 
+  check-actions-security:
+    runs-on: ubuntu-slim
+    permissions:
+      contents: read
+      pull-requests: write
+    needs: changes
+    if: ${{ needs.changes.outputs.actions == 'true' }}
+    timeout-minutes: 10
+
+    steps:
+      # https://github.com/actions/checkout
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # https://github.com/jdx/mise-action
+      - name: Install Mise dependencies
+        uses: jdx/mise-action@f5be966e4a917d54244728e6a5fdcd1d93a35e6c # v5.2.6
+        with:
+          install_args: "zizmor"
+
+      # https://github.com/reviewdog/action-setup
+      - name: Setup reviewdog
+        uses: reviewdog/action-setup@d8a7baabd7f3e8544ee4dbde3ee41d0011c3a93f # v1.5.0
+        with:
+          reviewdog_version: v0.21.2
+
+      # https://docs.zizmor.sh/
+      # SARIF で出力すると zizmor は指摘があっても失敗しないため、指摘の有無は reviewdog で判定する。
+      - name: Run zizmor
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ github.token }}
+        run: |
+          zizmor --format sarif .github |
+            reviewdog -f=sarif -name=zizmor -reporter=github-pr-review -filter-mode=nofilter -fail-level=any
+
+  check-secrets:
+    runs-on: ubuntu-slim
+    permissions:
+      contents: read
+    timeout-minutes: 5
+
+    steps:
+      # https://github.com/actions/checkout
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      # https://github.com/jdx/mise-action
+      - name: Install Mise dependencies
+        uses: jdx/mise-action@f5be966e4a917d54244728e6a5fdcd1d93a35e6c # v5.2.6
+        with:
+          install_args: "gitleaks"
+
+      # https://github.com/gitleaks/gitleaks
+      # 範囲を解決できず git log が失敗しても gitleaks は終了コード 0 で成功するため、BASE と HEAD のコミットがあることを先に確かめる。
+      # git log -p はマージコミットの差分を出さないため、自動マージの結果との差分（競合の解消など）を検査する。
+      - name: Run gitleaks
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          git cat-file -e "$BASE_SHA^{commit}"
+          git cat-file -e "$HEAD_SHA^{commit}"
+          gitleaks git --no-banner --redact --verbose --log-opts="--diff-merges=remerge $BASE_SHA..$HEAD_SHA" .
+
   cache-dependencies:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     needs: changes
     if: ${{ needs.changes.outputs.dependencies == 'true' }}
     timeout-minutes: 10
@@ -115,30 +192,15 @@ jobs:
         run: dart run melos run check:debug_tree_shaking
 
       - name: Run test
-        run: dart run melos run report:test --no-select
-
-      # https://github.com/andstor/file-existence-action
-      - name: Check file existence
-        id: check_files
-        if: ${{ !cancelled() }}
-        uses: andstor/file-existence-action@558493d6c74bf472d87c84eab196434afc2fa029 # v3.1.0
+        uses: ./.github/actions/run-test
         with:
-          # https://github.com/isaacs/node-glob の形式
-          files: "**/test_report.log"
-
-      # https://github.com/dorny/test-reporter
-      - name: Report test
-        if: ${{ !cancelled() && steps.check_files.outputs.files_exists == 'true' && github.event.pull_request.head.repo.full_name == github.repository }}
-        uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2 # v3.0.0
-        with:
-          name: "flutter test"
-          # https://github.com/mrmlnc/fast-glob の形式
-          path: "(apps|packages)/**/test_report.log"
-          reporter: "flutter-json"
-          fail-on-error: "true"
+          # fork からの PR ではレポートを飛ばす
+          report: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
 
   diff-gen:
     uses: ./.github/workflows/wc-check-diff.yaml
+    permissions:
+      contents: read
     with:
       diff-packages: true
     needs:
@@ -158,6 +220,8 @@ jobs:
 
   check-style-dprint:
     uses: ./.github/workflows/wc-check-style-dprint.yaml
+    permissions:
+      contents: read
     needs: changes
     if: ${{ needs.changes.outputs.dprint == 'true' }}
 
@@ -171,8 +235,17 @@ jobs:
 
   check-ai-skills:
     uses: ./.github/workflows/wc-check-ai-skills.yaml
+    permissions:
+      contents: read
     needs: changes
     if: ${{ needs.changes.outputs.ai_skills == 'true' }}
+
+  check-vulnerabilities:
+    uses: ./.github/workflows/wc-check-vulnerabilities.yaml
+    permissions:
+      contents: read
+    needs: changes
+    if: ${{ needs.changes.outputs.vulnerabilities == 'true' }}
 
   status-check:
     runs-on: ubuntu-24.04
@@ -180,6 +253,8 @@ jobs:
       - changes
       - skip-comment
       - check-actions
+      - check-actions-security
+      - check-secrets
       - cache-dependencies
       - check
       - diff-gen
@@ -187,6 +262,7 @@ jobs:
       - check-style-dprint
       - check-code-spell
       - check-ai-skills
+      - check-vulnerabilities
     permissions: {}
     if: always()
     steps:
