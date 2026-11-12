@@ -119,7 +119,7 @@ jobs:
           install_args: "gitleaks"
 
       # https://github.com/gitleaks/gitleaks
-      # 範囲のコミットがないと gitleaks は 0 件の検査で成功するため、先に確かめる。
+      # 範囲を解決できず git log が失敗しても gitleaks は終了コード 0 で成功するため、BASE と HEAD のコミットがあることを先に確かめる。
       # git log -p はマージコミットの差分を出さないため、自動マージの結果との差分（競合の解消など）を検査する。
       - name: Run gitleaks
         shell: bash
