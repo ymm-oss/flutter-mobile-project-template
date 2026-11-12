@@ -43,6 +43,45 @@
   color: "b60205"
   description: "Packages with known vulnerabilities"
 
+# Labels used by issue templates
+- name: "feature"
+  color: "1d76db"
+  description: "New feature request"
+
+- name: "improve"
+  color: "5319e7"
+  description: "Improvement to existing features"
+
+- name: "triage"
+  color: "fbca04"
+  description: "Needs to be triaged"
+
+# Labels used by initialization issues
+- name: "initialization"
+  color: "c5def5"
+  description: "Initial setup task for a project created from the template"
+
+- name: "optional"
+  color: "bfdadc"
+  description: "Optional initial setup task"
+
+- name: "required"
+  color: "d93f0b"
+  description: "Required initial setup task"
+
+- name: "ai-support"
+  color: "006b75"
+  description: "Initial setup task for AI development support"
+
+# Labels used by Dependabot
+- name: "dependencies"
+  color: "0366d6"
+  description: "Pull requests that update a dependency file"
+
+- name: "github_actions"
+  color: "000000"
+  description: "Pull requests that update GitHub Actions code"
+
 # <!-- This is an auto-generated label -->
 - name: "@apps/catalog"
   color: d4f227
