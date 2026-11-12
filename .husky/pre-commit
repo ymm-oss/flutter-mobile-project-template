@@ -1,4 +1,4 @@
-staged_files=$(git diff --cached --name-only --diff-filter=ACMR)
+staged_files=$(git -c core.quotePath=false diff --cached --name-only --diff-filter=ACMR)
 [ -n "$staged_files" ] || exit 0
 
 result=0
