@@ -20,6 +20,7 @@ labels: initialization
 | `bug` / `feature` / `improve` / `triage`                                                                                | [Issue テンプレート] で Issue を作成したときに付く                             |
 | `initialization` / `required` / `optional` / `ai-support`                                                               | 初期セットアップの Issue（この Issue など）に付く                              |
 | `package_update`                                                                                                        | [.github/workflows/issue-dependabot.yml] が作成する Issue に付く               |
+| `vulnerability`                                                                                                         | [.github/workflows/issue-vulnerabilities.yaml] が作成する Issue に付く         |
 | `dependencies` / `github_actions`                                                                                       | Dependabot（[.github/dependabot.yaml]）が作成する Pull Request に付く          |
 | `@apps/...` / `@packages/...` などのパッケージ名                                                                        | [.github/labeler.yml] によって、変更したパッケージに応じて Pull Request に付く |
 | `documentation` / `duplicate` / `enhancement` / `good first issue` / `help wanted` / `invalid` / `question` / `wontfix` | GitHub のデフォルトのラベル                                                    |
@@ -47,4 +48,5 @@ dart run melos run gen:labeler
 [.github/dependabot.yaml]: /.github/dependabot.yaml
 [.github/workflows/labels.yml]: /.github/workflows/labels.yml
 [.github/workflows/issue-dependabot.yml]: /.github/workflows/issue-dependabot.yml
+[.github/workflows/issue-vulnerabilities.yaml]: /.github/workflows/issue-vulnerabilities.yaml
 [Issue テンプレート]: /.github/ISSUE_TEMPLATE
