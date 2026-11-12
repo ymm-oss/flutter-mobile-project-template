@@ -87,14 +87,14 @@ jobs:
           reviewdog_version: v0.21.2
 
       # https://docs.zizmor.sh/
-      # 指摘の有無は reviewdog で判定するため、zizmor 自体は実行に失敗したときだけ落とす。
+      # SARIF で出力すると zizmor は指摘があっても失敗しないため、指摘の有無は reviewdog で判定する。
       - name: Run zizmor
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
           REVIEWDOG_GITHUB_API_TOKEN: ${{ github.token }}
         run: |
-          zizmor --format sarif --no-exit-codes .github |
+          zizmor --format sarif .github |
             reviewdog -f=sarif -name=zizmor -reporter=github-pr-review -filter-mode=nofilter -fail-level=any
 
   cache-dependencies:
