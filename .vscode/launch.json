@@ -15,6 +15,16 @@
       ]
     },
     {
+      "name": "dev-debug-marionette",
+      "cwd": "apps/app",
+      "request": "launch",
+      "program": "lib/main_marionette.dart",
+      "type": "dart",
+      "args": [
+        "--dart-define-from-file=flavor/dev.json"
+      ]
+    },
+    {
       "name": "stg-debug",
       "cwd": "apps/app",
       "request": "launch",
@@ -39,6 +49,13 @@
       "cwd": "apps/catalog",
       "request": "launch",
       "program": "lib/main.dart",
+      "type": "dart"
+    },
+    {
+      "name": "ui-catalog-marionette",
+      "cwd": "apps/catalog",
+      "request": "launch",
+      "program": "lib/main_marionette.dart",
       "type": "dart"
     },
     {

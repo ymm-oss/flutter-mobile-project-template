@@ -14,6 +14,7 @@ MCPサーバーは、特定のドメインやサービス（Git、GitHub等）�
 
 - [GitHub MCP Server](#github-model-context-protocol-mcp-server)
 - [git MCP Server](#git-model-context-protocol-mcp-server)
+- [Marionette MCP Server](#marionette-mcp-server)
 
 の設定方法を記載する。
 
@@ -88,10 +89,68 @@ Git MCP Server はAIアシスタントからGitコマンドを操作するため
    ※ 本ドキュメントでは、[2025.4.24] tagを指定し`clone`するが、状況に応じて臨機応変にtagを更新してください
 2. `<GIT_DOCKER_PATH>`を1でcloneしたリポジトリの`servers/src/git/Dockerfile`までの相対パスもしくは絶対パスを指定する
 
+## Marionette MCP Server
+
+### Marionette MCP Server 概要
+
+[Marionette MCP]は、DebugまたはProfileモードで実行中のFlutterアプリにVM Service経由で接続し、AIアシスタントから次の操作を可能にします。
+
+- 画面上の対話可能なWidgetと状態の取得
+- テキストやWidget種別を使ったタップ、スクロール、文字入力
+- スクリーンショット、ログ、操作レポートの取得
+- Hot reload、Hot restart
+
+Releaseビルドや自動回帰テストの代替には使用しません。再現性が必要なシナリオはWidget testまたはIntegration testとして実装してください。
+
+### セットアップ
+
+1. MCP Serverをインストールする。
+
+   ```shell
+   mise exec -- dart pub global activate marionette_mcp 0.7.0
+   ```
+
+2. [mcp.sample.json]を`.cursor/mcp.json`へコピーし、`marionette`を有効化する。
+3. CursorがServerを認識しない場合は、MCP設定画面から再読み込みする。
+
+### アプリの起動
+
+VS CodeまたはIntelliJ IDEAでは、次のRun Configurationを使用できます。
+
+- `dev-debug-marionette`
+- `ui-catalog-marionette`
+
+CLIから起動する場合は次のコマンドを使用します。
+
+```shell
+# 本体アプリ
+cd apps/app
+mise exec -- flutter run \
+  --target lib/main_marionette.dart \
+  --dart-define-from-file=flavor/dev.json
+
+# UI Catalog（例: macOS）
+cd ../catalog
+mise exec -- flutter run \
+  --target lib/main_marionette.dart \
+  --device-id macos
+```
+
+起動ログに表示されるVM Service URIを、AIアシスタントからMarionetteの`connect`へ渡します。接続後は`get_interactive_elements`で要素を取得してから操作してください。
+
+### Bindingの制約
+
+- `MarionetteBinding`はFlutterプロセスで最初に初期化する必要があります。
+- 通常起動は`main.dart`、Marionetteを使用する場合だけ`main_marionette.dart`を選択してください。
+- `flutter test`ではTest Bindingを使用するため、`main_marionette.dart`を呼び出さないでください。
+- Marionette用entrypointはDebug/Profile確認専用です。Release buildには通常の`main.dart`を使用してください。
+- セッションレポートは`.marionette/sessions/`へ出力されます。
+
 ## 参考
 
 - [GitHub's official MCP Server]
 - [git README]
+- [Marionette MCP]
 
 <!-- URLs -->
 
@@ -101,3 +160,4 @@ Git MCP Server はAIアシスタントからGitコマンドを操作するため
 [pr-creation]: ../.agents/skills/pr-creation/SKILL.md
 [2025.4.24]: https://github.com/modelcontextprotocol/servers/releases/tag/2025.4.24
 [git README]: https://github.com/modelcontextprotocol/servers/tree/2025.4.24/src/git
+[Marionette MCP]: https://marionette.leancode.co/docs/
