@@ -3,7 +3,7 @@ description: "Run tests of all packages and report the results"
 
 inputs:
   report:
-    description: "Whether to report the test results to the checks (requires checks: write)"
+    description: "Whether to report the test results to the job summary"
     default: "true"
 
 runs:
