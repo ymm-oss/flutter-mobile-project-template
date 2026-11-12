@@ -12,7 +12,7 @@ if [ -n "$dart_files" ]; then
   fi
 fi
 
-if ! mise exec -- dprint check --staged --allow-no-files; then
+if ! GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.quotePath GIT_CONFIG_VALUE_0=false mise exec -- dprint check --staged --allow-no-files; then
   echo "dprint の違反があります。dprint fmt で直してください。" >&2
   result=1
 fi
