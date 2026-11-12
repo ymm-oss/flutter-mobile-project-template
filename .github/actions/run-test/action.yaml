@@ -10,19 +10,14 @@ runs:
   using: "composite"
   steps:
 
-    # composite action ではステップが失敗すると後続のステップが飛ばされるため、
-    # ここでは失敗させずに終了コードを記録し、最後のステップでジョブの成否を判定する
     - name: Run test
-      id: test
-      run: |
-        exit_code=0
-        dart run melos run report:test --no-select || exit_code=$?
-        echo "exit-code=$exit_code" >> "$GITHUB_OUTPUT"
+      run: dart run melos run report:test --no-select
       shell: bash
 
     # https://github.com/andstor/file-existence-action
     - name: Check file existence
       id: check_files
+      if: ${{ !cancelled() }}
       uses: andstor/file-existence-action@558493d6c74bf472d87c84eab196434afc2fa029 # v3.1.0
       with:
         # https://github.com/isaacs/node-glob の形式
@@ -30,20 +25,11 @@ runs:
 
     # https://github.com/dorny/test-reporter
     - name: Report test
-      if: ${{ inputs.report == 'true' && steps.check_files.outputs.files_exists == 'true' }}
+      if: ${{ !cancelled() && inputs.report == 'true' && steps.check_files.outputs.files_exists == 'true' }}
       uses: dorny/test-reporter@d1b5dff021aa968b288b02285a8bf47471c5928a # v3.2.0
       with:
         name: "flutter test"
         # https://github.com/mrmlnc/fast-glob の形式
         path: "(apps|packages)/**/test_report.log"
         reporter: "flutter-json"
-        fail-on-error: "false"
-
-    - name: Fail on test failure
-      if: ${{ !cancelled() && steps.test.outputs.exit-code != '0' }}
-      run: |
-        echo "::error::Tests failed with exit code $EXIT_CODE"
-        exit 1
-      shell: bash
-      env:
-        EXIT_CODE: ${{ steps.test.outputs.exit-code }}
+        fail-on-error: "true"
