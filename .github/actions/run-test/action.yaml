@@ -9,7 +9,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-
     - name: Run test
       run: dart run melos run report:test --no-select
       shell: bash
