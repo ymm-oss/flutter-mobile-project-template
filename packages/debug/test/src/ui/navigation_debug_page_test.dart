@@ -114,4 +114,19 @@ void main() {
       expect(menuPaths(tester), ['/home', '/home/detail']);
     });
   });
+
+  testWidgets('Path の入力欄で送信すると遷移する', (tester) async {
+    await pumpRouter(tester, [
+      GoRoute(
+        path: '/target',
+        builder: (context, state) => const Text('target'),
+      ),
+    ]);
+
+    await tester.enterText(find.widgetWithText(TextField, 'Path'), '/target');
+    await tester.testTextInput.receiveAction(TextInputAction.go);
+    await tester.pumpAndSettle();
+
+    expect(find.text('target'), findsOneWidget);
+  });
 }
