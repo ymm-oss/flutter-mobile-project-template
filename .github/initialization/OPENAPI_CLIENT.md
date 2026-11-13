@@ -65,7 +65,8 @@ OpenAPI を使わない場合は、次を削除してください。
 
 - [ ] `openapi` ディレクトリ
 - [ ] [mise.toml] の `java` と `aqua:OpenAPITools/openapi-generator`（削除後に `mise lock` を実行する）
-- [ ] [package.json] の `@stoplight/prism-cli`（削除後に `bun install` を実行する）
+- [ ] [package.json] の `@stoplight/prism-cli` と `overrides`（削除後に `bun install` を実行する）
+- [ ] [osv-scanner.toml] の `GHSA-qxc2-j82w-r537`
 - [ ] [apps/app/flavor/mock.json] と、実行構成の `mock-debug`（[.vscode/launch.json] と [.idea/runConfigurations/mock_debug.xml]）
 - [ ] [docs/GET_STARTED.md] の「モックサーバーでの実行」
 - [ ] [dprint.jsonc]、[cspell.jsonc]、[.gitattributes] の `packages/api` の行
@@ -80,6 +81,7 @@ OpenAPI を使わない場合は、次を削除してください。
 [apps/app/flavor/mock.json]: ../blob/main/apps/app/flavor/mock.json
 [mise.toml]: ../blob/main/mise.toml
 [package.json]: ../blob/main/package.json
+[osv-scanner.toml]: ../blob/main/osv-scanner.toml
 [.vscode/launch.json]: ../blob/main/.vscode/launch.json
 [.idea/runConfigurations/mock_debug.xml]: ../blob/main/.idea/runConfigurations/mock_debug.xml
 [docs/GET_STARTED.md]: ../blob/main/docs/GET_STARTED.md
