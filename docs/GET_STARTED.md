@@ -74,6 +74,22 @@ Please check:
 - [Visual Studio Code] の場合、`.vscode/launch.json` を確認してください。
 - [IntelliJ IDEA] または [Android Studio] の場合、`.idea/runConfigurations/~.xml` を確認してください。
 
+### モックサーバーでの実行
+
+```shell
+openapi/sample/scripts/start-mock.sh
+```
+
+上記のコマンドを実行すると、`openapi/sample/openapi.yaml` の仕様書どおりに応答するモックサーバーが `http://127.0.0.1:4010` で起動します。
+
+実行構成の `mock-debug` でアプリを実行すると、API の向き先（`BuildConfig.apiBaseUrl`）がこのモックサーバーになります。
+
+Android のエミュレーターや実機で実行する場合は、端末の 4010 番ポートを開発マシンに転送してください。
+
+```shell
+adb reverse tcp:4010 tcp:4010
+```
+
 ## AI コーディングツール
 
 Cursor、GitHub Copilot、Claude Code で共有するスキルは `.agents/skills/` に含まれています。Claude Code は `.agents/skills/` への symlink である `.claude/skills` から読みます。Windows で symlink がパス文字列のファイルとして checkout されたときは、次のスクリプトで復元します。手順と Windows での設定は [AI スキルの配置] を参照してください。
