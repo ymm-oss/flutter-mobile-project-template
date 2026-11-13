@@ -14,6 +14,11 @@ root_dir="$(cd "$api_dir/../.." && pwd)"
 api_name="$(basename "$api_dir")"
 output_dir="$root_dir/packages/api/$api_name"
 
+if [[ ! "$api_name" =~ ^[a-z][a-z0-9_]*$ ]]; then
+  echo "error: API 名 '$api_name' は Dart のパッケージ名に使えません。openapi/<api_name> を snake_case にしてください。" >&2
+  exit 1
+fi
+
 cd "$root_dir"
 
 if ! generator_jar="$(mise which openapi-generator 2>/dev/null)"; then
