@@ -1,0 +1,4 @@
+[[IgnoredVulns]]
+id = "GHSA-qxc2-j82w-r537"
+effectiveUntil = 2027-02-13
+reason = "@stoplight/prism-cli が依存する postman-collection が @faker-js/faker 5.5.3 に固定している。postman-collection は脆弱な helpers.fake を呼ばず、Prism は開発時のローカルモックにだけ使う。"
