@@ -60,12 +60,12 @@ OpenAPI を使わない場合は、次を削除してください。
 <!-- Links -->
 
 [OpenAPI Generator]: https://openapi-generator.tech/docs/generators/dart-dio/
-[openapi/sample]: /openapi/sample
-[mise.toml]: /mise.toml
-[pubspec.yaml]: /pubspec.yaml
-[dprint.jsonc]: /dprint.jsonc
-[cspell.jsonc]: /cspell.jsonc
-[.gitattributes]: /.gitattributes
-[.github/labeler.yml]: /.github/labeler.yml
-[.github/labels.yml]: /.github/labels.yml
-[docs/ARCHITECTURE.md]: /docs/ARCHITECTURE.md
+[openapi/sample]: ../tree/main/openapi/sample
+[mise.toml]: ../blob/main/mise.toml
+[pubspec.yaml]: ../blob/main/pubspec.yaml
+[dprint.jsonc]: ../blob/main/dprint.jsonc
+[cspell.jsonc]: ../blob/main/cspell.jsonc
+[.gitattributes]: ../blob/main/.gitattributes
+[.github/labeler.yml]: ../blob/main/.github/labeler.yml
+[.github/labels.yml]: ../blob/main/.github/labels.yml
+[docs/ARCHITECTURE.md]: ../blob/main/docs/ARCHITECTURE.md
