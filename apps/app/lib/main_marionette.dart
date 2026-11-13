@@ -1,3 +1,6 @@
+// Marionette はデバッグ専用の dev_dependency として、この entrypoint からのみ利用する。
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:async';
 
 import 'package:flutter_app/main.dart' as app;
