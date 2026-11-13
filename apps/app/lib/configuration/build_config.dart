@@ -17,11 +17,13 @@ abstract class BuildConfig with _$BuildConfig {
     required String buildSignature,
     required Flavor flavor,
     required String? installerStore,
+    required String apiBaseUrl,
   }) = _BuildConfig;
 
   factory fromPackageInfo(PackageInfo packageInfo) {
     // ここに `~.fromEnvironment()` を集約する
     const flavor = String.fromEnvironment('flavor');
+    const apiBaseUrl = String.fromEnvironment('apiBaseUrl');
 
     return BuildConfig._init(
       flavor: Flavor.values.byName(flavor),
@@ -31,6 +33,7 @@ abstract class BuildConfig with _$BuildConfig {
       buildNumber: packageInfo.buildNumber,
       buildSignature: packageInfo.buildSignature,
       installerStore: packageInfo.installerStore,
+      apiBaseUrl: apiBaseUrl,
     );
   }
 }
