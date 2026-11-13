@@ -51,6 +51,8 @@ dev_dependencies:
   # lib/debug/debug_features_impl.dart 以外から参照しないこと。
   internal_debug:
     path: ../../packages/debug
+  # Marionette は専用 entrypoint からのみ利用し、通常の release build に含めない。
+  marionette_flutter: ^0.7.0
   riverpod_generator: ^4.0.9
   talker_flutter: ^5.2.0
   talker_riverpod_logger: ^5.2.0

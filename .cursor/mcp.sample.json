@@ -24,6 +24,18 @@
         "type=bind,src=<GIT_DOCKER_PATH>,dst=/workspace",
         "mcp/git"
       ]
+    },
+    "marionette": {
+      "command": "mise",
+      "args": [
+        "exec",
+        "--",
+        "dart",
+        "pub",
+        "global",
+        "run",
+        "marionette_mcp"
+      ]
     }
   }
 }
