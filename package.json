@@ -6,6 +6,7 @@
     "@cspell/dict-dart": "^2.3.2",
     "@cspell/dict-flutter": "^1.1.1",
     "@cspell/dict-software-terms": "^5.4.8",
+    "@stoplight/prism-cli": "^5.16.0",
     "cspell": "^10.4.0",
     "husky": "^9.1.7"
   },
