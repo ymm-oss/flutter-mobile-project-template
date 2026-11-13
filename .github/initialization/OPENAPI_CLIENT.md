@@ -15,6 +15,7 @@ labels:
 openapi/<api_name>/
   configs/dart-dio.yaml        # ジェネレーターのオプション
   scripts/generate-client.sh   # 生成スクリプト
+  scripts/start-mock.sh        # モックサーバーの起動スクリプト
   templates/                   # 既定のテンプレートを上書きするファイル
   openapi.yaml                 # 仕様書
 ```
@@ -50,18 +51,40 @@ OpenAPI Generator と、その実行に必要な Java のバージョンは [mis
 
 仕様書を更新したときは、生成スクリプト、`mise bs`、`dart run melos run gen:build` を同じ順で実行してください。
 
+### モックサーバー
+
+同じ仕様書から、[Prism] でローカルのモックサーバーを起動できます。起動方法は [docs/GET_STARTED.md] を参照してください。
+
+- [ ] [docs/GET_STARTED.md] の `openapi/sample` を `openapi/<api_name>` に書き換える
+- [ ] 生成したクライアントの Dio の `baseUrl` に `BuildConfig.apiBaseUrl` を渡す
+- [ ] [apps/app/flavor] の `dev.json`、`stg.json`、`prd.json` に、各環境の `apiBaseUrl` を追加する
+
+実行構成の `mock-debug` は、`apiBaseUrl` をモックサーバーにした [apps/app/flavor/mock.json] を使います。
+
 OpenAPI を使わない場合は、次を削除してください。
 
 - [ ] `openapi` ディレクトリ
 - [ ] [mise.toml] の `java` と `aqua:OpenAPITools/openapi-generator`（削除後に `mise lock` を実行する）
+- [ ] [package.json] の `@stoplight/prism-cli` と `overrides`（削除後に `bun install` を実行する）
+- [ ] [osv-scanner.toml] の `GHSA-qxc2-j82w-r537`
+- [ ] [apps/app/flavor/mock.json] と、実行構成の `mock-debug`（[.vscode/launch.json] と [.idea/runConfigurations/mock_debug.xml]）
+- [ ] [docs/GET_STARTED.md] の「モックサーバーでの実行」
 - [ ] [dprint.jsonc]、[cspell.jsonc]、[.gitattributes] の `packages/api` の行
 - [ ] [docs/ARCHITECTURE.md] の `openapi` と `packages/api` の行
 
 <!-- Links -->
 
 [OpenAPI Generator]: https://openapi-generator.tech/docs/generators/dart-dio/
+[Prism]: https://github.com/stoplightio/prism
 [openapi/sample]: ../tree/main/openapi/sample
+[apps/app/flavor]: ../tree/main/apps/app/flavor
+[apps/app/flavor/mock.json]: ../blob/main/apps/app/flavor/mock.json
 [mise.toml]: ../blob/main/mise.toml
+[package.json]: ../blob/main/package.json
+[osv-scanner.toml]: ../blob/main/osv-scanner.toml
+[.vscode/launch.json]: ../blob/main/.vscode/launch.json
+[.idea/runConfigurations/mock_debug.xml]: ../blob/main/.idea/runConfigurations/mock_debug.xml
+[docs/GET_STARTED.md]: ../blob/main/docs/GET_STARTED.md
 [pubspec.yaml]: ../blob/main/pubspec.yaml
 [dprint.jsonc]: ../blob/main/dprint.jsonc
 [cspell.jsonc]: ../blob/main/cspell.jsonc

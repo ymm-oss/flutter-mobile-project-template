@@ -35,6 +35,16 @@
       ]
     },
     {
+      "name": "mock-debug",
+      "cwd": "apps/app",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "type": "dart",
+      "args": [
+        "--dart-define-from-file=flavor/mock.json"
+      ]
+    },
+    {
       "name": "ui-catalog",
       "cwd": "apps/catalog",
       "request": "launch",
