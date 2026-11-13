@@ -2,6 +2,35 @@
 
 lockfile_version = 3
 
+[[tools."aqua:OpenAPITools/openapi-generator"]]
+version = "7.27.0"
+backend = "aqua:OpenAPITools/openapi-generator"
+specifiers = ["7.27.0"]
+
+[tools."aqua:OpenAPITools/openapi-generator"."platforms.linux-arm64"]
+checksum = "sha256:19bb32fd6ce5e0370aadef4db601b1239507721edd204bb37da70a0f7d9087c6"
+checksum_source = "mise-versions"
+url = "https://github.com/OpenAPITools/openapi-generator/releases/download/v7.27.0/openapi-generator-cli-7.27.0.jar"
+url_api = "https://api.github.com/repos/OpenAPITools/openapi-generator/releases/assets/700622699"
+
+[tools."aqua:OpenAPITools/openapi-generator"."platforms.linux-x64"]
+checksum = "sha256:19bb32fd6ce5e0370aadef4db601b1239507721edd204bb37da70a0f7d9087c6"
+checksum_source = "mise-versions"
+url = "https://github.com/OpenAPITools/openapi-generator/releases/download/v7.27.0/openapi-generator-cli-7.27.0.jar"
+url_api = "https://api.github.com/repos/OpenAPITools/openapi-generator/releases/assets/700622699"
+
+[tools."aqua:OpenAPITools/openapi-generator"."platforms.macos-arm64"]
+checksum = "sha256:19bb32fd6ce5e0370aadef4db601b1239507721edd204bb37da70a0f7d9087c6"
+checksum_source = "mise-versions"
+url = "https://github.com/OpenAPITools/openapi-generator/releases/download/v7.27.0/openapi-generator-cli-7.27.0.jar"
+url_api = "https://api.github.com/repos/OpenAPITools/openapi-generator/releases/assets/700622699"
+
+[tools."aqua:OpenAPITools/openapi-generator"."platforms.macos-x64"]
+checksum = "sha256:19bb32fd6ce5e0370aadef4db601b1239507721edd204bb37da70a0f7d9087c6"
+checksum_source = "mise-versions"
+url = "https://github.com/OpenAPITools/openapi-generator/releases/download/v7.27.0/openapi-generator-cli-7.27.0.jar"
+url_api = "https://api.github.com/repos/OpenAPITools/openapi-generator/releases/assets/700622699"
+
 [[tools.bun]]
 version = "1.4.4"
 backend = "core:bun"
@@ -113,6 +142,27 @@ checksum = "sha256:dfe101a4db2255fc85120ac7f3d25e4342c3c20cf749f2c20a18081af1952
 checksum_source = "mise-versions"
 url = "https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_darwin_x64.tar.gz"
 url_api = "https://api.github.com/repos/gitleaks/gitleaks/releases/assets/378332053"
+
+[[tools.java]]
+version = "temurin-25.0.5+8.0.LTS"
+backend = "core:java"
+specifiers = ["temurin-25.0.5+8.0.LTS"]
+
+[tools.java."platforms.linux-arm64"]
+checksum = "sha256:bb5b2ded252f21c6090cf780b0a408ad0d83bbb557e702955643557f13231880"
+url = "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5%2B8/OpenJDK25U-jdk_aarch64_linux_hotspot_25.0.5_8.tar.gz"
+
+[tools.java."platforms.linux-x64"]
+checksum = "sha256:68982529869257d0ee6b824ec5aa270ff8b118bb438670da0b97ebdab178d7fb"
+url = "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5%2B8/OpenJDK25U-jdk_x64_linux_hotspot_25.0.5_8.tar.gz"
+
+[tools.java."platforms.macos-arm64"]
+checksum = "sha256:36dc14d797aaff6d89aab302cd053fdba6207dfdcf772052fa7b023a94b0e857"
+url = "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5%2B8/OpenJDK25U-jdk_aarch64_mac_hotspot_25.0.5_8.tar.gz"
+
+[tools.java."platforms.macos-x64"]
+checksum = "sha256:32cd4d2151c91aa00d0fc911edfd05245ed40fa6b1aa894d5f35c928cd67a59d"
+url = "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5%2B8/OpenJDK25U-jdk_x64_mac_hotspot_25.0.5_8.tar.gz"
 
 [[tools.jq]]
 version = "1.8.2"

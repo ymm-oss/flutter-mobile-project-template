@@ -15,7 +15,12 @@
 │   │   └── composition_root
 │   └── catalog
 │
+├── openapi # (optional)
+│   └── <api_name>
+│
 └── packages
+    ├── api # (optional)
+    │   └── <api_name>
     ├── design_domain_ui # (optional)
     ├── design_ui
     ├── debug

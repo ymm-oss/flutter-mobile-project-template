@@ -1,0 +1,5 @@
+additionalProperties:
+  pubDescription: サンプル API のクライアントです。OpenAPI Generator で生成しています。
+  pubPublishTo: none
+  serializationLibrary: json_serializable
+  skipCopyWith: true
