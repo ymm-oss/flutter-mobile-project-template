@@ -1,0 +1,87 @@
+openapi: 3.0.3
+info:
+  title: Sample API
+  description: クライアント生成の動作確認に使うサンプルの仕様書です。プロジェクトの仕様書に差し替えてください。
+  version: 1.0.0
+servers:
+  - url: https://api.example.com/v1
+tags:
+  - name: items
+    description: アイテム
+paths:
+  /items:
+    get:
+      tags:
+        - items
+      operationId: listItems
+      summary: アイテムの一覧を取得する
+      parameters:
+        - name: limit
+          in: query
+          description: 取得する件数の上限
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        "200":
+          description: アイテムの一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Item"
+  /items/{itemId}:
+    get:
+      tags:
+        - items
+      operationId: getItem
+      summary: アイテムを 1 件取得する
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          description: アイテムの ID
+          schema:
+            type: string
+      responses:
+        "200":
+          description: アイテム
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "404":
+          description: アイテムが見つからない
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Item:
+      type: object
+      required:
+        - id
+        - name
+        - createdAt
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
