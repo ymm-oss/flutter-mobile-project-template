@@ -43,10 +43,10 @@ dart run melos run gen:labeler
 
 <!-- Links -->
 
-[.github/labels.yml]: /.github/labels.yml
-[.github/labeler.yml]: /.github/labeler.yml
-[.github/dependabot.yaml]: /.github/dependabot.yaml
-[.github/workflows/labels.yml]: /.github/workflows/labels.yml
-[.github/workflows/issue-dependabot.yml]: /.github/workflows/issue-dependabot.yml
-[.github/workflows/issue-vulnerabilities.yaml]: /.github/workflows/issue-vulnerabilities.yaml
-[Issue テンプレート]: /.github/ISSUE_TEMPLATE
+[.github/labels.yml]: ../blob/main/.github/labels.yml
+[.github/labeler.yml]: ../blob/main/.github/labeler.yml
+[.github/dependabot.yaml]: ../blob/main/.github/dependabot.yaml
+[.github/workflows/labels.yml]: ../blob/main/.github/workflows/labels.yml
+[.github/workflows/issue-dependabot.yml]: ../blob/main/.github/workflows/issue-dependabot.yml
+[.github/workflows/issue-vulnerabilities.yaml]: ../blob/main/.github/workflows/issue-vulnerabilities.yaml
+[Issue テンプレート]: ../tree/main/.github/ISSUE_TEMPLATE
