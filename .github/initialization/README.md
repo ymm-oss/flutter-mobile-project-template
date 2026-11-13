@@ -30,3 +30,14 @@ labels: |
 
 1. `.github/initialization/` ディレクトリに新しいマークダウンファイルを作成
 2. YAML frontmatter でメタデータを設定
+
+### リポジトリ内のファイルへのリンク
+
+このディレクトリのファイルは Issue の本文になるため、リポジトリ内のファイルへのリンクは Issue の URL を基準にした相対パスで書きます。
+
+```markdown
+[docs/BRANCH.md](../blob/main/docs/BRANCH.md)
+[Issue テンプレート](../tree/main/.github/ISSUE_TEMPLATE)
+```
+
+`../../docs/BRANCH.md` や `/docs/BRANCH.md` のようなファイルを基準にしたパスは、Issue 上でリンク切れになります。

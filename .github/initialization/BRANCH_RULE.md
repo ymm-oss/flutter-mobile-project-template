@@ -29,4 +29,4 @@ labels: initialization
 
 **全てのタスクが完了したら、このIssueを閉じてください。**
 
-[BRANCH.md]: ../../docs/BRANCH.md
+[BRANCH.md]: ../blob/main/docs/BRANCH.md
