@@ -1,0 +1,8 @@
+{
+  "flavor": "dev",
+  "appName": "mock-Template",
+  "appIdAndroid": "jp.co.yumemi.template",
+  "appIdIos": "jp.co.yumemi.template",
+  "appIdSuffix": ".dev",
+  "apiBaseUrl": "http://127.0.0.1:4010"
+}
