@@ -54,7 +54,7 @@ OpenAPI を使わない場合は、次を削除してください。
 
 - [ ] `openapi` ディレクトリ
 - [ ] [mise.toml] の `java` と `aqua:OpenAPITools/openapi-generator`（削除後に `mise lock` を実行する）
-- [ ] [dprint.jsonc] と [.gitattributes] の `packages/api` の行
+- [ ] [dprint.jsonc]、[cspell.jsonc]、[.gitattributes] の `packages/api` の行
 - [ ] [docs/ARCHITECTURE.md] の `openapi` と `packages/api` の行
 
 <!-- Links -->
@@ -64,6 +64,7 @@ OpenAPI を使わない場合は、次を削除してください。
 [mise.toml]: /mise.toml
 [pubspec.yaml]: /pubspec.yaml
 [dprint.jsonc]: /dprint.jsonc
+[cspell.jsonc]: /cspell.jsonc
 [.gitattributes]: /.gitattributes
 [.github/labeler.yml]: /.github/labeler.yml
 [.github/labels.yml]: /.github/labels.yml
