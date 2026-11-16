@@ -35,5 +35,5 @@ labels:
 
 ## 関連資料
 
-- [workflows/pr-rebase-detector.yaml](../workflows/pr-rebase-detector.yaml)
-- [PR_GUIDELINES.md](../../docs/PR_GUIDELINES.md)
+- [workflows/pr-rebase-detector.yaml](../blob/main/.github/workflows/pr-rebase-detector.yaml)
+- [PR_GUIDELINES.md](../blob/main/docs/PR_GUIDELINES.md)
