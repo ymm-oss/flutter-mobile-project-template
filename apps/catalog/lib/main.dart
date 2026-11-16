@@ -5,6 +5,13 @@ import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart';
 
 void main() {
+  runApplication();
+}
+
+/// UI Catalog を起動する。
+///
+/// Binding は呼び出し元のエントリーポイントで初期化する。
+void runApplication() {
   // catalog は Riverpod を使わないため ProviderScope は不要
   // ignore: riverpod_lint/missing_provider_scope
   runApp(const WidgetbookApp());
