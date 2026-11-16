@@ -19,8 +19,6 @@ on:
         value: ${{ jobs.changes.outputs.spell }}
       ai_skills:
         value: ${{ jobs.changes.outputs.ai_skills }}
-      dependencies:
-        value: ${{ jobs.changes.outputs.dependencies }}
       vulnerabilities:
         value: ${{ jobs.changes.outputs.vulnerabilities }}
 
@@ -40,7 +38,6 @@ jobs:
       src: ${{ steps.filter.outputs.src }}
       spell: ${{ steps.filter.outputs.spell }}
       ai_skills: ${{ steps.filter.outputs.ai_skills }}
-      dependencies: ${{ steps.needs.outputs.dependencies }}
       vulnerabilities: ${{ steps.filter.outputs.vulnerabilities }}
     steps:
       # https://github.com/marketplace/actions/checkout
@@ -117,20 +114,3 @@ jobs:
               - ".github/workflows/wc-check-vulnerabilities.yaml"
               - "mise.toml"
               - "mise.lock"
-
-      - name: Check for dependencies changes
-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-        id: needs
-        env:
-          CHANGES: ${{ steps.filter.outputs.changes }}
-        with:
-          script: |
-            const changes = JSON.parse(process.env.CHANGES);
-
-            // 依存関係の解決が必要な変更箇所
-            const dependencies = [
-              'gen',
-              'lint',
-              'src',
-            ];
-            core.setOutput('dependencies', changes.some(value => dependencies.includes(value)));
