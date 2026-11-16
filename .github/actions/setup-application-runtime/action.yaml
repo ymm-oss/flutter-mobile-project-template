@@ -44,9 +44,9 @@ runs:
         ENFORCE_LOCKFILE: ${{ inputs.enforce-lockfile }}
 
     # https://github.com/actions/cache/tree/main/save
-    # PR と merge queue で保存しても後の実行から読めず容量を使うだけなので、main でだけ保存する
+    # merge queue のキャッシュは後の実行から読めず容量を使うだけなので保存しない
     - name: Save pub cache
-      if: github.ref == 'refs/heads/main' && steps.restore-pub-cache.outputs.cache-hit != 'true'
+      if: github.event_name != 'merge_group' && steps.restore-pub-cache.outputs.cache-hit != 'true'
       uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: ~/.pub-cache
