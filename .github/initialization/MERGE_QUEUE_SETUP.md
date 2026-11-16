@@ -22,7 +22,7 @@ GitHubのマージキュー機能を設定して、 PR のマージプロセス�
 ### 前提条件
 
 - ブランチ保護ルールは、プロジェクトの方針に従って設定してください。
-- その他、ステータスチェックなどに関する内容は [`docs/BRANCH.md`](../../docs/BRANCH.md) を参照してください。
+- その他、ステータスチェックなどに関する内容は [`docs/BRANCH.md`](../blob/main/docs/BRANCH.md) を参照してください。
 
 ### 設定
 
@@ -34,7 +34,7 @@ GitHubのマージキュー機能を設定して、 PR のマージプロセス�
      - ※ 必要に応じて、他のオプションも設定
 
 2. **ドキュメント**：
-   - 概要は [`docs/MERGE_QUEUE.md`](../../docs/MERGE_QUEUE.md)を参照してください。
+   - 概要は [`docs/MERGE_QUEUE.md`](../blob/main/docs/MERGE_QUEUE.md)を参照してください。
 
 ## 参考リンク
 

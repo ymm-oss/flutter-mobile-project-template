@@ -16,6 +16,13 @@ import 'package:internal_util_ui/snack_bar_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await runApplication();
+}
+
+/// アプリケーションを初期化して起動する。
+///
+/// Binding は呼び出し元のエントリーポイントで初期化する。
+Future<void> runApplication() async {
   await LocaleSettings.useDeviceLocale();
 
   LicenseRegistry.addLicense(() async* {

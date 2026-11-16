@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="ui-catalog-marionette" type="FlutterRunConfigurationType"
+    factoryName="Flutter">
+    <option name="filePath" value="$PROJECT_DIR$/apps/catalog/lib/main_marionette.dart" />
+    <method v="2" />
+  </configuration>
+</component>
