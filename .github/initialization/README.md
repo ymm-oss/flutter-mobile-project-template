@@ -40,4 +40,4 @@ labels: |
 [Issue テンプレート](../tree/main/.github/ISSUE_TEMPLATE)
 ```
 
-`../../docs/BRANCH.md` や `/docs/BRANCH.md` のようなファイルを基準にしたパスは、Issue 上でリンク切れになります。
+`../../docs/BRANCH.md`（ファイルからの相対パス）や `/docs/BRANCH.md`（リポジトリのルートからのパス）は、Issue 上では別の URL に解決されてリンク切れになります。
