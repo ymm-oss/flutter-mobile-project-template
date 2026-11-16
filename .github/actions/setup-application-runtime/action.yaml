@@ -11,12 +11,15 @@ runs:
   steps:
 
     # https://github.com/jdx/mise-action
-    # インストール直後に保存すると、初回の flutter で作る flutter tool がキャッシュに入らないため、ジョブの終わりに保存する
+    # インストール直後に保存すると、初回の flutter で作る flutter tool がキャッシュに入らないため、main ではジョブの終わりに保存する
+    # post はジョブがキャンセルされても走り、flutter tool のないキャッシュが残るため、cancel-in-progress で止めない main に限る
+    # merge queue のキャッシュは後の実行から読めず容量を使うだけなので保存しない
     - name: Setup flutter
       uses: jdx/mise-action@f5be966e4a917d54244728e6a5fdcd1d93a35e6c # v5.2.6
       with:
         install_args: "flutter"
-        cache_save_post: "true"
+        cache_save: ${{ github.event_name != 'merge_group' }}
+        cache_save_post: ${{ github.ref == 'refs/heads/main' }}
         cache_key_prefix: "mise-v2"
 
     # https://github.com/actions/cache/tree/main/restore
