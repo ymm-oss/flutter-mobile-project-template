@@ -22,6 +22,13 @@ jobs:
           persist-credentials: false
           fetch-depth: 0 # 全履歴を取得
 
+      # actions/checkout は origin/HEAD を作らないため、取得済みの既定ブランチを指すように設定する
+      - name: Set origin/HEAD
+        if: ${{ inputs.diff-packages }}
+        run: git symbolic-ref refs/remotes/origin/HEAD "refs/remotes/origin/${DEFAULT_BRANCH}"
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+
       - name: Setup Application Runtime
         uses: ./.github/actions/setup-application-runtime
 
@@ -41,7 +48,7 @@ jobs:
       - name: Regenerate code
         run: |
           if [ "${{ inputs.diff-packages }}" = "true" ]; then
-            dart run melos run gen:diff:main
+            dart run melos run gen:diff:default
           else
             dart run melos run gen
           fi
