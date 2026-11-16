@@ -19,6 +19,7 @@ flavor="${1:-prd}"
 forbidden_libraries=(
   "package:internal_debug/"
   "package:flutter_app/debug/debug_features_impl.dart"
+  "package:marionette_flutter/"
   "package:accessibility_tools/"
   "package:shake_gesture/"
   "package:talker_flutter/"
