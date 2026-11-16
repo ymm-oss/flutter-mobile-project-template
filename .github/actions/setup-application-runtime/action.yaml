@@ -11,10 +11,21 @@ runs:
   steps:
 
     # https://github.com/jdx/mise-action
+    # インストール直後に保存すると、初回の flutter で作る flutter tool がキャッシュに入らないため、ジョブの終わりに保存する
     - name: Setup flutter
       uses: jdx/mise-action@f5be966e4a917d54244728e6a5fdcd1d93a35e6c # v5.2.6
       with:
         install_args: "flutter"
+        cache_save_post: "true"
+        cache_key_prefix: "mise-v2"
+
+    # https://github.com/actions/cache
+    - name: Cache pub
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.pub-cache
+        key: ${{ runner.os }}-pub-cache-${{ hashFiles('**/pubspec.lock') }}
+        restore-keys: ${{ runner.os }}-pub-cache-
 
     # dart run は pubspec.lock が古いと --enforce-lockfile なしで pub get を実行するため、
     # 先に flutter pub get --enforce-lockfile でロックファイルとの一致を確認する
