@@ -84,7 +84,7 @@ scripts/sync-ai-skills.sh
 
 公式の Dart / Flutter スキルも `.agents/skills/` に含まれているため、clone 後に追加の作業はいりません。更新するときは `dart run skills@1.0.4 get` で差分を確認し、`.agents/skills/` と `.config/dart_skills/` の差分をプルリクエストにします。手順は [AI スキルの配置] を参照してください。
 
-公式スキルとこのリポジトリのルールが異なる場合は、`.cursor/rules/` と [アーキテクチャ] を優先してください。
+AI が常に守る規約は、ルートの [AGENTS.md] に書いています。公式スキルとこのリポジトリの決まりが異なる場合は、[AGENTS.md] と [アーキテクチャ] を優先してください。
 
 ## ワークスペースの設定
 
@@ -130,4 +130,5 @@ scripts/sync-ai-skills.sh
 [flutter-mobile-project-template]: https://github.com/ymm-oss/flutter-mobile-project-template/tree/main
 [flutter-mobile-project-docs-template]: https://github.com/ymm-oss/flutter-mobile-project-docs-template
 [AI スキルの配置]: AI_SKILLS.md
+[AGENTS.md]: ../AGENTS.md
 [アーキテクチャ]: ARCHITECTURE.md
