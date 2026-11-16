@@ -19,9 +19,10 @@ runs:
         cache_save_post: "true"
         cache_key_prefix: "mise-v2"
 
-    # https://github.com/actions/cache
-    - name: Cache pub
-      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+    # https://github.com/actions/cache/tree/main/restore
+    - name: Restore pub cache
+      id: restore-pub-cache
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: ~/.pub-cache
         key: ${{ runner.os }}-pub-cache-${{ hashFiles('**/pubspec.lock') }}
@@ -41,3 +42,12 @@ runs:
       shell: bash
       env:
         ENFORCE_LOCKFILE: ${{ inputs.enforce-lockfile }}
+
+    # https://github.com/actions/cache/tree/main/save
+    # PR と merge queue で保存しても後の実行から読めず容量を使うだけなので、main でだけ保存する
+    - name: Save pub cache
+      if: github.ref == 'refs/heads/main' && steps.restore-pub-cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.pub-cache
+        key: ${{ steps.restore-pub-cache.outputs.cache-primary-key }}
