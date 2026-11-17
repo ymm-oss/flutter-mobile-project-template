@@ -48,7 +48,7 @@ runs:
         ENFORCE_LOCKFILE: ${{ inputs.enforce-lockfile }}
 
     - name: Setup melos
-      if: inputs.bootstrap == 'true'
+      if: inputs.bootstrap != 'false'
       run: |
         if [[ "$ENFORCE_LOCKFILE" == "true" ]]; then
           dart run melos bootstrap --enforce-lockfile
