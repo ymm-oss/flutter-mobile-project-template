@@ -15,7 +15,12 @@
 │   │   └── composition_root
 │   └── catalog
 │
+├── openapi # (optional)
+│   └── <api_name>
+│
 └── packages
+    ├── api # (optional)
+    │   └── <api_name>
     ├── design_domain_ui # (optional)
     ├── design_ui
     ├── debug
@@ -80,6 +85,9 @@ flowchart TD
   subgraph "Infrastructure Layer"
     infrastructure_pkg[infrastructure]
     class infrastructure_pkg package
+
+    api["api (optional)"]
+    class api optional
   end
 
   %% Domain Layer
@@ -128,6 +136,7 @@ flowchart TD
 
   infrastructure_pkg --> domain_model
   infrastructure_pkg --> domain_logic
+  infrastructure_pkg --> api
 
   design_domain_ui --> design_ui
   design_domain_ui --> design_theme

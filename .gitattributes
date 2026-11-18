@@ -1,6 +1,7 @@
 *.g.dart linguist-generated=true
 *.g.theme.dart linguist-generated=true
 *.freezed.dart linguist-generated=true
+packages/api/** linguist-generated=true
 
 # Windows の改行変換で SKILL.md とシェルスクリプトが CRLF にならないようにする。
 # 公式スキルは内容のハッシュで更新を判定するため、例のコードなども LF に揃える。

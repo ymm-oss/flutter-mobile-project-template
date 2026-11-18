@@ -12,7 +12,9 @@
     // dart run skills@ が管理する公式スキルと設定ファイル
     ".agents/skills/dart-*/",
     ".agents/skills/flutter-*/",
-    ".config/dart_skills/"
+    ".config/dart_skills/",
+    // OpenAPI Generator が生成する API クライアント
+    "packages/api/"
   ],
   "plugins": [
     "https://plugins.dprint.dev/json-0.20.0.wasm",

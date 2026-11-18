@@ -24,7 +24,9 @@
     ".github/labels.yml",
     // dart run skills@ が管理する公式スキル
     ".agents/skills/dart-*/**",
-    ".agents/skills/flutter-*/**"
+    ".agents/skills/flutter-*/**",
+    // OpenAPI Generator が生成する API クライアント
+    "packages/api/**"
   ],
   "dictionaryDefinitions": [
     {
