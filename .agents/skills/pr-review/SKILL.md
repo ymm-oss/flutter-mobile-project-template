@@ -48,7 +48,7 @@ gh pr diff <番号>
   git worktree add --detach <リポジトリの外のディレクトリ> FETCH_HEAD
   ```
 
-  依存は、その作業ツリーで `flutter pub get` を実行して取得する。ステージやコミットを伴う確認は、使い捨ての複製で行う。
+  その作業ツリーで、[docs/GET_STARTED.md](../../../docs/GET_STARTED.md) と同じ `mise bs` を実行し、ツールと依存を入れる。ステージやコミットを伴う確認は、使い捨ての複製で行う。
 
 ## 2. レビューする
 
