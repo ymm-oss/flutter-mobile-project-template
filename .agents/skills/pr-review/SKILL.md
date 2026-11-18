@@ -51,7 +51,7 @@ gh pr diff <番号>
 
 - CI が実行する検査（analyze、format、テスト、スペル、dprint など）は、`checks` の結果で判断し、手元で実行し直さない。手元では、変更を元に戻すと落ちるかなど、CI が確かめないことを確かめる。
 - 手元で実行する前に、次を確かめる。`mise bs`、テスト、ビルドでは、PR に含まれるスクリプトと依存がそのまま実行される。
-  - `checks` の `check-secrets`、`check-vulnerabilities`、`check-actions-security` が `fail` でも `pending` でもないこと。そうでなければ実行せず、Lv1 と同じく読むだけにして、確かめていないこととして書く。
+  - `checks` の `check-vulnerabilities`（依存に新しい脆弱性がないかの検査）が `fail` でも `pending` でもないこと。そうでなければ実行せず、Lv1 と同じく読むだけにして、確かめていないこととして書く。
   - 次のファイルが変わる PR では、変わったファイルを示し、実行してよいかをユーザーに確かめる。断られた場合も、読むだけにして、確かめていないこととして書く。
     - 依存: `pubspec.yaml`、`pubspec.lock`、`package.json`、`bun.lock`、`mise.toml`
     - スクリプトとフック: 階層を問わず `tools/` と `scripts/` の下のファイル、シェルスクリプト、`.husky/`、`build.yaml`
