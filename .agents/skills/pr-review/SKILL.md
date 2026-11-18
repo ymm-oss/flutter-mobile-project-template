@@ -53,8 +53,8 @@ gh pr diff <番号>
 - 手元で実行する前に、次を確かめる。`mise bs`、テスト、ビルドでは、PR に含まれるスクリプトと依存がそのまま実行される。
   - `checks` の `check-vulnerabilities`（依存に新しい脆弱性がないかの検査）が `fail` でも `pending` でもないこと。そうでなければ実行せず、Lv1 と同じく読むだけにして、確かめていないこととして書く。
   - 次のファイルが変わる PR では、変わったファイルを示し、実行してよいかをユーザーに確かめる。断られた場合も、読むだけにして、確かめていないこととして書く。
-    - 依存: `pubspec.yaml`、`pubspec.lock`、`package.json`、`bun.lock`、`mise.toml`
-    - スクリプトとフック: 階層を問わず `tools/` と `scripts/` の下のファイル、シェルスクリプト、`.husky/`、`build.yaml`
+    - 依存とツール: 階層を問わず `pubspec.yaml`、`pubspec.lock`、`package.json`、`bun.lock`、`mise.toml`、`mise.lock`
+    - スクリプトとフック: 階層を問わず `tools/`、`scripts/`、`hook/` の下のファイル、シェルスクリプト、`.husky/`、`build.yaml`
     - ビルドの設定: `android/` と `ios/` の下のファイル
 - Lv2 と Lv3 で実行して確かめる場合は、作業中のブランチを切り替えず、別の作業ツリーに取り込む。
 
