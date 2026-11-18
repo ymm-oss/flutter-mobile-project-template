@@ -4,6 +4,7 @@
 #
 # 次のいずれかに当てはまる場合は、投稿せずに理由を出力して終了コード 1 で終了する。
 #   - event が COMMENT でも REQUEST_CHANGES でもない
+#   - commit_id が PR の現在の先端と違う（レビューのあとに push された）
 #   - コメントの行が、差分のコメントを付けられる範囲に入っていない
 #
 # Usage: post-review.sh <PR の番号> <JSON ファイル> [--dry-run]
@@ -29,6 +30,17 @@ fi
 event=$(jq -r '.event // ""' "$review_file")
 if [ "$event" != "COMMENT" ] && [ "$event" != "REQUEST_CHANGES" ]; then
   echo "event が \"$event\" です。COMMENT か、ユーザーが指示した場合だけ REQUEST_CHANGES にしてください。" >&2
+  exit 1
+fi
+
+commit_id=$(jq -r '.commit_id // ""' "$review_file")
+head_ref_oid=$(gh pr view "$number" --json headRefOid --jq '.headRefOid')
+if [ -z "$commit_id" ]; then
+  echo "commit_id がありません。レビューした時点の headRefOid を指定してください。" >&2
+  exit 1
+fi
+if [ "$commit_id" != "$head_ref_oid" ]; then
+  echo "commit_id（${commit_id}）が、PR の現在の先端（${head_ref_oid}）と違います。レビューのあとに push されたため、差分を見直してください。" >&2
   exit 1
 fi
 

@@ -168,6 +168,7 @@ gh pr diff <番号>
 - 追加・変更後の行は `side` を `RIGHT`、削除された行は `LEFT` にする。
 - 複数行にコメントする場合は `start_line` と `line` を指定し、`start_side` を `side` と同じ値にする。
 - `event` は `COMMENT` にする。ユーザーが指示した場合だけ `REQUEST_CHANGES` にする。`APPROVE` にはしない。
+- `commit_id` には、手順 1 の `headRefOid` を入れる。レビューのあとに push されていると、スクリプトは投稿せずに終了する。その場合は、手順 1 から取り直して差分を見直し、コメントと総評をユーザーに確かめ直してから投稿する。
 
 ## 7. 片付ける
 
