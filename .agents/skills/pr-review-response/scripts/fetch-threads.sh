@@ -36,6 +36,9 @@ threads=$(
                 comments(first: 50) {
                   nodes { databaseId author { login } body url }
                 }
+                lastComment: comments(last: 1) {
+                  nodes { author { login } }
+                }
               }
             }
           }
@@ -54,7 +57,7 @@ printf '%s\n' "$pr" "$threads" |
       author: $author,
       threads: [
         $threads[]
-        | select((.isResolved | not) and .comments.nodes[-1].author.login != $author)
+        | select((.isResolved | not) and .lastComment.nodes[0].author.login != $author)
         | {
             path, line, originalLine, isOutdated,
             replyTo: .comments.nodes[0].databaseId,
