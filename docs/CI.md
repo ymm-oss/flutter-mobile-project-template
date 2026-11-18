@@ -4,19 +4,19 @@
 
 ## ワークフロー
 
-| ワークフロー                    | トリガー                                               | 内容                                                     |
-| ------------------------------- | ------------------------------------------------------ | -------------------------------------------------------- |
-| [check-pr.yaml]                 | `pull_request`                                         | PR の検査                                                |
-| [merge-queue.yaml]              | `merge_group`                                          | merge queue での検査（[マージキュー](./MERGE_QUEUE.md)） |
-| [cache-main.yaml]               | `main` への `push`                                     | 生成コードの検査と、`main` のキャッシュの作成            |
-| [auto-assign.yaml]              | `pull_request`（opened、ready_for_review）             | レビュアーと担当者の設定                                 |
-| [labeler.yml]                   | `pull_request_target`                                  | 変更したパッケージのラベルの付与                         |
-| [labels.yml]                    | `.github/labels.yml` を変えた `main` への `push` と PR | リポジトリのラベルの同期（PR では dry-run）              |
-| [pr-rebase-detector.yaml]       | `pull_request`（synchronize）                          | rebase や force push の検知                              |
-| [github-pages-pull-request.yml] | `pull_request`、`workflow_dispatch`                    | catalog の GitHub Pages へのデプロイ                     |
-| [issue-dependabot.yml]          | 毎週月曜日 9:00（JST）                                 | 更新できるパッケージの Issue へのコメント                |
-| [issue-vulnerabilities.yaml]    | 毎週月曜日 9:00（JST）、`workflow_dispatch`            | 脆弱性の Issue 化                                        |
-| [initialization.yaml]           | `main` への `push`                                     | テンプレートから作ったリポジトリの初期化                 |
+| ワークフロー                    | トリガー                                                                                                        | 内容                                                     |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| [check-pr.yaml]                 | `pull_request`                                                                                                  | PR の検査                                                |
+| [merge-queue.yaml]              | `merge_group`                                                                                                   | merge queue での検査（[マージキュー](./MERGE_QUEUE.md)） |
+| [create-cache.yaml]             | `mise.toml`、`mise.lock`、`pubspec.lock` を変えた既定ブランチへの `push`、毎日 9:00（JST）、`workflow_dispatch` | 既定ブランチの mise と pub のキャッシュの作成            |
+| [auto-assign.yaml]              | `pull_request`（opened、ready_for_review）                                                                      | レビュアーと担当者の設定                                 |
+| [labeler.yml]                   | `pull_request_target`                                                                                           | 変更したパッケージのラベルの付与                         |
+| [labels.yml]                    | `.github/labels.yml` を変えた `main` への `push` と PR                                                          | リポジトリのラベルの同期（PR では dry-run）              |
+| [pr-rebase-detector.yaml]       | `pull_request`（synchronize）                                                                                   | rebase や force push の検知                              |
+| [github-pages-pull-request.yml] | `pull_request`、`workflow_dispatch`                                                                             | catalog の GitHub Pages へのデプロイ                     |
+| [issue-dependabot.yml]          | 毎週月曜日 9:00（JST）                                                                                          | 更新できるパッケージの Issue へのコメント                |
+| [issue-vulnerabilities.yaml]    | 毎週月曜日 9:00（JST）、`workflow_dispatch`                                                                     | 脆弱性の Issue 化                                        |
+| [initialization.yaml]           | `main` への `push`                                                                                              | テンプレートから作ったリポジトリの初期化                 |
 
 ファイル名が `wc-` で始まるワークフローは、上のワークフローから `workflow_call` で呼ぶ部品です。
 
@@ -89,21 +89,21 @@ analyze、check、test は、[Setup Application Runtime] の `bootstrap: false` 
 
 ## キャッシュ
 
-| キャッシュ   | 場所                                      | キー                                           | 保存する実行     |
-| ------------ | ----------------------------------------- | ---------------------------------------------- | ---------------- |
-| mise         | `~/.local/share/mise`（Flutter SDK など） | `mise-v2` と mise の設定ファイルのハッシュなど | merge queue 以外 |
-| pub          | `~/.pub-cache`                            | OS と `pubspec.lock` のハッシュ                | merge queue 以外 |
-| build_runner | `**/.dart_tool/build`                     | OS と `pubspec.lock` のハッシュとコミット      | `main` への push |
+| キャッシュ   | 場所                                      | キー                                                | 保存する実行                 |
+| ------------ | ----------------------------------------- | --------------------------------------------------- | ---------------------------- |
+| mise         | `~/.local/share/mise`（Flutter SDK など） | mise の設定ファイルのハッシュと 30 日ごとの期間など | create-cache（既定ブランチ） |
+| pub          | `~/.pub-cache`                            | OS と `pubspec.lock` のハッシュ                     | create-cache（既定ブランチ） |
+| build_runner | `**/.dart_tool/build`                     | OS と `pubspec.lock` のハッシュ                     | diff-gen                     |
 
 mise と pub のキャッシュは [Setup Application Runtime]、build_runner のキャッシュは [wc-check-diff.yaml] で扱います。
 
-GitHub Actions のキャッシュは、自分のブランチと既定ブランチで作ったものしか読めません（[Restrictions for accessing a cache]）。そのため、PR と merge queue は `main` のキャッシュを復元し、`main` のキャッシュは [cache-main.yaml] で作ります。merge queue で保存しても後の実行から読めず、容量を使うだけなので、merge queue では保存しません。
+GitHub Actions のキャッシュは、PR で保存したものはその PR からしか読めません。PR と merge queue の実行が共通して読めるのは、既定ブランチで保存したキャッシュです（[Restrictions for accessing a cache]）。そのため、mise と pub のキャッシュは [create-cache.yaml] から既定ブランチでだけ保存し、PR と merge queue はそれを復元します。保存するのは、Setup Application Runtime の `save-cache` が `true` で、既定ブランチで動いたときだけです。mise はジョブの終わりに保存し、最初の `flutter` で作られる Flutter tool もキャッシュに入れます。
 
-キャッシュのキーに使うファイルは、cache-main.yaml の `paths` に含めてください。含めないと、そのファイルが変わっても `main` のキャッシュが作り直されず、PR と merge queue がキャッシュに当たらなくなります。
+mise のキャッシュのキーは 30 日ごとに変わるため、create-cache.yaml は毎日の schedule でも動きます。mise と pub のキャッシュのキーに使うファイルは、create-cache.yaml の `paths` に含めてください。含めないと、そのファイルが変わっても次の schedule まで既定ブランチのキャッシュが作り直されず、PR と merge queue がキャッシュに当たらなくなります。
 
 [auto-assign.yaml]: ../.github/workflows/auto-assign.yaml
-[cache-main.yaml]: ../.github/workflows/cache-main.yaml
 [check-pr.yaml]: ../.github/workflows/check-pr.yaml
+[create-cache.yaml]: ../.github/workflows/create-cache.yaml
 [github-pages-pull-request.yml]: ../.github/workflows/github-pages-pull-request.yml
 [initialization.yaml]: ../.github/workflows/initialization.yaml
 [issue-dependabot.yml]: ../.github/workflows/issue-dependabot.yml
