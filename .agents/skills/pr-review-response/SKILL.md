@@ -23,7 +23,7 @@ PR に付いたレビューコメントを取得し、コメントごとの修�
 番号を省くと、現在のブランチの PR を使う。次を JSON で返す。
 
 - `threads`: 対応の対象のスレッド。`isResolved` が `false` で、最後のコメントが PR の作成者のものでないもの。解決済みにしない運用のため、`isResolved` だけでは判断しない。`replyTo` は、返信に使うコメントの ID
-- `botThreads`: `threads` と同じ条件で、CI（reviewdog）が付けたスレッド。`check` は検査の名前
+- `botThreads`: `threads` と同じ条件で、CI（reviewdog）が付けたスレッド。`check` は検査の名前。ほかの bot のスレッドは `threads` に入る
 - `checks`: CI のチェックの結果
 - `reviews`: PR の作成者以外が書いた総評
 

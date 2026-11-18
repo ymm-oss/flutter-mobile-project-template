@@ -4,7 +4,7 @@
 #
 #   threads: 未解決で、最後のコメントが PR の作成者のものでないスレッド。
 #            replyTo は、返信に使うスレッドの最初のコメントの ID
-#   botThreads: threads と同じ条件で、CI（reviewdog）が付けたスレッド。
+#   botThreads: threads と同じ条件で、CI（reviewdog）が付けたスレッド。ほかの bot のスレッドは threads に入れる。
 #               check は、コメントの先頭の [cspell] などから取り出した検査の名前
 #   checks: CI のチェックの結果
 #   reviews: PR の作成者以外が書いた、本文のある総評
@@ -58,6 +58,7 @@ fi
 
 printf '%s\n' "$pr" "$threads" "$checks" |
   jq -s '
+    def reviewdog: .comments.nodes[0] | .author.__typename == "Bot" and (.body | test("reported by \\[reviewdog\\]"));
     .[0] as $pr | .[1] as $threads | .[2] as $checks | ($pr.author.login) as $author |
     [
       $threads[]
@@ -70,7 +71,7 @@ printf '%s\n' "$pr" "$threads" "$checks" |
       author: $author,
       threads: [
         $open[]
-        | select(.comments.nodes[0].author.__typename != "Bot")
+        | select(reviewdog | not)
         | {
             path, line, originalLine, isOutdated,
             replyTo: .comments.nodes[0].databaseId,
@@ -79,7 +80,7 @@ printf '%s\n' "$pr" "$threads" "$checks" |
       ],
       botThreads: [
         $open[]
-        | select(.comments.nodes[0].author.__typename == "Bot")
+        | select(reviewdog)
         | .comments.nodes[0] as $first
         | {
             path, line, isOutdated,
