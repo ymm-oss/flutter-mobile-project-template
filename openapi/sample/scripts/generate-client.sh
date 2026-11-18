@@ -35,6 +35,7 @@ mise exec -- java -jar "$generator_jar" generate \
   --config "$api_dir/configs/dart-dio.yaml" \
   --additional-properties "pubName=internal_api_$api_name" \
   --template-dir "$api_dir/templates" \
+  --global-property apiTests=false,modelTests=false \
   --output "$output_dir"
 
 mise exec -- dart format "$output_dir"
