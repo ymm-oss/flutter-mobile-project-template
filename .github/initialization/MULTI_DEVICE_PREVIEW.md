@@ -17,7 +17,7 @@ labels:
 
 実機での確認の代わりにはなりません。ネイティブ UI・WebView・ソフトウェアキーボードは対象外です。
 
-この手順は multi_device_preview 1.3.0 以上を前提にしています（GlobalKey が共有されたときのログや、`init` が `ProviderScope`・`TranslationProvider` の中からルート Widget を見つける動作は 1.3.0 からです）。
+この手順は multi_device_preview 1.3.2 以上を前提にしています（GlobalKey が共有されたときのログや、`init` が `ProviderScope`・`TranslationProvider` の中からルート Widget を見つける動作は 1.3.0 から、ホットリロードで `appBuilder` が呼び直されない動作は 1.3.2 からです）。
 
 ## 1. アプリ側の GlobalKey を直す
 
@@ -71,7 +71,7 @@ ref.read(scaffoldMessengerKeyProvider).currentState
 scaffoldMessengerKey: ref.watch(scaffoldMessengerKeyProvider),
 ```
 
-`packages/debug/lib/src/ui/debug_page.dart` は `MaterialApp` の下にあるので、`ScaffoldMessenger.of(context)` で出せます。
+`packages/debug/lib/src/ui/debug_page.dart` は `MaterialApp` の下にあるので、`ScaffoldMessenger.of(context)` で出せます。`import 'package:internal_util_ui/snack_bar_manager.dart';` は削除します。
 
 ```dart
 ScaffoldMessenger.of(context)
@@ -98,7 +98,7 @@ dart run build_runner build
 
 ```sh
 cd apps/app
-flutter pub add dev:multi_device_preview:^1.3.0
+flutter pub add dev:multi_device_preview:^1.3.2
 dart run multi_device_preview:init --host ../app_preview
 ```
 
@@ -106,12 +106,14 @@ dart run multi_device_preview:init --host ../app_preview
 
 - `apps/app_preview` を作成する（assets の宣言とシンボリックリンクも用意する）
 - `apps/app_preview/pubspec.yaml` に次を書く
-  - `dependencies` に `flutter_app`（`apps/app` への path 依存）と `multi_device_preview`（`apps/app` の dev_dependencies と同じバージョン指定）。`apps/app` の dev_dependencies はホストからは見えないため、ホスト側の `dependencies` に入れる
+  - `dependencies` に `flutter_app`（`apps/app` への path 依存）と `multi_device_preview`（`apps/app` の dev_dependencies と同じバージョン指定）。ホストの `main.dart` が import するパッケージは、ホストの pubspec で宣言する必要があるため（`depend_on_referenced_packages`）
   - `apps/app` が使っている `flutter_riverpod`
   - `resolution: workspace`（workspace のメンバーに必要）
 - `flutter create` が入れる `flutter_lints` と `analysis_options.yaml` を外し、workspace の lint 設定に従わせる
 - `lib/main.dart` にエントリポイントの雛形を書く
 - macOS の entitlements を設定する（sandbox 無効・ネットワーク・JIT）
+
+手順 3 で workspace に追加するまで、`apps/app_preview` で `flutter pub get` は通りません。`resolution: workspace` が付いているのに、まだ workspace のメンバーではないためです。
 
 ## 3. workspace に追加する
 
@@ -171,12 +173,16 @@ Future<void> main() async {
     controller: controller,
     // slang の TranslationProvider は GlobalKey を持つため、全端末の上に 1 つだけ置く
     wrapper: (child) => TranslationProvider(child: child),
-    // 端末ごとに呼ばれる。ProviderScope も端末ごとに作り、状態を分ける
+    // 端末ごとに 1 回呼ばれる（ホットリロードでは呼び直されない）。
+    // ProviderScope も端末ごとに作り、状態を分ける
     appBuilder: (context, slot) {
       final debugFeatures = createDebugFeatures();
       return ProviderScope(
         overrides: [
           ...overrideProviders,
+          // 端末ごとのルートの ProviderScope だが、runApp の直下ではないため、
+          // lint からはルートに見えない
+          // ignore: riverpod_lint/scoped_providers_should_specify_dependencies
           debugFeaturesProvider.overrideWithValue(debugFeatures),
           ...debugFeatures.overrides,
         ],
@@ -200,6 +206,8 @@ flutter pub add 'internal_design_ui:{"path":"../../packages/design_ui"}'
 
 - `LicenseRegistry.addLicense` は、プレビューではライセンス画面を確認しないので省略している。必要なら同じ処理を足す
 - `createDebugFeatures()` を `kDebugMode` のガードなしで呼んでいる。`apps/app/lib/debug/debug_features.dart` は、リリースビルドから tree shaking で除外するために `kDebugMode` でガードして呼ぶ前提だが、このホストは `flutter run` でのプレビュー専用で、リリースビルドは作らないため
+
+`appBuilder` の中を編集したときは、ホットリロードでも、ツールバーからの再起動でも反映されません。ホットリスタート（`R`）してください。
 
 `apps/app/lib/main.dart` で override や初期化を増やしたときは、このエントリポイントにも同じ変更を入れてください（入れないと、override が前提のプロバイダが `UnimplementedError` を投げます）。
 
