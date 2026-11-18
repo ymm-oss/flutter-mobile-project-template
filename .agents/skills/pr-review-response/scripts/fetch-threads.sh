@@ -4,6 +4,9 @@
 #
 #   threads: 未解決で、最後のコメントが PR の作成者のものでないスレッド。
 #            replyTo は、返信に使うスレッドの最初のコメントの ID
+#   botThreads: threads と同じ条件で、CI（reviewdog）が付けたスレッド。
+#               check は、コメントの先頭の [cspell] などから取り出した検査の名前
+#   checks: CI のチェックの結果
 #   reviews: PR の作成者以外が書いた、本文のある総評
 #
 # Usage: fetch-threads.sh [PR の番号]
@@ -34,7 +37,7 @@ threads=$(
                 line
                 originalLine
                 comments(first: 50) {
-                  nodes { databaseId author { login } body url }
+                  nodes { databaseId author { __typename login } body url }
                 }
                 lastComment: comments(last: 1) {
                   nodes { author { login } }
@@ -47,23 +50,44 @@ threads=$(
     jq '[.[].data.repository.pullRequest.reviewThreads.nodes[]]'
 )
 
-printf '%s\n' "$pr" "$threads" |
+# チェックが実行中のときは終了コード 8、チェックがないときは 1 になるため、出力だけを見る
+checks=$(gh pr checks "$number" --json name,state,bucket,workflow 2>/dev/null || true)
+if ! jq -e 'type == "array"' >/dev/null 2>&1 <<<"$checks"; then
+  checks='[]'
+fi
+
+printf '%s\n' "$pr" "$threads" "$checks" |
   jq -s '
-    .[0] as $pr | .[1] as $threads | ($pr.author.login) as $author |
+    .[0] as $pr | .[1] as $threads | .[2] as $checks | ($pr.author.login) as $author |
+    [
+      $threads[]
+      | select((.isResolved | not) and .lastComment.nodes[0].author.login != $author)
+    ] as $open |
     {
       number: $pr.number,
       title: $pr.title,
       url: $pr.url,
       author: $author,
       threads: [
-        $threads[]
-        | select((.isResolved | not) and .lastComment.nodes[0].author.login != $author)
+        $open[]
+        | select(.comments.nodes[0].author.__typename != "Bot")
         | {
             path, line, originalLine, isOutdated,
             replyTo: .comments.nodes[0].databaseId,
             comments: [.comments.nodes[] | {author: .author.login, body, url}]
           }
       ],
+      botThreads: [
+        $open[]
+        | select(.comments.nodes[0].author.__typename == "Bot")
+        | .comments.nodes[0] as $first
+        | {
+            path, line, isOutdated,
+            check: ($first.body | capture("^\\*\\*\\[(?<name>[^\\]]+)\\]\\*\\*").name // null),
+            url: $first.url
+          }
+      ],
+      checks: $checks,
       reviews: [
         $pr.reviews[]
         | select(.author.login != $author and .body != "")
