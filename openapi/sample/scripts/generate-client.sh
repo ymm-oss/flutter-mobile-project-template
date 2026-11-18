@@ -39,3 +39,5 @@ mise exec -- java -jar "$generator_jar" generate \
   --output "$output_dir"
 
 mise exec -- dart format "$output_dir"
+
+echo "packages/api/$api_name を生成しました。続けて mise bs と dart run melos run gen:build を実行してください。"
