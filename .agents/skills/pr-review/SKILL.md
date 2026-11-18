@@ -16,14 +16,21 @@ PR の差分をレビューし、変更行へのコメントと総評を 1 つ�
 ## 1. 対象を取得する
 
 ```shell
-gh pr view <番号> --json number,title,body,state,baseRefName,headRefOid,closingIssuesReferences,files
+.agents/skills/pr-review/scripts/fetch-pr.sh <番号>
 gh pr diff <番号>
 ```
 
+`fetch-pr.sh` は、PR の情報（`title`、`body`、`state`、`headRefOid`、`files` など）に加えて、次を JSON で返す。
+
+- `reviewLevel`: PR 本文の「レビューレベル」で選ばれたレベル。選ばれていなければ `null`
+- `issues`: PR が close する Issue の本文とコメント
+- `checks`: CI のチェックの結果
+- `diffRanges`: コメントを付けられる行の範囲
+
 - `state` が `OPEN` でない場合、または差分が空の場合は、その旨を伝えて終了する。
 - PR 本文の「レビュー観点」に対象外が書かれていれば、その範囲はレビューしない。問いが書かれていれば、確かめて総評で答える。
-- `closingIssuesReferences` に Issue があれば、完了条件や期待される動作を読む。
-- PR 本文の「レビューレベル」で選ばれたレベルに、確かめる深さを合わせる。選ばれていない場合は Lv2 とする。
+- `issues` があれば、完了条件や期待される動作を読む。
+- `reviewLevel` のレベルに、確かめる深さを合わせる。`null` の場合は Lv2 とする。
 
   | レベル | 確かめる深さ                                                                           |
   | ------ | -------------------------------------------------------------------------------------- |
@@ -130,10 +137,10 @@ gh pr diff <番号>
 
 ## 6. 投稿する
 
-確認されたコメントと総評を、1 つのレビューとして投稿し、レビューの URL を示す。
+確認されたコメントと総評を JSON ファイルに書き、1 つのレビューとして投稿する。`post-review.sh` は、`event` と、コメントの行が `diffRanges` に入っているかを確かめてから投稿し、レビューの URL を出力する。問題があれば、投稿せずに理由を出力する。
 
 ```shell
-gh api --method POST 'repos/{owner}/{repo}/pulls/<番号>/reviews' --input <JSON ファイル>
+.agents/skills/pr-review/scripts/post-review.sh <番号> <JSON ファイル>
 ```
 
 ```json

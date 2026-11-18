@@ -16,39 +16,15 @@ PR に付いたレビューコメントを取得し、コメントごとの修�
 
 ## 1. コメントを取得する
 
-番号の指定がなければ、現在のブランチの PR を使う（`gh pr view --json number,url,title,author`）。
-
 ```shell
-gh api graphql -F owner='{owner}' -F name='{repo}' -F number=<番号> -f query='
-query($owner: String!, $name: String!, $number: Int!) {
-  repository(owner: $owner, name: $name) {
-    pullRequest(number: $number) {
-      title
-      url
-      author { login }
-      reviewThreads(first: 100) {
-        pageInfo { hasNextPage endCursor }
-        nodes {
-          isResolved
-          isOutdated
-          path
-          line
-          originalLine
-          comments(first: 50) {
-            nodes { databaseId author { login } body url }
-          }
-        }
-      }
-      reviews(first: 50) {
-        nodes { author { login } state body url }
-      }
-    }
-  }
-}'
+.agents/skills/pr-review-response/scripts/fetch-threads.sh [番号]
 ```
 
-- `hasNextPage` が `true` の場合は、`endCursor` を `after` に渡して残りを取得する。
-- 対象は、`isResolved` が `false` で、最後のコメントが PR の作成者のものでないスレッドである。解決済みにしない運用のため、`isResolved` だけでは判断しない。
+番号を省くと、現在のブランチの PR を使う。次を JSON で返す。
+
+- `threads`: 対応の対象のスレッド。`isResolved` が `false` で、最後のコメントが PR の作成者のものでないもの。解決済みにしない運用のため、`isResolved` だけでは判断しない。`replyTo` は、返信に使うコメントの ID
+- `reviews`: PR の作成者以外が書いた総評
+
 - `isOutdated` が `true` のスレッドは、指摘された箇所が現在のコードに残っているかを確かめる。`line` が `null` の場合は `originalLine` を使う。
 - `reviews` の `body` に書かれた総評も読む。総評の中の指摘や問いは、対応一覧に載せる。
 
@@ -120,10 +96,10 @@ query($owner: String!, $name: String!, $number: Int!) {
 
 ## 6. push と返信の投稿
 
-ユーザーが指示したら、push し、スレッドごとに返信を投稿する。PR 全体へのコメントではなく、スレッドに返信する。総評への返信だけは、PR へのコメントにする。`databaseId` は、スレッドの最初のコメントのものを使う。
+ユーザーが指示したら、push し、スレッドごとに返信を投稿する。PR 全体へのコメントではなく、スレッドに返信する。総評への返信だけは、PR へのコメントにする。
 
 ```shell
-gh api --method POST 'repos/{owner}/{repo}/pulls/<番号>/comments/<databaseId>/replies' -f body='<返信>'
+gh api --method POST 'repos/{owner}/{repo}/pulls/<番号>/comments/<replyTo>/replies' -f body='<返信>'
 ```
 
 スレッドは解決済みにしない。
