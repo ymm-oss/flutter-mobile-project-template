@@ -16,7 +16,7 @@ PR の差分をレビューし、変更行へのコメントと総評を 1 つ�
 ## 1. 対象を取得する
 
 ```shell
-gh pr view <番号> --json number,title,body,state,isDraft,baseRefName,headRefOid,closingIssuesReferences,files
+gh pr view <番号> --json number,title,body,state,baseRefName,headRefOid,closingIssuesReferences,files
 gh pr diff <番号>
 ```
 
