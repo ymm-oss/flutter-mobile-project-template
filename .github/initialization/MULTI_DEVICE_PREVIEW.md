@@ -17,7 +17,7 @@ labels:
 
 実機での確認の代わりにはなりません。ネイティブ UI・WebView・ソフトウェアキーボードは対象外です。
 
-この手順は multi_device_preview 1.3.2 以上を前提にしています（GlobalKey が共有されたときのログや、`init` が `ProviderScope`・`TranslationProvider` の中からルート Widget を見つける動作は 1.3.0 から、ホットリロードで `appBuilder` が呼び直されない動作は 1.3.2 からです）。
+この手順は multi_device_preview 1.3.3 以上を前提にしています（GlobalKey が共有されたときのログや、`init` が `ProviderScope`・`TranslationProvider` の中からルート Widget を見つける動作は 1.3.0 から、ホットリロードで `appBuilder` が呼び直されない動作は 1.3.2 からです。1.3.2 は `appBuilder` を編集したときの説明に誤りがあり、1.3.3 で直しています）。
 
 ## 1. アプリ側の GlobalKey を直す
 
@@ -98,7 +98,7 @@ dart run build_runner build
 
 ```sh
 cd apps/app
-flutter pub add dev:multi_device_preview:^1.3.2
+flutter pub add dev:multi_device_preview:^1.3.3
 dart run multi_device_preview:init --host ../app_preview
 ```
 
