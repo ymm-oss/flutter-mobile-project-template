@@ -40,4 +40,5 @@ jobs:
       - name: Setup Application Runtime
         uses: ./.github/actions/setup-application-runtime
         with:
+          bootstrap: false
           save-cache: true
