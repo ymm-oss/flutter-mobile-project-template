@@ -3,5 +3,7 @@
 *.freezed.dart linguist-generated=true
 
 # Windows の改行変換で SKILL.md とシェルスクリプトが CRLF にならないようにする。
+# 公式スキルは内容のハッシュで更新を判定するため、例のコードなども LF に揃える。
 *.sh text eol=lf
+.agents/skills/** text=auto eol=lf
 .agents/skills/**/*.md text eol=lf

@@ -18,7 +18,7 @@ labels:
 ## 現在の設定状況
 
 - **cspell**: `package.json` で管理、設定ファイル `cspell.jsonc` が存在
-- **実行方法**: `bun run cspell --version` で確認可能
+- **実行方法**: `bun --bun run cspell --version` で確認可能
 
 ## Todo
 

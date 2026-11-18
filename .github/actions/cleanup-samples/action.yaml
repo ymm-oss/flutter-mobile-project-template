@@ -14,8 +14,6 @@ runs:
   steps:
     - name: Remove samples from pubspec.yaml
       run: |
-        PUBSPEC_PATH="${{ inputs.pubspec-yaml-path || 'pubspec.yaml' }}" # 入力でパスを指定可能にする (デフォルトは pubspec.yaml)
-
         # yq を使ってサンプルパッケージのパスを削除し、一時ファイルに出力
         # test 関数で正規表現に一致するものを選択
         yq eval 'del(.workspace[] | select(test("^(packages/samples/|samples/).*")))' "$PUBSPEC_PATH" > "$PUBSPEC_PATH.new"
@@ -30,20 +28,29 @@ runs:
         # 一時ファイルを削除
         rm "$PUBSPEC_PATH.new" "$PUBSPEC_PATH.diff"
       shell: bash
+      env:
+        # 入力でパスを指定可能にする (デフォルトは pubspec.yaml)
+        PUBSPEC_PATH: ${{ inputs.pubspec-yaml-path || 'pubspec.yaml' }}
 
     - name: Strip comments from launch.json
-      run: strip-json-comments ${{ inputs.vscode-launch-json-path }} > ${{ inputs.vscode-launch-json-path }}.temp
+      run: strip-json-comments "$LAUNCH_JSON_PATH" > "$LAUNCH_JSON_PATH.temp"
       shell: sh
+      env:
+        LAUNCH_JSON_PATH: ${{ inputs.vscode-launch-json-path }}
 
     - name: Remove samples configurations from launch.json
       run: >
-        jq -n -f ${{ inputs.vscode-launch-json-path }}.temp |
+        jq -n -f "$LAUNCH_JSON_PATH.temp" |
         jq '
         .configurations |= map(select(.cwd | strings | startswith("samples/") | not))
         '
-        > ${{ inputs.vscode-launch-json-path }}
+        > "$LAUNCH_JSON_PATH"
       shell: sh
+      env:
+        LAUNCH_JSON_PATH: ${{ inputs.vscode-launch-json-path }}
 
     - name: Remove temp file
-      run: rm ${{ inputs.vscode-launch-json-path }}.temp
+      run: rm "$LAUNCH_JSON_PATH.temp"
       shell: sh
+      env:
+        LAUNCH_JSON_PATH: ${{ inputs.vscode-launch-json-path }}

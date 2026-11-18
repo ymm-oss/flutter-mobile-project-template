@@ -41,15 +41,20 @@ echo -e "${BLUE}[INFO] Working directory: $(pwd)${NC}"
 ##
 ##############################################################################
 echo ""
-print_step "mise install"
+print_step "mise install --locked"
 if type mise >/dev/null 2>&1; then
-  if mise install; then
-    print_result 0 "mise install"
+  # Install only the tools in mise.toml, so global tools outside mise.lock do not fail --locked.
+  project_tools=()
+  while IFS=' ' read -r tool _; do
+    project_tools+=("$tool")
+  done < <(mise ls --local --no-header)
+  if mise install --locked "${project_tools[@]}"; then
+    print_result 0 "mise install --locked"
   else
-    print_result $? "mise install"
+    print_result $? "mise install --locked"
   fi
 else
-  echo -e "${YELLOW}[!] mise install: Skip because it could not be found.${NC}"
+  echo -e "${YELLOW}[!] mise install --locked: Skip because it could not be found.${NC}"
   echo -e "${YELLOW}[!] See https://mise.jdx.dev/getting-started.html for installation.${NC}"
 fi
 

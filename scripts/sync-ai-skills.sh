@@ -41,6 +41,9 @@ claude_link="$root_dir/.claude/skills"
 claude_path=".claude/skills"
 expected_target="../.agents/skills"
 copy_marker=".ai-skills-copy"
+skills_config="$root_dir/.config/dart_skills/skills_config.json"
+# skills パッケージで導入した公式スキルの「名前<TAB>contentHash」の一覧。load_official_skills で読む。
+official_skills=""
 link_mode="${AI_SKILLS_LINK_MODE:-auto}"
 failed=0
 
@@ -125,6 +128,53 @@ is_skill_name() {
   esac
 }
 
+load_official_skills() {
+  if [[ ! -f "$skills_config" ]]; then
+    return 0
+  fi
+  if ! command -v jq >/dev/null 2>&1; then
+    fail "jq がありません。mise install で入れてください。"
+    return 0
+  fi
+  # 外したスキル（isInstalled: false）は公式スキルとして扱わない。
+  if ! official_skills="$(jq -r '
+    .installations[][].skills[]
+    | select(.isInstalled != false)
+    | [.name, .contentHash] | @tsv
+  ' "$skills_config")"; then
+    fail "$skills_config を読めません。"
+    official_skills=""
+  fi
+}
+
+official_skill_hash() {
+  printf '%s\n' "$official_skills" | awk -F '\t' -v name="$1" '$1 == name { print $2; found = 1; exit } END { exit !found }'
+}
+
+md5_hex() {
+  if command -v md5sum >/dev/null 2>&1; then
+    md5sum | cut -c 1-32
+  else
+    md5 -q
+  fi
+}
+
+# skills パッケージの contentHash と同じ値を計算する。
+# 各ファイルの「相対パス + 内容」の MD5 を XOR で合わせ、base64 にする。
+skill_content_hash() {
+  local dir="$1"
+  local file rel hex hi=0 lo=0
+  while IFS= read -r -d '' file; do
+    rel="${file#"$dir"/}"
+    hex="$({ printf '%s' "$rel"; cat "$file"; } | md5_hex)"
+    hi=$((hi ^ 16#${hex:0:16}))
+    lo=$((lo ^ 16#${hex:16:16}))
+  done < <(find "$dir" -type f -print0)
+  # 16 進の 32 文字を 16 バイトに戻してから base64 にする。
+  # shellcheck disable=SC2059
+  printf "$(printf '%016x%016x' "$hi" "$lo" | sed 's/../\\x&/g')" | base64
+}
+
 list_names() {
   local dir="$1"
   local path name
@@ -144,7 +194,7 @@ list_names() {
 validate_skill() {
   local name="$1"
   local dir="$agents_dir/$name"
-  local skill_file value chars
+  local skill_file value chars expected
 
   if ! is_skill_name "$name"; then
     fail "$dir のディレクトリ名は小文字・数字・ハイフンだけにしてください。"
@@ -164,6 +214,14 @@ validate_skill() {
   if [[ "$value" != "$name" ]]; then
     fail "$skill_file の name はディレクトリ名 $name と一致させてください。"
   fi
+  # skills パッケージで導入した公式スキルは上流の書式のまま取り込むため、
+  # description の書き方は検査しない。代わりに、手で編集されていないことを確かめる。
+  if expected="$(official_skill_hash "$name")"; then
+    if [[ "$(skill_content_hash "$dir")" != "$expected" ]]; then
+      fail "$dir が skills パッケージで取り込んだ内容と一致しません。公式スキルは手で編集せず、dart run skills@1.0.4 get で更新してください。"
+    fi
+    return 0
+  fi
   value="$(frontmatter_value "$skill_file" description)" || value=""
   if [[ -z "$value" ]]; then
     fail "$skill_file の description を 1 行で書いてください。"
@@ -182,6 +240,13 @@ validate_agents_skills() {
     fail "$agents_dir がありません。"
     return 0
   fi
+  load_official_skills
+  while IFS=$'\t' read -r name _; do
+    [[ -n "$name" ]] || continue
+    if [[ ! -d "$agents_dir/$name" ]]; then
+      fail "$skills_config にある $name が $agents_dir にありません。"
+    fi
+  done <<<"$official_skills"
   while IFS= read -r name; do
     [[ -n "$name" ]] || continue
     validate_skill "$name"

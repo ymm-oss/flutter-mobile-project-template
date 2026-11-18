@@ -13,3 +13,7 @@ startswith
 webframeworks
 elif
 tonumber
+sarif
+strenv
+zizmor
+slurpfile

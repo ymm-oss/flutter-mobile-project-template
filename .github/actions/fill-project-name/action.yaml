@@ -7,15 +7,19 @@ runs:
     - name: Convert repository name to snake_case
       id: convert_name
       shell: bash
+      env:
+        REPOSITORY_NAME: ${{ github.event.repository.name }}
       run: |
-        SNAKE_CASE=$(echo "${{ github.event.repository.name }}" | sed -r 's/([a-z0-9])([A-Z])/\1_\L\2/g' | tr '-' '_' | tr '[:upper:]' '[:lower:]')
+        SNAKE_CASE=$(echo "$REPOSITORY_NAME" | sed -r 's/([a-z0-9])([A-Z])/\1_\L\2/g' | tr '-' '_' | tr '[:upper:]' '[:lower:]')
         echo "repository_name=$SNAKE_CASE" >> $GITHUB_OUTPUT
 
     - name: Fill the project name
-      uses: mikefarah/yq@751d8ad57b84f1794661bc70c0afb92a22ad7b3c # v4.53.2
+      uses: mikefarah/yq@f2944b823f84906a127dbd29e4c2a3e60c4e550e # v4.54.3
+      env:
+        REPOSITORY_NAME: ${{ steps.convert_name.outputs.repository_name }}
       with:
         cmd: |
-          yq '.name = "${{ steps.convert_name.outputs.repository_name }}"' pubspec.yaml > pubspec.yaml.new
+          yq '.name = strenv(REPOSITORY_NAME)' pubspec.yaml > pubspec.yaml.new
 
     - name: Keep empty lines
       # NOTE: https://github.com/mikefarah/yq/issues/515

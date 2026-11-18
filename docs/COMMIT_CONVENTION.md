@@ -76,8 +76,26 @@ fix(api): ユーザー情報取得APIのエラーハンドリングを修正
 このプロジェクトでは、[`husky`]を使用してコミットメッセージの自動検証を設定しています。
 [`husky`]によってコミット時に自動で[`commitlint`]のチェックが実行され、規約に従っていない場合はコミットが拒否されます。
 
+また、コミットの前にステージしたファイルを以下のように検査し、違反があればコミットを止めます。
+自動では直さないため、表示されたコマンドで直してからコミットし直してください。
+
+| 検査           | 対象                               | 直すコマンド  |
+| -------------- | ---------------------------------- | ------------- |
+| `dart format`  | `*.dart`（自動生成ファイルを除く） | `dart format` |
+| `dprint check` | [`dprint.jsonc`] の対象            | `dprint fmt`  |
+| `cspell lint`  | [`cspell.jsonc`] の対象            | -             |
+| `gitleaks git` | すべてのファイル                   | -             |
+
+部分的にステージしたファイル（`git add -p` など）は、ステージした内容ではなく作業ツリーの内容を検査します。
+
+急ぎのときは、`git commit --no-verify` で検査を飛ばせます。
+ただし、コミットメッセージの検査も飛ばされます。
+ファイルの検査の違反は CI で検出されますが、コミットメッセージは CI では検査しません。
+
 <!-- Links -->
 
 [`@commitlint/config-conventional`]: https://github.com/conventional-changelog/commitlint/tree/master/%40commitlint/config-conventional
 [`husky`]: https://typicode.github.io/husky/
 [`commitlint`]: https://commitlint.js.org/
+[`dprint.jsonc`]: ../dprint.jsonc
+[`cspell.jsonc`]: ../cspell.jsonc
