@@ -7,20 +7,33 @@
 
 - Flutter SDK は mise で管理している。
 - 複数のパッケージを Melos でまとめて管理しており、`dart run melos` で実行する。
-  - ルートの `pubspec.yaml` の `melos.command.bootstrap` に載っている依存は、ルート側で管理する。
+  - 共通の依存パッケージは各 `pubspec.yaml` を直接変更せず、ルートの `pubspec.yaml`（`melos.command.bootstrap`）を変更して `dart run melos bootstrap` を実行する。
+
+## コマンド
+
+- 解析: `dart analyze`
+- フォーマット: `dart run melos run format`
+- コード生成: `dart run melos run gen`（未コミットの変更があるパッケージだけなら `gen:diff:head`）
+- テスト: `dart run melos run test`
+
+作業を終える前に、次を確かめる。
+
+- `dart analyze` で info も含めて何も出ないこと
+- `dart run melos run format:check` が通ること
+- `dart run melos run test` が通ること
+- パッケージの依存を変えたときは、`dart run melos list --cycles` で循環がないこと
+- `debug` への参照を変えたときは、`dart run melos run check:debug_tree_shaking` が通ること
 
 ## 生成されたファイル
 
 - `*.g.dart`、`*.freezed.dart` などの生成されたファイルは直接直さない。元のファイルを直し、コード生成で作り直す。
 
-## レイヤーの依存方向
+## レイヤーと置き場所
 
-- 依存の向きは `presentation` → `composition_root` → `application` / `infrastructure` → `domain_logic` → `domain_model` の一方向にする。逆向きの依存や循環参照は作らない。
-- `domain_model` はほかのレイヤーに依存しない。`shared` と `util_*` はどこにも依存せず、どこからでも参照できる。
-- `application` と `infrastructure` は互いに依存しない。データ取得や外部連携は `infrastructure` に置き、`domain_logic` のインターフェースを通して使う。
-- 依存性の注入は `apps/app/lib/composition_root` で行う。
+- ドメインのロジックは `domain_logic` に、データ取得や外部連携は `infrastructure` に置く。`presentation` に直接書かない。
+- `presentation` から `application` や `infrastructure` を直接 import しない。依存性の注入は `apps/app/lib/composition_root` で行う。
 - `debug` は `apps/app/lib/debug/debug_features_impl.dart` からだけ参照する。リリースビルドから外すため。
-- 詳しくは [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) を見る。
+- パッケージの依存や import を足す前に、[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) の図で依存方向を確かめる。
 
 ## 公式スキルとの関係
 
