@@ -87,6 +87,8 @@ analyze、check、test は、[Setup Application Runtime] の `bootstrap: false` 
 - bootstrap の入力（`pubspec.yaml`、`pubspec.lock`、`analysis_options.yaml`、`tools/` の Dart ファイル）は、diff-gen の `gen` フィルタに含めてください。含めないと、古いファイルが diff-gen をすり抜け、analyze が古い設定のまま通ります。
 - コミットしない生成物で、analyze、check、test が使うものを bootstrap の post フックに足すときは、それらのジョブでも bootstrap を実行してください。
 
+create-cache も `bootstrap: false` で `melos bootstrap` を省きます。キャッシュに入れる Flutter tool と pub のパッケージは、bootstrap の前の `flutter pub get` までにそろうためです。
+
 ## キャッシュ
 
 | キャッシュ   | 場所                                      | キー                                                | 保存する実行                 |
