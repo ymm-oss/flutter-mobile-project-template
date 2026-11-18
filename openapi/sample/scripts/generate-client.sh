@@ -19,11 +19,10 @@ if [[ ! "$api_name" =~ ^[a-z][a-z0-9_]*$ ]]; then
   exit 1
 fi
 
-# openapi/mise.toml の Java と OpenAPI Generator を使うため、openapi の下で実行する。
-cd "$api_dir"
+cd "$root_dir"
 
 if ! generator_jar="$(mise which openapi-generator 2>/dev/null)"; then
-  echo "error: openapi-generator が見つかりません。openapi ディレクトリで mise install を実行してください。" >&2
+  echo "error: openapi-generator が見つかりません。mise install を実行してください。" >&2
   exit 1
 fi
 
