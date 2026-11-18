@@ -32,18 +32,17 @@ jobs:
       - name: Setup Application Runtime
         uses: ./.github/actions/setup-application-runtime
 
-      # https://github.com/actions/cache/tree/main/restore
-      # コードの変更でキャッシュを更新するため、キーにコミットを含める
-      - name: Restore build runner cache
-        id: restore-build-runner-cache
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      # https://github.com/actions/cache
+      - name: Cache build runner
+        id: cache-build-runner
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        env:
+          cache-name: build-runner
         with:
           path: |
             **/.dart_tool/build
-          key: ${{ runner.os }}-build-runner-${{ hashFiles('**/pubspec.lock') }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-build-runner-${{ hashFiles('**/pubspec.lock') }}-
-            ${{ runner.os }}-build-runner-
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-${{ env.cache-name }}-
 
       - name: Regenerate code
         run: |
@@ -52,16 +51,6 @@ jobs:
           else
             dart run melos run gen
           fi
-
-      # https://github.com/actions/cache/tree/main/save
-      # キーがコミットごとに変わり、PR と merge queue で保存すると容量を使うため、main でだけ保存する
-      - name: Save build runner cache
-        if: github.ref == 'refs/heads/main' && steps.restore-build-runner-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: |
-            **/.dart_tool/build
-          key: ${{ steps.restore-build-runner-cache.outputs.cache-primary-key }}
 
       - name: Check difference
         run: |
