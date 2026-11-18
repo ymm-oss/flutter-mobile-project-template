@@ -85,6 +85,9 @@ flowchart TD
   subgraph "Infrastructure Layer"
     infrastructure_pkg[infrastructure]
     class infrastructure_pkg package
+
+    api["api (optional)"]
+    class api optional
   end
 
   %% Domain Layer
@@ -133,6 +136,7 @@ flowchart TD
 
   infrastructure_pkg --> domain_model
   infrastructure_pkg --> domain_logic
+  infrastructure_pkg --> api
 
   design_domain_ui --> design_ui
   design_domain_ui --> design_theme

@@ -46,7 +46,7 @@ OpenAPI Generator と、その実行に必要な Java のバージョンは [mis
   ```
 
 - [ ] 生成した `packages/api/<api_name>` と、`mise bs` が更新した [.github/labeler.yml] と [.github/labels.yml] をコミットする
-- [ ] [docs/ARCHITECTURE.md] に、生成したパッケージをどのパッケージから使うかを追記する
+- [ ] 生成したパッケージを `infrastructure` 以外から使う場合は、[docs/ARCHITECTURE.md] の依存の向きを書き換える
 
 仕様書を更新したときは、生成スクリプト、`mise bs`、`dart run melos run gen:build` を同じ順で実行してください。
 
@@ -55,7 +55,7 @@ OpenAPI を使わない場合は、次を削除してください。
 - [ ] `openapi` ディレクトリ
 - [ ] [mise.toml] の `java` と `aqua:OpenAPITools/openapi-generator`（削除後に `mise lock` を実行する）
 - [ ] [dprint.jsonc]、[cspell.jsonc]、[.gitattributes] の `packages/api` の行
-- [ ] [docs/ARCHITECTURE.md] の `openapi` と `packages/api` の行
+- [ ] [docs/ARCHITECTURE.md] のディレクトリ構造の `openapi` と `packages/api`、依存の図の `api`
 
 <!-- Links -->
 
