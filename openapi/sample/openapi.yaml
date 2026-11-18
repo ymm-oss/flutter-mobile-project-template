@@ -59,7 +59,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     Item:
@@ -78,7 +78,7 @@ components:
         createdAt:
           type: string
           format: date-time
-    Error:
+    ErrorResponse:
       type: object
       required:
         - message
