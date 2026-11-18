@@ -29,25 +29,26 @@ Cursor は互換のため `.claude/skills/` も探索する。`.agents/skills/` 
 .agents/skills/flutter-*/         # 公式の Flutter スキル。skills パッケージが管理する
 .config/dart_skills/              # 公式スキルの設定ファイル。skills パッケージが管理する
 .claude/skills                    # ../.agents/skills への symlink
-.cursor/rules/*.mdc               # Cursor に残す規約と Cursor 固有の手順
+.cursor/rules/*.mdc               # Cursor 固有の手順
+AGENTS.md                         # すべてのツールが常に読む規約
 ```
 
 `dart-` と `flutter-` で始まる名前は公式スキル用に空けておく。このリポジトリ固有のスキルには使わない。
 
 `SKILL.md` の先頭には `name` と `description` を書く。`name` はディレクトリ名と一致させ、小文字・数字・ハイフンだけを使う。`description` は、どの依頼でそのスキルを使うかを 1 行で書く。`>` や `|` を使った複数行の書き方はしない。
 
-## 既存の Cursor Rules との境界
+## AGENTS.md と Cursor Rules との境界
 
-スキルは、依頼されたときに読む作業手順である。アーキテクチャや命名のように、スキルが選ばれなくても守る規約は Rules に残す。共通の規約を `AGENTS.md` へまとめる作業は、この配置の変更とは分けて検討する。
+スキルは、依頼されたときに読む作業手順である。アーキテクチャや命名のように、スキルが選ばれなくても守る規約は、すべてのツールが常に読む `AGENTS.md` に書く。`AGENTS.md` には、AI がコードから分からず、間違えやすいことだけを書き、短く保つ。
 
 | ファイル                | 扱い                                   | 理由                                               |
 | ----------------------- | -------------------------------------- | -------------------------------------------------- |
-| `architecture-rule.mdc` | `.cursor/rules/` に残す                | レイヤー責務は、スキルの選択に依存させない制約     |
-| `branch-rule.mdc`       | `.cursor/rules/` に残す                | ブランチの命名と運用は、作業のたびに参照する規約   |
+| `architecture-rule.mdc` | `AGENTS.md` へ移した                   | レイヤー責務は、スキルの選択に依存させない制約     |
+| `branch-rule.mdc`       | `AGENTS.md` へ移した                   | ブランチの命名は、作業のたびに参照する規約         |
 | `memory.mdc`            | `.cursor/rules/` に残す                | `.cursor/memories/` への保存は Cursor 固有の操作   |
 | `pr-creation-rule.mdc`  | `.agents/skills/pr-creation/` へ移した | プルリクエスト作成は、依頼されたときに実行する手順 |
 
-`architecture-rule.mdc` は常時適用にする。レイヤー責務は、エージェントがルールを選ばなかった会話でも守る。
+`CLAUDE.md` は置かない。Claude Code は v2.1.277 以降、`CLAUDE.md` がなければ `AGENTS.md` を読む。
 
 `pr-creation` は現在のリポジトリに対してプルリクエストを作る。以前のルールにあった `owner: yumemi-inc` の固定は、テンプレートから作成したリポジトリでは成り立たないため、スキルには引き継がない。
 
@@ -121,7 +122,7 @@ dart run skills@1.0.4 get --agent generic --skill <name> --skill <name>
 
 ### 外した公式スキル
 
-公式スキルは、一般的な Dart / Flutter プロジェクト向けに書かれている。エージェントは `description` を見てスキルを自動で使うため、このリポジトリの技術選定や構成と食い違うスキルは取り込まない。ルールで優先順位を書いても、ルールを読まないエージェントには届かない。
+公式スキルは、一般的な Dart / Flutter プロジェクト向けに書かれている。エージェントは `description` を見てスキルを自動で使うため、このリポジトリの技術選定や構成と食い違うスキルは取り込まない。`AGENTS.md` に優先順位を書いても、食い違う手順を読ませれば守られにくくなる。
 
 | スキル                                      | 外した理由                                                   |
 | ------------------------------------------- | ------------------------------------------------------------ |
@@ -137,9 +138,9 @@ dart run skills@1.0.4 remove --agent generic --git <取り込み元の URL> --sk
 dart run skills@1.0.4 get --agent generic --git <取り込み元の URL> --skill <残すスキル>
 ```
 
-残した公式スキルとこのリポジトリのルールが異なる場合は、[.cursor/rules/] と [アーキテクチャ] を優先する。
+残した公式スキルとこのリポジトリの決まりが異なる場合は、[AGENTS.md] と [アーキテクチャ] を優先する。
 
-公式スキルはこのリポジトリに合わせて書き換えない。書き換えると上流の更新を取り込めなくなる。補足が必要な場合は、ルールかドキュメントに書く。
+公式スキルはこのリポジトリに合わせて書き換えない。書き換えると上流の更新を取り込めなくなる。補足が必要な場合は、[AGENTS.md] かドキュメントに書く。
 
 ### 検査の対象外
 
@@ -178,5 +179,5 @@ symlink を作成できない環境では、同じスクリプトが `.claude/sk
 <!-- Links -->
 
 [skills]: https://pub.dev/packages/skills
-[.cursor/rules/]: ../.cursor/rules/
+[AGENTS.md]: ../AGENTS.md
 [アーキテクチャ]: ARCHITECTURE.md
