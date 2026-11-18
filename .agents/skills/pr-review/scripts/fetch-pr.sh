@@ -7,6 +7,8 @@
 #   issues: PR が close する Issue の本文とコメント
 #   checks: CI のチェックの結果
 #   diffRanges: コメントを付けられる行の範囲（diff-ranges.sh の出力）
+#   threads: PR にすでに付いているレビューのスレッド
+#   reviews: PR にすでに付いている、本文のある総評
 #
 # Usage: fetch-pr.sh <PR の番号>
 
@@ -20,7 +22,7 @@ fi
 number="$1"
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-pr=$(gh pr view "$number" --json number,title,body,state,url,author,baseRefName,headRefOid,closingIssuesReferences,files)
+pr=$(gh pr view "$number" --json number,title,body,state,url,author,baseRefName,headRefOid,closingIssuesReferences,files,reviews)
 
 issues=$(
   jq -r '.closingIssuesReferences[].url' <<<"$pr" |
@@ -39,9 +41,37 @@ fi
 
 diff_ranges=$("$script_dir/diff-ranges.sh" "$number")
 
-printf '%s\n' "$pr" "$issues" "$checks" "$diff_ranges" |
+threads=$(
+  gh api graphql --paginate --slurp \
+    -F owner='{owner}' -F name='{repo}' -F number="$number" -f query='
+      query($owner: String!, $name: String!, $number: Int!, $endCursor: String) {
+        repository(owner: $owner, name: $name) {
+          pullRequest(number: $number) {
+            reviewThreads(first: 100, after: $endCursor) {
+              pageInfo { hasNextPage endCursor }
+              nodes {
+                isResolved
+                isOutdated
+                path
+                line
+                originalLine
+                comments(first: 50) {
+                  nodes { author { login } body url }
+                }
+              }
+            }
+          }
+        }
+      }' |
+    jq '[
+      .[].data.repository.pullRequest.reviewThreads.nodes[]
+      | .comments = [.comments.nodes[] | {author: .author.login, body, url}]
+    ]'
+)
+
+printf '%s\n' "$pr" "$issues" "$checks" "$diff_ranges" "$threads" |
   jq -s '
-    .[0] as $pr | .[1] as $issues | .[2] as $checks | .[3] as $diffRanges |
+    .[0] as $pr | .[1] as $issues | .[2] as $checks | .[3] as $diffRanges | .[4] as $threads |
     $pr
     | del(.closingIssuesReferences)
     | .author = .author.login
@@ -49,4 +79,6 @@ printf '%s\n' "$pr" "$issues" "$checks" "$diff_ranges" |
     | .issues = $issues
     | .checks = $checks
     | .diffRanges = $diffRanges
+    | .threads = $threads
+    | .reviews = [.reviews[] | select(.body != "") | {author: .author.login, state, body}]
   '
