@@ -10,6 +10,10 @@ on:
       - "mise.toml"
       - "mise.lock"
       - "**/pubspec.lock"
+  # mise のキャッシュのキーは 30 日ごとに変わるため、push がなくても作り直す
+  schedule:
+    - cron: "0 0 * * *" # 日本標準時間 毎日朝9:00
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -19,7 +23,8 @@ permissions: {}
 
 jobs:
   create:
-    if: github.ref_name == github.event.repository.default_branch
+    # schedule は既定ブランチでしか動かないため、ref を比べない
+    if: github.event_name == 'schedule' || github.ref_name == github.event.repository.default_branch
     runs-on: ubuntu-24.04
     permissions:
       contents: read
