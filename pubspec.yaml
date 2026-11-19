@@ -134,11 +134,11 @@ melos:
       steps:
         - gen:i18n
         - gen:build
-    gen:diff:main:
-      description: main ブランチと差分のあるパッケージのみ build_runner と i18n の生成コマンドを実行します。
+    gen:diff:default:
+      description: 既定ブランチと差分のあるパッケージのみ build_runner と i18n の生成コマンドを実行します。
       steps:
-        - gen:i18n:diff:main
-        - gen:build:diff:main
+        - gen:i18n:diff:default
+        - gen:build:diff:default
     gen:build:
       description: build_runner を使用してコードを生成します。
       exec:
@@ -153,22 +153,22 @@ melos:
         orderDependents: true
       packageFilters:
         dependsOn: slang
-    gen:build:diff:main:
-      description: main ブランチと差分のあるパッケージのみ build_runner を使用してコードを生成します。
+    gen:build:diff:default:
+      description: 既定ブランチと差分のあるパッケージのみ build_runner を使用してコードを生成します。
       exec:
         command: dart run build_runner build
         orderDependents: true
       packageFilters:
         dependsOn: build_runner
-        diff: origin/main...HEAD
-    gen:i18n:diff:main:
-      description: main ブランチと差分のあるパッケージのみ 多言語対応のためのローカライゼーションファイルを生成します。
+        diff: origin/HEAD...HEAD
+    gen:i18n:diff:default:
+      description: 既定ブランチと差分のあるパッケージのみ 多言語対応のためのローカライゼーションファイルを生成します。
       exec:
         command: dart run slang build
         orderDependents: true
       packageFilters:
         dependsOn: slang
-        diff: origin/main...HEAD
+        diff: origin/HEAD...HEAD
     # ローカル確認用
     # - 未コミットの差分パッケージのみ[build_runner][i18n]を処理するスクリプト
     gen:diff:head:

@@ -68,10 +68,10 @@
 
 ### マージキュー
 
-マージキューについては、[MERGE_QUEUE.md] を参照してください。
+マージキューで実行する検査については、[CI.md] を参照してください。
 
 <!-- Links -->
 
 [ブランチ保護ルール]: https://docs.github.com/ja/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/managing-a-branch-protection-rule
 [check-pr.yaml]: ../.github/workflows/check-pr.yaml
-[MERGE_QUEUE.md]: ./MERGE_QUEUE.md
+[CI.md]: ./CI.md#check-pr-と-merge-queue-の違い

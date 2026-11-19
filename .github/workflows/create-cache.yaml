@@ -1,0 +1,44 @@
+name: create-cache
+
+# PR と merge queue のキャッシュはほかの実行から読めないため、既定ブランチで作っておく
+# on.push.branches には式を書けないため、すべてのブランチで起動し、既定ブランチかどうかはジョブの if で判定する
+on:
+  push:
+    branches:
+      - "**"
+    paths:
+      - "mise.toml"
+      - "mise.lock"
+      - "**/pubspec.lock"
+  # mise のキャッシュのキーは 30 日ごとに変わるため、push がなくても作り直す
+  schedule:
+    - cron: "0 0 * * *" # 日本標準時間 毎日朝9:00
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  create:
+    # schedule は既定ブランチでしか動かないため、ref を比べない
+    if: github.event_name == 'schedule' || github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    timeout-minutes: 15
+
+    steps:
+      # https://github.com/actions/checkout
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Application Runtime
+        uses: ./.github/actions/setup-application-runtime
+        with:
+          bootstrap-workspace: false
+          save-cache: true
