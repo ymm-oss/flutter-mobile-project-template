@@ -19,8 +19,7 @@ dependencies:
   internal_util_ui:
     path: ../util_ui
   riverpod_annotation: ^4.0.7
-  # 2.2.0 以降は Android で AGP 9 と built-in Kotlin が必要なため 2.1 系に留める（#671 で上限を外す）
-  shake_gesture: ">=2.1.0 <2.2.0"
+  shake_gesture: ^2.2.1
   talker_flutter: ^5.2.0
 
 dev_dependencies:

@@ -33,7 +33,7 @@ jobs:
           persist-credentials: false
 
       # https://github.com/marketplace/actions/actionlint-with-reviewdog
-      - uses: reviewdog/action-actionlint@a7d35aaf8c309203a4ae861d32b7bd490baa7bf3 # v1.83.0
+      - uses: reviewdog/action-actionlint@78b296370c5c75abca79860e9baa9846e3286a29 # v1.84.0
         with:
           actionlint_flags: -ignore 'SC2153'
           fail_on_error: true
@@ -78,16 +78,16 @@ jobs:
           zizmor --format sarif .github |
             reviewdog -f=sarif -name=zizmor -reporter=local -filter-mode=nofilter -fail-level=any
 
-  cache-dependencies:
+  analyze:
+    needs: changes
+    if: ${{ needs.changes.outputs.src == 'true' }}
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     permissions:
       contents: read
-    needs: changes
-    if: ${{ needs.changes.outputs.dependencies == 'true' }}
-    timeout-minutes: 10
 
     steps:
-      # https://github.com/marketplace/actions/checkout
+      # https://github.com/actions/checkout
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -95,11 +95,49 @@ jobs:
 
       - name: Setup Application Runtime
         uses: ./.github/actions/setup-application-runtime
+        with:
+          bootstrap-workspace: false
+
+      # https://github.com/reviewdog/action-setup
+      - name: Setup reviewdog
+        uses: reviewdog/action-setup@d8a7baabd7f3e8544ee4dbde3ee41d0011c3a93f # v1.5.0
+        with:
+          reviewdog_version: v0.21.2
+
+      - name: Report analyze
+        run: reviewdog -runners=dart-analyze -reporter=local -filter-mode=nofilter -fail-level=info
 
   check:
-    needs:
-      - changes
-      - cache-dependencies
+    needs: changes
+    if: ${{ needs.changes.outputs.src == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+
+    steps:
+      # https://github.com/actions/checkout
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Application Runtime
+        uses: ./.github/actions/setup-application-runtime
+        with:
+          bootstrap-workspace: false
+
+      - name: Check format
+        run: dart run melos run format:check
+
+      - name: Check for circular dependencies
+        run: dart run melos list --cycles
+
+      - name: Check debug features are excluded from release build
+        run: dart run melos run check:debug_tree_shaking
+
+  test:
+    needs: changes
     if: ${{ needs.changes.outputs.src == 'true' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -116,24 +154,8 @@ jobs:
 
       - name: Setup Application Runtime
         uses: ./.github/actions/setup-application-runtime
-
-      # https://github.com/reviewdog/action-setup
-      - name: Setup reviewdog
-        uses: reviewdog/action-setup@d8a7baabd7f3e8544ee4dbde3ee41d0011c3a93f # v1.5.0
         with:
-          reviewdog_version: v0.21.2
-
-      - name: Report analyze
-        run: reviewdog -runners=dart-analyze -reporter=local -filter-mode=nofilter -fail-level=info
-
-      - name: Check format
-        run: dart run melos run format:check
-
-      - name: Check for circular dependencies
-        run: dart run melos list --cycles
-
-      - name: Check debug features are excluded from release build
-        run: dart run melos run check:debug_tree_shaking
+          bootstrap-workspace: false
 
       - name: Run test
         uses: ./.github/actions/run-test
@@ -142,9 +164,7 @@ jobs:
     uses: ./.github/workflows/wc-check-diff.yaml
     permissions:
       contents: read
-    needs:
-      - changes
-      - cache-dependencies
+    needs: changes
     if: ${{ needs.changes.outputs.gen == 'true' }}
 
   check-ai-skills:
@@ -167,8 +187,9 @@ jobs:
       - changes
       - check-actions
       - check-actions-security
-      - cache-dependencies
+      - analyze
       - check
+      - test
       - diff-gen
       - check-ai-skills
       - check-vulnerabilities
