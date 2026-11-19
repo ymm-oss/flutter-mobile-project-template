@@ -80,7 +80,7 @@ melos の `diff` フィルタは、ファイルが変わったパッケージだ
 
 ## melos bootstrap を省くジョブ
 
-analyze、check、test は、[Setup Application Runtime] の `bootstrap-workspace: false` で `melos bootstrap` を省きます。bootstrap が生成し直すファイル（`pubspec.yaml` の共通の依存、`analysis_options.yaml` の `include:`、`.github/labeler.yml`、`.github/labels.yml`）が最新であることは、bootstrap を実行する diff-gen が確かめます。
+analyze、check、test は、[Setup Application Runtime] の `bootstrap-workspace: false` で `melos bootstrap` を省きます。bootstrap が生成し直すファイル（`pubspec.yaml` の共通の依存、`analysis_options.yaml` の `include:`）が最新であることは、bootstrap を実行する diff-gen が確かめます。
 
 この分担を保つため、次の点を守ってください。
 
