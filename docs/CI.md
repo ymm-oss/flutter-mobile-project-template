@@ -4,61 +4,41 @@
 
 ## ワークフロー
 
-| ワークフロー                    | トリガー                                                                                                        | 内容                                          |
-| ------------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
-| [check-pr.yaml]                 | `pull_request`                                                                                                  | PR の検査                                     |
-| [merge-queue.yaml]              | `merge_group`                                                                                                   | merge queue での検査                          |
-| [create-cache.yaml]             | `mise.toml`、`mise.lock`、`pubspec.lock` を変えた既定ブランチへの `push`、毎日 9:00（JST）、`workflow_dispatch` | 既定ブランチの mise と pub のキャッシュの作成 |
-| [auto-assign.yaml]              | `pull_request`（opened、ready_for_review）                                                                      | レビュアーと担当者の設定                      |
-| [labeler.yml]                   | `pull_request_target`                                                                                           | 変更したパッケージのラベルの付与              |
-| [labels.yml]                    | `.github/labels.yml` を変えた `main` への `push` と PR                                                          | リポジトリのラベルの同期（PR では dry-run）   |
-| [pr-rebase-detector.yaml]       | `pull_request`（synchronize）                                                                                   | rebase や force push の検知                   |
-| [github-pages-pull-request.yml] | `pull_request`、`workflow_dispatch`                                                                             | catalog の GitHub Pages へのデプロイ          |
-| [issue-dependabot.yml]          | 毎週月曜日 9:00（JST）                                                                                          | 更新できるパッケージの Issue へのコメント     |
-| [issue-vulnerabilities.yaml]    | 毎週月曜日 9:00（JST）、`workflow_dispatch`                                                                     | 脆弱性の Issue 化                             |
-| [initialization.yaml]           | `main` への `push`                                                                                              | テンプレートから作ったリポジトリの初期化      |
+| ワークフロー                    | 内容                                          |
+| ------------------------------- | --------------------------------------------- |
+| [check-pr.yaml]                 | PR の検査                                     |
+| [merge-queue.yaml]              | merge queue での検査                          |
+| [create-cache.yaml]             | 既定ブランチの mise と pub のキャッシュの作成 |
+| [auto-assign.yaml]              | レビュアーと担当者の設定                      |
+| [labeler.yml]                   | 変更したパッケージのラベルの付与              |
+| [labels.yml]                    | リポジトリのラベルの同期（PR では dry-run）   |
+| [pr-rebase-detector.yaml]       | rebase や force push の検知                   |
+| [github-pages-pull-request.yml] | catalog の GitHub Pages へのデプロイ          |
+| [issue-dependabot.yml]          | 更新できるパッケージの Issue へのコメント     |
+| [issue-vulnerabilities.yaml]    | 脆弱性の Issue 化                             |
+| [initialization.yaml]           | テンプレートから作ったリポジトリの初期化      |
 
 ファイル名が `wc-` で始まるワークフローは、上のワークフローから `workflow_call` で呼ぶ部品です。
 
 ## 実行するジョブを決める条件
 
-check-pr と merge-queue は、最初に [wc-changes.yml] で変更したファイルを調べ、関係するジョブだけを実行します。changes の後にほかのジョブを並列に実行し、最後に status-check を実行します。check-secrets は changes を待たずに始まります。
+check-pr と merge-queue は、最初に [wc-changes.yml] で変更したファイルを調べ、関係するジョブだけを実行します。changes の後にほかのジョブを並列に実行し、最後に status-check を実行します。check-pr の check-secrets は changes を待たずに始まります。
 
-| フィルタ          | 対象のファイル                                                                                                            | 使うジョブ                            |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
-| `actions`         | `.github/actions/**/action.y(a)ml`、`.github/workflows/*`、`.github/zizmor.yml`、`mise.toml`、`mise.lock`                 | check-actions、check-actions-security |
-| `src`             | `**.dart`、`**.yaml`、`**/pubspec.lock`、`scripts/**`、`.reviewdog.yml`                                                   | analyze、check、test                  |
-| `gen`             | `**.dart`、`**.yaml`、`**/pubspec.lock`                                                                                   | diff-gen、check-dependencies          |
-| `dprint`          | `**.json`、`**.jsonc`、`**.md`、`**.toml`、`**.yml`、`**.yaml`                                                            | check-style-dprint                    |
-| `spell`           | `**.md`、`**.yaml`、`**.yml`、`**.dart`、cspell と reviewdog の設定、`package.json`、`bun.lock`、`mise.toml`、`mise.lock` | check-code-spell                      |
-| `ai_skills`       | `.agents/**`、`.claude/**`、`.config/dart_skills/**` など                                                                 | check-ai-skills                       |
-| `vulnerabilities` | `pubspec.lock`、`bun.lock`、`osv-scanner.toml`、`mise.toml`、`mise.lock` など                                             | check-vulnerabilities                 |
+| フィルタ          | 使うジョブ                            |
+| ----------------- | ------------------------------------- |
+| `actions`         | check-actions、check-actions-security |
+| `src`             | analyze、check、test                  |
+| `gen`             | diff-gen、check-dependencies          |
+| `dprint`          | check-style-dprint                    |
+| `spell`           | check-code-spell                      |
+| `ai_skills`       | check-ai-skills                       |
+| `vulnerabilities` | check-vulnerabilities                 |
 
-正確な対象は [wc-changes.yml] を参照してください。ジョブの結果に関わるファイルは、そのジョブのフィルタに含めてください。含めないと、そのファイルだけを変えた PR ではジョブがスキップされ、検査されないまま通ります。
+各フィルタの対象のファイルは [wc-changes.yml] を参照してください。ジョブの結果に関わるファイルは、そのジョブのフィルタに含めてください。含めないと、そのファイルだけを変えた PR ではジョブがスキップされ、検査されないまま通ります。
 
 changes、check-secrets、status-check はフィルタを使わず、常に実行します。skip-comment は、どのフィルタにも当てはまらないときに実行します。
 
 ブランチの保護ルールで必須にしているのは `status-check` だけです（[ブランチ運用ルールのステータスチェック](./BRANCH.md#ステータスチェック)）。`status-check` は、ほかのすべてのジョブが成功かスキップであることを確かめます。ジョブを追加したら、`status-check` の `needs` にも加えてください。加えないと、そのジョブが失敗してもマージできます。
-
-## ジョブ
-
-| ジョブ                 | 内容                                                           | check-pr | merge queue  |
-| ---------------------- | -------------------------------------------------------------- | :------: | :----------: |
-| changes                | 変更したファイルの検出                                         |    ○     |      ○       |
-| skip-comment           | 対象のファイルの変更がないときに、PR にコメントする            |    ○     |              |
-| check-actions          | actionlint によるワークフローの検査                            |    ○     |      ○       |
-| check-actions-security | zizmor によるワークフローのセキュリティの検査                  |    ○     |      ○       |
-| check-secrets          | gitleaks による PR のコミットの秘密情報の検査                  |    ○     |              |
-| analyze                | `dart analyze` の結果の報告                                    |    ○     |      ○       |
-| check                  | format、循環依存、リリースビルドからのデバッグ機能の除外の検査 |    ○     |      ○       |
-| test                   | テストの実行と結果の報告                                       |    ○     |      ○       |
-| diff-gen               | 生成コードが最新であることの検査                               | 差分のみ | 全パッケージ |
-| check-dependencies     | `pubspec.lock` の変更内容を PR にコメントする                  |    ○     |              |
-| check-style-dprint     | dprint によるフォーマットの検査                                |    ○     |              |
-| check-code-spell       | cspell によるスペルの検査                                      |    ○     |              |
-| check-ai-skills        | AI のスキルのシンボリックリンクの検査                          |    ○     |      ○       |
-| check-vulnerabilities  | OSV-Scanner による、ベースにない脆弱性の検査                   |    ○     |      ○       |
-| status-check           | すべてのジョブの結果の集約                                     |    ○     |      ○       |
 
 check-pr.yaml と merge-queue.yaml は、同じジョブをそれぞれに定義しています。両方で実行するジョブを変えるときは、両方を変えてください。
 
@@ -90,12 +70,6 @@ analyze、check、test は、[Setup Application Runtime] の `bootstrap-workspac
 create-cache も `bootstrap-workspace: false` で `melos bootstrap` を省きます。キャッシュに入れる Flutter tool と pub のパッケージは、bootstrap の前の `flutter pub get` までにそろうためです。
 
 ## キャッシュ
-
-| キャッシュ   | 場所                                      | キー                                                | 保存する実行                 |
-| ------------ | ----------------------------------------- | --------------------------------------------------- | ---------------------------- |
-| mise         | `~/.local/share/mise`（Flutter SDK など） | mise の設定ファイルのハッシュと 30 日ごとの期間など | create-cache（既定ブランチ） |
-| pub          | `~/.pub-cache`                            | OS と `pubspec.lock` のハッシュ                     | create-cache（既定ブランチ） |
-| build_runner | `**/.dart_tool/build`                     | OS と `pubspec.lock` のハッシュ                     | diff-gen                     |
 
 mise と pub のキャッシュは [Setup Application Runtime]、build_runner のキャッシュは [wc-check-diff.yaml] で扱います。
 
