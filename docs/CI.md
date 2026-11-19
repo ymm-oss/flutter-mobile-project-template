@@ -107,7 +107,7 @@ mise のキャッシュのキーは 30 日ごとに変わるため、create-cach
 [check-pr.yaml]: ../.github/workflows/check-pr.yaml
 [create-cache.yaml]: ../.github/workflows/create-cache.yaml
 [github-pages-pull-request.yml]: ../.github/workflows/github-pages-pull-request.yml
-[initialization.yaml]: ../.github/workflows/initialization.yaml
+[initialization.yaml]: https://github.com/ymm-oss/flutter-mobile-project-template/blob/main/.github/workflows/initialization.yaml
 [issue-dependabot.yml]: ../.github/workflows/issue-dependabot.yml
 [issue-vulnerabilities.yaml]: ../.github/workflows/issue-vulnerabilities.yaml
 [labeler.yml]: ../.github/workflows/labeler.yml
