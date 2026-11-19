@@ -34,7 +34,7 @@ GitHubのマージキュー機能を設定して、 PR のマージプロセス�
      - ※ 必要に応じて、他のオプションも設定
 
 2. **ドキュメント**：
-   - 概要は [`docs/MERGE_QUEUE.md`](../blob/main/docs/MERGE_QUEUE.md)を参照してください。
+   - マージキューで実行する検査は [`docs/CI.md`](../blob/main/docs/CI.md#check-pr-と-merge-queue-の違い)を参照してください。
 
 ## 参考リンク
 
