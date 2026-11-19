@@ -131,34 +131,13 @@ jobs:
           git cat-file -e "$HEAD_SHA^{commit}"
           gitleaks git --no-banner --redact --verbose --log-opts="--diff-merges=remerge $BASE_SHA..$HEAD_SHA" .
 
-  cache-dependencies:
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: read
+  analyze:
     needs: changes
-    if: ${{ needs.changes.outputs.dependencies == 'true' }}
-    timeout-minutes: 10
-
-    steps:
-      # https://github.com/marketplace/actions/checkout
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Setup Application Runtime
-        uses: ./.github/actions/setup-application-runtime
-
-  check:
-    needs:
-      - changes
-      - cache-dependencies
     if: ${{ needs.changes.outputs.src == 'true' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     permissions:
       contents: read
-      checks: write
       pull-requests: write
 
     steps:
@@ -182,6 +161,24 @@ jobs:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ github.token }}
         run: reviewdog -runners=dart-analyze -reporter=github-pr-review -filter-mode=nofilter -fail-level=info
 
+  check:
+    needs: changes
+    if: ${{ needs.changes.outputs.src == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+
+    steps:
+      # https://github.com/actions/checkout
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Application Runtime
+        uses: ./.github/actions/setup-application-runtime
+
       - name: Check format
         run: dart run melos run format:check
 
@@ -190,6 +187,25 @@ jobs:
 
       - name: Check debug features are excluded from release build
         run: dart run melos run check:debug_tree_shaking
+
+  test:
+    needs: changes
+    if: ${{ needs.changes.outputs.src == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      checks: write
+
+    steps:
+      # https://github.com/actions/checkout
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Application Runtime
+        uses: ./.github/actions/setup-application-runtime
 
       - name: Run test
         uses: ./.github/actions/run-test
@@ -203,9 +219,7 @@ jobs:
       contents: read
     with:
       diff-packages: true
-    needs:
-      - changes
-      - cache-dependencies
+    needs: changes
     if: ${{ needs.changes.outputs.gen == 'true' }}
 
   check-dependencies:
@@ -213,9 +227,7 @@ jobs:
     permissions:
       pull-requests: write
       contents: read
-    needs:
-      - changes
-      - cache-dependencies
+    needs: changes
     if: ${{ needs.changes.outputs.gen == 'true' }}
 
   check-style-dprint:
@@ -255,8 +267,9 @@ jobs:
       - check-actions
       - check-actions-security
       - check-secrets
-      - cache-dependencies
+      - analyze
       - check
+      - test
       - diff-gen
       - check-dependencies
       - check-style-dprint
