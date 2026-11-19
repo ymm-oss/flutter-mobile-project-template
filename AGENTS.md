@@ -11,18 +11,13 @@
 
 ## コマンド
 
-- 解析: `dart analyze`
-- フォーマット: `dart run melos run format`
-- コード生成: `dart run melos run gen`（未コミットの変更があるパッケージだけなら `gen:diff:head`）
-- テスト: `dart run melos run test`
-
-作業を終える前に、次を確かめる。
-
-- `dart analyze` で info も含めて何も出ないこと
-- `dart run melos run format:check` が通ること
-- `dart run melos run test` が通ること
-- パッケージの依存を変えたときは、`dart run melos list --cycles` で循環がないこと
-- `debug` への参照を変えたときは、`dart run melos run check:debug_tree_shaking` が通ること
+- コマンドは `mise run <タスク>` で実行する。中身は `mise.toml` の `[tasks]` にある。
+  - 解析: `mise run analyze`
+  - フォーマット: `mise run format`
+  - コード生成: `mise run gen`
+  - テスト: `mise run test`
+- 作業を終える前に `mise run check` が通ることを確かめる。解析（info も含む）、フォーマット、循環参照、テストをまとめて検査する。
+- `debug` への参照を変えたときは、`dart run melos run check:debug_tree_shaking` も通ることを確かめる。リリースビルドを作るため時間がかかり、`check` には含めていない。
 
 ## 生成されたファイル
 
