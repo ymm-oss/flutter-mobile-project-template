@@ -20,7 +20,8 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          fetch-depth: 0 # 全履歴を取得
+          # 既定ブランチとの差分を取るため、全履歴と refs/remotes/origin/<既定ブランチ> を取得する。浅くすると origin/HEAD...HEAD を解決できない
+          fetch-depth: 0
 
       # actions/checkout は origin/HEAD を作らないため、取得済みの既定ブランチを指すように設定する
       - name: Set origin/HEAD
