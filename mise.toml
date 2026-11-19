@@ -33,3 +33,30 @@ description = "Run cspell to check spelling."
 run = [
   'bun --bun run cspell lint',
 ]
+
+# The tasks below are the entry points for people and AI agents.
+# They call the melos scripts in pubspec.yaml; keep this list short.
+[tasks.analyze]
+description = "Analyze all packages. Fails on infos, as CI does."
+run = 'dart analyze --fatal-infos'
+
+[tasks.format]
+description = "Format all packages, excluding generated code."
+run = 'dart run melos run format --no-select'
+
+[tasks.gen]
+description = "Generate code with build_runner and slang."
+run = 'dart run melos run gen --no-select'
+
+[tasks.test]
+description = "Run the tests of all packages."
+run = 'dart run melos run test --no-select'
+
+[tasks.check]
+description = "Run the checks to pass before finishing work: analyze, format, dependency cycles and tests."
+run = [
+  'dart analyze --fatal-infos',
+  'dart run melos run format:check --no-select',
+  'dart run melos list --cycles',
+  'dart run melos run test --no-select',
+]
