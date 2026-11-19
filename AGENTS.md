@@ -11,7 +11,7 @@
 
 ## コマンド
 
-- コマンドは `mise run <タスク>` で実行する。中身は `mise.toml` の `[tasks]` にある。
+- よく使うコマンドは `mise run <タスク>` で実行する。中身は `mise.toml` の `[tasks]` にある。
   - 解析: `mise run analyze`
   - フォーマット: `mise run format`
   - コード生成: `mise run gen`
