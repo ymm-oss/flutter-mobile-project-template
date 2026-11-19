@@ -5,6 +5,9 @@ inputs:
   enforce-lockfile:
     description: "Whether to fail if resolved dependencies differ from pubspec.lock"
     default: "true"
+  bootstrap-workspace:
+    description: "Whether to bootstrap the workspace with melos. Jobs that only use committed files can skip it, since diff-gen checks that bootstrap changes no files"
+    default: "true"
   save-cache:
     description: "mise と pub のキャッシュを保存する。キャッシュを作るワークフローだけ true にする"
     default: "false"
@@ -35,13 +38,23 @@ runs:
 
     # dart run は pubspec.lock が古いと --enforce-lockfile なしで pub get を実行するため、
     # 先に flutter pub get --enforce-lockfile でロックファイルとの一致を確認する
-    - name: Setup melos
+    - name: Get dependencies
       run: |
         if [[ "$ENFORCE_LOCKFILE" == "true" ]]; then
           flutter pub get --enforce-lockfile
-          dart run melos bootstrap --enforce-lockfile
         else
           flutter pub get
+        fi
+      shell: bash
+      env:
+        ENFORCE_LOCKFILE: ${{ inputs.enforce-lockfile }}
+
+    - name: Setup melos
+      if: inputs.bootstrap-workspace != 'false'
+      run: |
+        if [[ "$ENFORCE_LOCKFILE" == "true" ]]; then
+          dart run melos bootstrap --enforce-lockfile
+        else
           dart run melos bootstrap
         fi
       shell: bash
