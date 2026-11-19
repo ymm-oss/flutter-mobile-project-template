@@ -4,19 +4,19 @@
 
 ## ワークフロー
 
-| ワークフロー                    | トリガー                                                                                                        | 内容                                                     |
-| ------------------------------- | --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| [check-pr.yaml]                 | `pull_request`                                                                                                  | PR の検査                                                |
-| [merge-queue.yaml]              | `merge_group`                                                                                                   | merge queue での検査（[マージキュー](./MERGE_QUEUE.md)） |
-| [create-cache.yaml]             | `mise.toml`、`mise.lock`、`pubspec.lock` を変えた既定ブランチへの `push`、毎日 9:00（JST）、`workflow_dispatch` | 既定ブランチの mise と pub のキャッシュの作成            |
-| [auto-assign.yaml]              | `pull_request`（opened、ready_for_review）                                                                      | レビュアーと担当者の設定                                 |
-| [labeler.yml]                   | `pull_request_target`                                                                                           | 変更したパッケージのラベルの付与                         |
-| [labels.yml]                    | `.github/labels.yml` を変えた `main` への `push` と PR                                                          | リポジトリのラベルの同期（PR では dry-run）              |
-| [pr-rebase-detector.yaml]       | `pull_request`（synchronize）                                                                                   | rebase や force push の検知                              |
-| [github-pages-pull-request.yml] | `pull_request`、`workflow_dispatch`                                                                             | catalog の GitHub Pages へのデプロイ                     |
-| [issue-dependabot.yml]          | 毎週月曜日 9:00（JST）                                                                                          | 更新できるパッケージの Issue へのコメント                |
-| [issue-vulnerabilities.yaml]    | 毎週月曜日 9:00（JST）、`workflow_dispatch`                                                                     | 脆弱性の Issue 化                                        |
-| [initialization.yaml]           | `main` への `push`                                                                                              | テンプレートから作ったリポジトリの初期化                 |
+| ワークフロー                    | トリガー                                                                                                        | 内容                                          |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| [check-pr.yaml]                 | `pull_request`                                                                                                  | PR の検査                                     |
+| [merge-queue.yaml]              | `merge_group`                                                                                                   | merge queue での検査                          |
+| [create-cache.yaml]             | `mise.toml`、`mise.lock`、`pubspec.lock` を変えた既定ブランチへの `push`、毎日 9:00（JST）、`workflow_dispatch` | 既定ブランチの mise と pub のキャッシュの作成 |
+| [auto-assign.yaml]              | `pull_request`（opened、ready_for_review）                                                                      | レビュアーと担当者の設定                      |
+| [labeler.yml]                   | `pull_request_target`                                                                                           | 変更したパッケージのラベルの付与              |
+| [labels.yml]                    | `.github/labels.yml` を変えた `main` への `push` と PR                                                          | リポジトリのラベルの同期（PR では dry-run）   |
+| [pr-rebase-detector.yaml]       | `pull_request`（synchronize）                                                                                   | rebase や force push の検知                   |
+| [github-pages-pull-request.yml] | `pull_request`、`workflow_dispatch`                                                                             | catalog の GitHub Pages へのデプロイ          |
+| [issue-dependabot.yml]          | 毎週月曜日 9:00（JST）                                                                                          | 更新できるパッケージの Issue へのコメント     |
+| [issue-vulnerabilities.yaml]    | 毎週月曜日 9:00（JST）、`workflow_dispatch`                                                                     | 脆弱性の Issue 化                             |
+| [initialization.yaml]           | `main` への `push`                                                                                              | テンプレートから作ったリポジトリの初期化      |
 
 ファイル名が `wc-` で始まるワークフローは、上のワークフローから `workflow_call` で呼ぶ部品です。
 
