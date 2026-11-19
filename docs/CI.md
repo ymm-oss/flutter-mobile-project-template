@@ -80,14 +80,14 @@ melos の `diff` フィルタは、ファイルが変わったパッケージだ
 
 ## melos bootstrap を省くジョブ
 
-analyze、check、test は、[Setup Application Runtime] の `bootstrap: false` で `melos bootstrap` を省きます。bootstrap が生成し直すファイル（`pubspec.yaml` の共通の依存、`analysis_options.yaml` の `include:`、`.github/labeler.yml`、`.github/labels.yml`）が最新であることは、bootstrap を実行する diff-gen が確かめます。
+analyze、check、test は、[Setup Application Runtime] の `bootstrap-workspace: false` で `melos bootstrap` を省きます。bootstrap が生成し直すファイル（`pubspec.yaml` の共通の依存、`analysis_options.yaml` の `include:`、`.github/labeler.yml`、`.github/labels.yml`）が最新であることは、bootstrap を実行する diff-gen が確かめます。
 
 この分担を保つため、次の点を守ってください。
 
 - bootstrap の入力（`pubspec.yaml`、`pubspec.lock`、`analysis_options.yaml`、`tools/` の Dart ファイル）は、diff-gen の `gen` フィルタに含めてください。含めないと、古いファイルが diff-gen をすり抜け、analyze が古い設定のまま通ります。
 - コミットしない生成物で、analyze、check、test が使うものを bootstrap の post フックに足すときは、それらのジョブでも bootstrap を実行してください。
 
-create-cache も `bootstrap: false` で `melos bootstrap` を省きます。キャッシュに入れる Flutter tool と pub のパッケージは、bootstrap の前の `flutter pub get` までにそろうためです。
+create-cache も `bootstrap-workspace: false` で `melos bootstrap` を省きます。キャッシュに入れる Flutter tool と pub のパッケージは、bootstrap の前の `flutter pub get` までにそろうためです。
 
 ## キャッシュ
 
