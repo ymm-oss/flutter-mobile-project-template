@@ -54,10 +54,12 @@ OpenAPI Generator と、その実行に必要な Java のバージョンは [ope
 - [ ] 生成したパッケージを `infrastructure` 以外から使う場合は、[docs/ARCHITECTURE.md] の依存の向きを書き換える
 
 仕様書を更新したときは、生成スクリプト、`mise bs`、`dart run melos run gen:build` を同じ順で実行してください。
+`openapi` か `packages/api` を変えた PR では、CI が生成し直した結果とコミット済みのものが一致するかを確かめます。
 
 OpenAPI を使わない場合は、次を削除してください。
 
 - [ ] `openapi` ディレクトリ
+- [ ] [.github/workflows/wc-check-openapi.yaml] と、[.github/workflows/check-pr.yaml]、[.github/workflows/merge-queue.yaml]、[.github/workflows/wc-changes.yml] の `openapi` の記述
 - [ ] [dprint.jsonc]、[cspell.jsonc]、[.gitattributes] の `packages/api` の行
 - [ ] [docs/ARCHITECTURE.md] のディレクトリ構造の `openapi` と `packages/api`、依存の図の `api`
 
@@ -72,4 +74,8 @@ OpenAPI を使わない場合は、次を削除してください。
 [.gitattributes]: ../blob/main/.gitattributes
 [.github/labeler.yml]: ../blob/main/.github/labeler.yml
 [.github/labels.yml]: ../blob/main/.github/labels.yml
+[.github/workflows/wc-check-openapi.yaml]: ../blob/main/.github/workflows/wc-check-openapi.yaml
+[.github/workflows/check-pr.yaml]: ../blob/main/.github/workflows/check-pr.yaml
+[.github/workflows/merge-queue.yaml]: ../blob/main/.github/workflows/merge-queue.yaml
+[.github/workflows/wc-changes.yml]: ../blob/main/.github/workflows/wc-changes.yml
 [docs/ARCHITECTURE.md]: ../blob/main/docs/ARCHITECTURE.md
