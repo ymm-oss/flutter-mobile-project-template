@@ -76,6 +76,26 @@ else
   echo -e "${YELLOW}[!] This may be due to mise installation not completed.${NC}"
 fi
 
+echo ""
+print_step "bun --bun run prepare"
+if type bun >/dev/null 2>&1; then
+  # bun install --ignore-scripts skips the prepare script, so run husky explicitly to enable Git hooks.
+  if bun --bun run prepare; then
+    print_result 0 "bun --bun run prepare"
+    # husky exits 0 without enabling hooks when HUSKY=0 is set, and a worktree-level core.hooksPath overrides it.
+    hooks_path=$(git config --get core.hooksPath || true)
+    if [ "$hooks_path" != ".husky/_" ]; then
+      echo -e "${YELLOW}[!] Git hooks are not enabled: core.hooksPath is '${hooks_path}', expected '.husky/_'.${NC}"
+      echo -e "${YELLOW}[!] Check the HUSKY environment variable and 'git config --show-origin --get-all core.hooksPath'.${NC}"
+    fi
+  else
+    print_result $? "bun --bun run prepare"
+  fi
+else
+  echo -e "${YELLOW}[!] bun --bun run prepare: Skip because it could not be found.${NC}"
+  echo -e "${YELLOW}[!] This may be due to mise installation not completed.${NC}"
+fi
+
 ##############################################################################
 ##
 ##  melos
