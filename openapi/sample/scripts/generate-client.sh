@@ -22,7 +22,8 @@ fi
 # openapi/mise.toml の Java と OpenAPI Generator を使うため、openapi の下で実行する。
 cd "$api_dir"
 
-if ! generator_jar="$(mise which openapi-generator 2>/dev/null)"; then
+# mise の版が openapi/mise.toml の min_version より古い場合も、mise のエラーが見えるように標準エラーは捨てない。
+if ! mise which openapi-generator >/dev/null; then
   echo "error: openapi-generator が見つかりません。mise -C openapi install を実行してください。" >&2
   exit 1
 fi
@@ -30,7 +31,7 @@ fi
 # 仕様書から消えた API やモデルのファイルを残さないため、生成先を作り直す。
 rm -rf "$output_dir"
 
-mise exec -- java -jar "$generator_jar" generate \
+mise exec -- openapi-generator generate \
   --generator-name dart-dio \
   --input-spec "$api_dir/openapi.yaml" \
   --config "$api_dir/configs/dart-dio.yaml" \
