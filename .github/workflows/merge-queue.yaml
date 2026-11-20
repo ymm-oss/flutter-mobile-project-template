@@ -33,7 +33,7 @@ jobs:
           persist-credentials: false
 
       # https://github.com/marketplace/actions/actionlint-with-reviewdog
-      - uses: reviewdog/action-actionlint@78b296370c5c75abca79860e9baa9846e3286a29 # v1.84.0
+      - uses: reviewdog/action-actionlint@ae857e78c1b42b3d0a49637181b09d3d56d402b4 # v1.84.1
         with:
           actionlint_flags: -ignore 'SC2153'
           fail_on_error: true
@@ -58,7 +58,7 @@ jobs:
 
       # https://github.com/jdx/mise-action
       - name: Install Mise dependencies
-        uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+        uses: jdx/mise-action@d5574b52816a478f9d4e6529a3f6ff17a8a36785 # v5.2.8
         with:
           install_args: "zizmor"
 
