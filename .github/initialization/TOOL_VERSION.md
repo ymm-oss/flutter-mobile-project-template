@@ -88,6 +88,7 @@ labels: initialization
   - [ ] `mise` 自体のバージョン確認・推奨
     - [ ] `mise.toml` の `min_version` の確認・更新
     - [ ] `mise.toml` の `[tools]` の確認・更新と、`mise.lock` の更新
+    - [ ] OpenAPI を使う場合は、`openapi/mise.toml` の `[tools]` の確認・更新と、`openapi/mise.lock` の更新
   - [ ] `package.json` の `devDependencies` 確認・更新:
   - [ ] Xcode バージョンの指定:
     - [ ] CocoaPods バージョンの指定
