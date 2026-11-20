@@ -88,6 +88,11 @@ jobs:
               - "openapi/**"
               - "packages/api/**"
               - ".github/workflows/wc-check-openapi.yaml"
+              # 依存や解析の設定、実行環境が変わったときも、生成したクライアントを検証する
+              - "pubspec.yaml"
+              - "pubspec.lock"
+              - "analysis_options.yaml"
+              - ".github/actions/setup-application-runtime/**"
             src:
               - "**.dart"
               - "**.yaml"

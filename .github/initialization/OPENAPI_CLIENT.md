@@ -54,7 +54,7 @@ OpenAPI Generator と、その実行に必要な Java のバージョンは [ope
 - [ ] 生成したパッケージを `infrastructure` 以外から使う場合は、[docs/ARCHITECTURE.md] の依存の向きを書き換える
 
 仕様書を更新したときは、生成スクリプト、`mise bs`、`dart run melos run gen:build` を同じ順で実行してください。
-`openapi` か `packages/api` を変えた PR では、CI が生成し直した結果とコミット済みのものが一致するかを確かめます。
+`openapi` か `packages/api`、ルートの依存や解析の設定を変えた PR では、CI が生成し直した結果とコミット済みのものが一致するかを確かめます。
 
 OpenAPI を使わない場合は、次を削除してください。
 
