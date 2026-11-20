@@ -7,20 +7,29 @@
 
 - Flutter SDK は mise で管理している。
 - 複数のパッケージを Melos でまとめて管理しており、`dart run melos` で実行する。
-  - ルートの `pubspec.yaml` の `melos.command.bootstrap` に載っている依存は、ルート側で管理する。
+  - 共通の依存パッケージは各 `pubspec.yaml` を直接変更せず、ルートの `pubspec.yaml`（`melos.command.bootstrap`）を変更して `dart run melos bootstrap` を実行する。
+
+## コマンド
+
+- よく使うコマンドは `mise run <タスク>` で実行する。中身は `mise.toml` の `[tasks]` にある。
+  - 解析: `mise run analyze`
+  - フォーマット: `mise run format`
+  - コード生成: `mise run gen`
+  - テスト: `mise run test`
+- 作業を終える前に `mise run check` が通ることを確かめる。解析（info も含む）、フォーマット、循環参照、テストをまとめて検査する。
+- `debug` への参照を変えたときは、`dart run melos run check:debug_tree_shaking` も通ることを確かめる。リリースビルドを作るため時間がかかり、`check` には含めていない。
+- コマンドの実行には若干時間がかかるため、作業途中では頻繁に実行せず、適切なタイミングで実行する（例: AGENTS.md を整えた時点では `mise run check` に約 1 分かかった）。
 
 ## 生成されたファイル
 
 - `*.g.dart`、`*.freezed.dart` などの生成されたファイルは直接直さない。元のファイルを直し、コード生成で作り直す。
 
-## レイヤーの依存方向
+## レイヤーと置き場所
 
-- 依存の向きは `presentation` → `composition_root` → `application` / `infrastructure` → `domain_logic` → `domain_model` の一方向にする。逆向きの依存や循環参照は作らない。
-- `domain_model` はほかのレイヤーに依存しない。`shared` と `util_*` はどこにも依存せず、どこからでも参照できる。
-- `application` と `infrastructure` は互いに依存しない。データ取得や外部連携は `infrastructure` に置き、`domain_logic` のインターフェースを通して使う。
-- 依存性の注入は `apps/app/lib/composition_root` で行う。
+- ドメインのロジックは `domain_logic` に、データ取得や外部連携は `infrastructure` に置く。`presentation` に直接書かない。
+- `presentation` から `application` や `infrastructure` を直接 import しない。依存性の注入は `apps/app/lib/composition_root` で行う。
 - `debug` は `apps/app/lib/debug/debug_features_impl.dart` からだけ参照する。リリースビルドから外すため。
-- 詳しくは [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) を見る。
+- パッケージの依存や import を足す前に、[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) の図で依存方向を確かめる。
 
 ## 公式スキルとの関係
 
