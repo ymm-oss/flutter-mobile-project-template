@@ -4,7 +4,7 @@ info:
   description: クライアント生成の動作確認に使うサンプルの仕様書です。プロジェクトの仕様書に差し替えてください。
   version: 1.0.0
 servers:
-  - url: https://api.example.com/v1
+  - url: https://api.example.com
 tags:
   - name: items
     description: アイテム
