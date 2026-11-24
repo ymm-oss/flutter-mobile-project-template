@@ -123,6 +123,10 @@
   color: 92ba54
   description: packages infrastructure package
 
+- name: "@packages/mock_server"
+  color: 64a2bc
+  description: packages mock_server package
+
 - name: "@packages/shared"
   color: c22c75
   description: packages shared package
