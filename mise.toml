@@ -35,8 +35,8 @@ run = [
 ]
 
 # The tasks below are the entry points for people and AI agents.
-# They call the melos scripts in pubspec.yaml; keep this list short.
-# Arguments after the task name are passed to its command.
+# Most of them call the melos scripts in pubspec.yaml; the analysis runs dart directly, as CI does.
+# Keep this list short. Arguments after the task name are passed to its command.
 [tasks.analyze]
 description = "Analyze all packages, or only the given files or directories. Fails on infos, as CI does."
 run = 'dart analyze --fatal-infos'
@@ -63,3 +63,7 @@ run = [
   'dart run melos list --cycles',
   'dart run melos run test --no-select',
 ]
+
+[tasks."check:debug_tree_shaking"]
+description = "Check that the release build excludes the debug features. Builds a release snapshot."
+run = 'dart run melos run check:debug_tree_shaking'
