@@ -36,7 +36,7 @@ run = [
 
 # The tasks below are the entry points for people and AI agents.
 # Most of them call the melos scripts in pubspec.yaml; the analysis runs dart directly, as CI does.
-# Keep this list short. Arguments after the task name are passed to its command.
+# Keep this list short. Only analyze and test take paths as arguments.
 [tasks.analyze]
 description = "Analyze all packages, or only the given files or directories. Fails on infos, as CI does."
 run = 'dart analyze --fatal-infos'
