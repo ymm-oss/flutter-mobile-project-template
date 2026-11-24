@@ -78,6 +78,20 @@ Please check:
 - [Visual Studio Code] の場合、`.vscode/launch.json` を確認してください。
 - [IntelliJ IDEA] または [Android Studio] の場合、`.idea/runConfigurations/~.xml` を確認してください。
 
+### モックサーバーの起動
+
+次のコマンドで、OpenAPI の仕様書（`openapi/<api_name>/openapi.yaml`）の `example` を返すモックサーバーが `http://127.0.0.1:4000` で起動します。
+
+```shell
+mise run mock
+```
+
+`openapi` に API が複数あるときは、`mise run mock <api_name>` で API 名を指定してください。
+
+- 各 operation の 2xx（なければ `default`）の応答から、media type の `example`、`examples` の最初の `value`、`schema` の `example` の順に探して返します。`example` がない operation には 501 を返し、起動時にもその一覧を表示します。
+- ポートは `mise run mock --port 4011` のように変えられます。Firebase Local Emulator Suite の UI も既定で 4000 を使うため、同時に動かすときは別のポートにしてください。
+- 仕様書を変えたときは、モックサーバーを起動し直してください。
+
 ## AI コーディングツール
 
 Cursor、GitHub Copilot、Claude Code で共有するスキルは `.agents/skills/` に含まれています。Claude Code は `.agents/skills/` への symlink である `.claude/skills` から読みます。Windows で symlink がパス文字列のファイルとして checkout されたときは、次のスクリプトで復元します。手順と Windows での設定は [AI スキルの配置] を参照してください。

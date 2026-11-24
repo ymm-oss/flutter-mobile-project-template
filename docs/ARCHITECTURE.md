@@ -21,6 +21,7 @@
 └── packages
     ├── api # (optional)
     │   └── <api_name>
+    ├── mock_server # (optional)
     ├── design_domain_ui # (optional)
     ├── design_ui
     ├── debug

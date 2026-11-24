@@ -29,6 +29,8 @@ OpenAPI Generator と、その実行に必要な Java のバージョンは [ope
 ルートの `mise.toml` に置くと、リポジトリ全体の `JAVA_HOME` が変わり、Android のビルドに使う JDK も変わるため、分けています。
 `mise bs` ではインストールされません。
 
+同じ仕様書の `example` を返すモックサーバー（[packages/mock_server]）も、`mise run mock <api_name>` で起動できます。使い方は [docs/GET_STARTED.md] を参照してください。
+
 ## Todo
 
 - [ ] `openapi/sample` を `openapi/<api_name>` に改名する
@@ -50,18 +52,31 @@ OpenAPI Generator と、その実行に必要な Java のバージョンは [ope
   dart run melos run gen:build
   ```
 
+- [ ] モックサーバーを起動し、仕様書の `example` が返ることを確かめる
+
+  ```shell
+  mise run mock <api_name>
+  ```
+
+  `example` がない operation には 501 を返すため、モックで確かめたい operation には `example` を書く
+
 - [ ] 生成した `packages/api/<api_name>` と、`mise bs` が更新した [.github/labeler.yml] と [.github/labels.yml] をコミットする
 - [ ] 生成したパッケージを `infrastructure` 以外から使う場合は、[docs/ARCHITECTURE.md] の依存の向きを書き換える
 
-仕様書を更新したときは、生成スクリプト、`mise bs`、`dart run melos run gen:build` を同じ順で実行してください。
+仕様書を更新したときは、生成スクリプト、`mise bs`、`dart run melos run gen:build` を同じ順で実行してください。モックサーバーを起動しているときは、起動し直してください。
 `openapi` か `packages/api`、ルートの依存や解析の設定を変えた PR では、CI が生成し直した結果とコミット済みのものが一致するかを確かめます。
 
 OpenAPI を使わない場合は、次を削除してください。
 
 - [ ] `openapi` ディレクトリ
 - [ ] [.github/workflows/wc-check-openapi.yaml] と、[.github/workflows/check-pr.yaml]、[.github/workflows/merge-queue.yaml]、[.github/workflows/wc-changes.yml] の `openapi` の記述
+- [ ] `packages/mock_server` ディレクトリと、ルートの [pubspec.yaml] の `workspace` の `packages/mock_server`
+- [ ] [mise.toml] の `mock` タスク
 - [ ] [dprint.jsonc]、[cspell.jsonc]、[.gitattributes] の `packages/api` の行
-- [ ] [docs/ARCHITECTURE.md] のディレクトリ構造の `openapi` と `packages/api`、依存の図の `api`
+- [ ] [docs/ARCHITECTURE.md] のディレクトリ構造の `openapi`、`packages/api`、`packages/mock_server` と、依存の図の `api`
+- [ ] [docs/GET_STARTED.md] の「モックサーバーの起動」
+
+削除したあとに `mise bs` を実行し、更新された [.github/labeler.yml] と [.github/labels.yml] もコミットしてください。
 
 <!-- Links -->
 
@@ -79,3 +94,5 @@ OpenAPI を使わない場合は、次を削除してください。
 [.github/workflows/merge-queue.yaml]: ../blob/main/.github/workflows/merge-queue.yaml
 [.github/workflows/wc-changes.yml]: ../blob/main/.github/workflows/wc-changes.yml
 [docs/ARCHITECTURE.md]: ../blob/main/docs/ARCHITECTURE.md
+[docs/GET_STARTED.md]: ../blob/main/docs/GET_STARTED.md
+[packages/mock_server]: ../tree/main/packages/mock_server
