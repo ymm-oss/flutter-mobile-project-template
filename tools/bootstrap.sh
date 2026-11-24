@@ -64,15 +64,16 @@ fi
 ##
 ##############################################################################
 echo ""
-print_step "bun install --ignore-scripts"
+print_step "bun install --frozen-lockfile --ignore-scripts"
 if type bun >/dev/null 2>&1; then
-  if bun install --ignore-scripts; then
-    print_result 0 "bun install --ignore-scripts"
+  # --frozen-lockfile fails when package.json and bun.lock disagree, so the husky run below is the version in bun.lock.
+  if bun install --frozen-lockfile --ignore-scripts; then
+    print_result 0 "bun install --frozen-lockfile --ignore-scripts"
   else
-    print_result $? "bun install --ignore-scripts"
+    print_result $? "bun install --frozen-lockfile --ignore-scripts"
   fi
 else
-  echo -e "${YELLOW}[!] bun install --ignore-scripts: Skip because it could not be found.${NC}"
+  echo -e "${YELLOW}[!] bun install --frozen-lockfile --ignore-scripts: Skip because it could not be found.${NC}"
   echo -e "${YELLOW}[!] This may be due to mise installation not completed.${NC}"
 fi
 
