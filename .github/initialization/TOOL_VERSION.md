@@ -47,7 +47,7 @@ labels: initialization
 
 ## `package.json` で管理する Node.js パッケージ
 
-以下のツールは `package.json` の `devDependencies` でバージョンが指定され、`bun install --ignore-scripts` コマンドでインストールされます。(一部抜粋)
+以下のツールは `package.json` の `devDependencies` でバージョンが指定され、`bun install --frozen-lockfile --ignore-scripts` コマンドでインストールされます。(一部抜粋)
 
 - **cspell (Spell Checker)**:
   - 確認: `bun --bun run cspell --version`
