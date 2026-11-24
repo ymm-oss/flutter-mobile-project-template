@@ -4,7 +4,7 @@ import 'package:yaml/yaml.dart';
 
 /// OpenAPI の仕様書のうち、モックサーバーが応答を作るのに使う部分。
 final class OpenApiDocument {
-  new _(this.operations);
+  new _(this.operations, this.basePath, this.skippedPaths);
 
   /// YAML または JSON の仕様書を読む。
   ///
@@ -26,28 +26,45 @@ final class OpenApiDocument {
 
     final resolver = _RefResolver(root);
     final operations = <Operation>[];
+    final skippedPaths = <String>[];
     for (final MapEntry(key: path, value: pathItem) in paths.entries) {
-      if (resolver.resolve(pathItem) case final Map<String, Object?> item) {
-        for (final method in _methods) {
-          if (resolver.resolve(item[method])
-              case final Map<String, Object?> operation) {
-            operations.add(
-              Operation._fromSpec(
-                method: method.toUpperCase(),
-                path: path,
-                operation: operation,
-                resolver: resolver,
-              ),
-            );
-          }
+      if (path.startsWith('x-')) {
+        continue;
+      }
+      final item = resolver.resolve(pathItem);
+      if (item is! Map<String, Object?>) {
+        skippedPaths.add(path);
+        continue;
+      }
+      for (final method in _methods) {
+        if (resolver.resolve(item[method])
+            case final Map<String, Object?> operation) {
+          operations.add(
+            Operation._fromSpec(
+              method: method.toUpperCase(),
+              path: path,
+              operation: operation,
+              resolver: resolver,
+            ),
+          );
         }
       }
     }
-    return OpenApiDocument._(List.unmodifiable(operations));
+    return OpenApiDocument._(
+      List.unmodifiable(operations),
+      _basePath(root['servers']),
+      List.unmodifiable(skippedPaths),
+    );
   }
 
   /// 仕様書にある operation。
   final List<Operation> operations;
+
+  /// `servers` の 1 つ目の URL のパス（`/v1` など）。パスがなければ空文字。
+  final String basePath;
+
+  /// 中身を読めず、読み飛ばしたパス（ほかのファイルへの `$ref` など）。
+  final List<String> skippedPaths;
 
   static const _methods = [
     'get',
@@ -59,6 +76,37 @@ final class OpenApiDocument {
     'patch',
     'trace',
   ];
+}
+
+/// 生成したクライアントの既定の URL と同じく、`servers` の 1 つ目の URL から
+/// パスを取り出す。URL の変数は `default` の値で埋める。
+String _basePath(Object? servers) {
+  if (servers is! List<Object?> || servers.isEmpty) {
+    return '';
+  }
+  final (template, variables) = switch (servers.first) {
+    {'url': final String url, 'variables': final Map<String, Object?> vars} => (
+      url,
+      vars,
+    ),
+    {'url': final String url} => (url, const <String, Object?>{}),
+    _ => throw const FormatException('servers の 1 つ目に url がありません。'),
+  };
+  final url = template.replaceAllMapped(RegExp(r'\{([^}]*)\}'), (match) {
+    if (variables[match[1]] case {'default': final Object value}) {
+      return '$value';
+    }
+    throw FormatException('servers の url の変数 {${match[1]}} に default がありません。');
+  });
+  final Uri uri;
+  try {
+    uri = Uri.parse(url);
+  } on FormatException {
+    throw FormatException('servers の url「$url」を URL として読めません。');
+  }
+  // Request.url と比べられるよう、パーセントエンコードしたままのパスを使う。
+  final path = uri.path.replaceFirst(RegExp(r'/+$'), '');
+  return path.isEmpty || path.startsWith('/') ? path : '/$path';
 }
 
 /// 仕様書の operation と、モックサーバーがそれに返す応答。
@@ -161,18 +209,45 @@ MockResponse _mockResponse(
       '$label の $key の応答（$mediaType）に example がありません。仕様書に example を書いてください。',
     );
   }
-  final json = _isJson(mediaType);
+  final wildcard = _baseType(mediaType).contains('*');
+  final json = _isJson(mediaType) || (wildcard && example.value is! String);
+  if (json && _hasNonFiniteNumber(example.value)) {
+    const reason = 'NaN か Infinity があり、JSON で表せません。';
+    return MissingExample('$label の $key の応答（$mediaType）の example に $reason');
+  }
   return ExampleResponse(
     statusCode: statusCode,
-    contentType: json && !mediaType.contains(';')
-        ? '$mediaType; charset=utf-8'
-        : mediaType,
+    contentType: _contentType(mediaType, json: json, wildcard: wildcard),
     body: switch (example.value) {
       final String value when !json => value,
       final value => jsonEncode(value),
     },
   );
 }
+
+/// `*/*` のようなワイルドカードは Content-Type に使えないため、本文に合わせて
+/// JSON か文字列の media type にする。
+String _contentType(
+  String mediaType, {
+  required bool json,
+  required bool wildcard,
+}) {
+  if (wildcard) {
+    return json
+        ? 'application/json; charset=utf-8'
+        : 'text/plain; charset=utf-8';
+  }
+  return json && !mediaType.contains(';')
+      ? '$mediaType; charset=utf-8'
+      : mediaType;
+}
+
+bool _hasNonFiniteNumber(Object? value) => switch (value) {
+  final double number => !number.isFinite,
+  final Map<String, Object?> map => map.values.any(_hasNonFiniteNumber),
+  final List<Object?> list => list.any(_hasNonFiniteNumber),
+  _ => false,
+};
 
 /// 2xx のうち最も小さいコード、`2XX`、`default` の順に応答を選ぶ。
 ({int statusCode, String key, Object? response})? _selectResponse(
@@ -185,12 +260,13 @@ MockResponse _mockResponse(
     final key = codes.first;
     return (statusCode: int.parse(key), key: key, response: responses[key]);
   }
-  for (final key in responses.keys) {
-    if (key.toUpperCase() == '2XX' || key == 'default') {
-      return (statusCode: 200, key: key, response: responses[key]);
-    }
+  final key =
+      responses.keys.where((key) => key.toUpperCase() == '2XX').firstOrNull ??
+      (responses.containsKey('default') ? 'default' : null);
+  if (key == null) {
+    return null;
   }
-  return null;
+  return (statusCode: 200, key: key, response: responses[key]);
 }
 
 /// `application/json`、ほかの JSON 系、最初のものの順に media type を選ぶ。
@@ -210,9 +286,9 @@ bool _isJson(String mediaType) {
 String _baseType(String mediaType) =>
     mediaType.split(';').first.trim().toLowerCase();
 
-/// media type の `example`、`examples` の最初の `value`、`schema` の `example`
-/// の順に探す。example の値が null のこともあるため、見つからなければ
-/// レコードごと null を返す。
+/// media type の `example`、`examples` の最初の `value`、`schema` の `example`、
+/// `schema` の `examples` の最初の値の順に探す。example の値が null のことも
+/// あるため、見つからなければレコードごと null を返す。
 ({Object? value})? _findExample(Object? mediaType, _RefResolver resolver) {
   if (mediaType is! Map<String, Object?>) {
     return null;
@@ -226,7 +302,12 @@ String _baseType(String mediaType) =>
       return (value: value);
     }
   }
-  if (resolver.resolve(mediaType['schema']) case {'example': final value}) {
+  final schema = resolver.resolve(mediaType['schema']);
+  if (schema case {'example': final value}) {
+    return (value: value);
+  }
+  // OpenAPI 3.1 では、schema の example の代わりに JSON Schema の examples を使う。
+  if (schema case {'examples': [final value, ...]}) {
     return (value: value);
   }
   return null;
@@ -259,9 +340,10 @@ final class _RefResolver {
   Object? _pointer(String pointer) {
     Object? current = _root;
     for (final token in pointer.split('/')) {
-      final key = Uri.decodeComponent(
-        token,
-      ).replaceAll('~1', '/').replaceAll('~0', '~');
+      final key = _decodeToken(token);
+      if (key == null) {
+        return null;
+      }
       current = switch (current) {
         final Map<String, Object?> map => map[key],
         final List<Object?> list => switch (int.tryParse(key)) {
@@ -272,6 +354,23 @@ final class _RefResolver {
       };
     }
     return current;
+  }
+
+  /// JSON Pointer の 1 区間を、パーセントエンコードと `~1`、`~0` を戻して返す。
+  /// 戻せない区間は null を返す。
+  static String? _decodeToken(String token) {
+    // `%` のあとに 16 進数が 2 桁続かないと、Uri.decodeComponent は
+    // ArgumentError を投げる。
+    if (RegExp('%(?![0-9A-Fa-f]{2})').hasMatch(token)) {
+      return null;
+    }
+    try {
+      return Uri.decodeComponent(
+        token,
+      ).replaceAll('~1', '/').replaceAll('~0', '~');
+    } on FormatException {
+      return null;
+    }
   }
 }
 

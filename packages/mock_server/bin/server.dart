@@ -53,7 +53,9 @@ Future<void> main(List<String> arguments) async {
     server = await shelf_io.serve(
       const Pipeline()
           .addMiddleware(logRequests())
-          .addHandler(createMockHandler(document)),
+          .addHandler(
+            mountAtBasePath(document.basePath, createMockHandler(document)),
+          ),
       InternetAddress.loopbackIPv4,
       port,
     );
@@ -66,8 +68,15 @@ Future<void> main(List<String> arguments) async {
 
   stdout.writeln(
     '${specFile.path} のモックサーバーを '
-    'http://${server.address.host}:${server.port} で起動しました。',
+    'http://${server.address.host}:${server.port}${document.basePath} '
+    'で起動しました。',
   );
+  if (document.skippedPaths.isNotEmpty) {
+    stdout.writeln(r'次のパスは中身を読めないため、読み飛ばしました。ほかのファイルへの $ref は読めません。');
+    for (final path in document.skippedPaths) {
+      stdout.writeln('  - $path');
+    }
+  }
   final missing = [
     for (final operation in document.operations)
       if (operation.response case MissingExample(:final reason)) reason,

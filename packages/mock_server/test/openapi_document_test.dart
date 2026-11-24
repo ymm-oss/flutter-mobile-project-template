@@ -55,6 +55,72 @@ paths:
     test('YAML として読めなければ FormatException を投げる', () {
       expect(() => OpenApiDocument.parse('paths: ['), throwsFormatException);
     });
+
+    test('中身を読めないパスは読み飛ばし、skippedPaths に入れる', () {
+      final document = OpenApiDocument.parse(r'''
+paths:
+  x-extension: value
+  /items:
+    $ref: ./paths/items.yaml
+  /drafts:
+    get:
+      responses:
+        "204":
+          description: ok
+''');
+
+      expect(document.skippedPaths, ['/items']);
+      expect(document.operations.map((operation) => operation.path), [
+        '/drafts',
+      ]);
+    });
+  });
+
+  group('OpenApiDocument.basePath', () {
+    String basePathOf(String servers) =>
+        OpenApiDocument.parse('$servers\npaths: {}').basePath;
+
+    test('servers の 1 つ目の URL のパスを返す', () {
+      expect(
+        basePathOf('''
+servers:
+  - url: https://api.example.com/v1/
+  - url: https://staging.example.com/v2
+'''),
+        '/v1',
+      );
+    });
+
+    test('URL の変数を default の値で埋める', () {
+      expect(
+        basePathOf('''
+servers:
+  - url: https://{env}.example.com/{version}
+    variables:
+      env:
+        default: api
+      version:
+        default: v2
+'''),
+        '/v2',
+      );
+    });
+
+    test('ホストのない URL のパスも返す', () {
+      expect(basePathOf('servers: [{url: /api/v1}]'), '/api/v1');
+    });
+
+    test('servers がないときと、URL のパスが / のときは空文字を返す', () {
+      expect(basePathOf(''), '');
+      expect(basePathOf('servers: [{url: "https://api.example.com/"}]'), '');
+    });
+
+    test('URL の変数に default がなければ FormatException を投げる', () {
+      expect(
+        () => basePathOf('servers: [{url: "https://api.example.com/{v}"}]'),
+        throwsFormatException,
+      );
+    });
   });
 
   group('example の探し方', () {
@@ -151,6 +217,54 @@ components:
         response,
         isA<ExampleResponse>().having((r) => r.body, 'body', '{"id":"1"}'),
       );
+    });
+
+    test('schema に example がなければ、schema の examples の最初の値を返す', () {
+      final response = responseOf('''
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                examples:
+                  - id: "1"
+                  - id: "2"
+''');
+
+      expect(
+        response,
+        isA<ExampleResponse>().having((r) => r.body, 'body', '{"id":"1"}'),
+      );
+    });
+
+    test('JSON で表せない数を含む example は MissingExample を返す', () {
+      final response = responseOf('''
+        "200":
+          description: ok
+          content:
+            application/json:
+              example:
+                value: .nan
+''');
+
+      expect(
+        response,
+        isA<MissingExample>().having(
+          (r) => r.reason,
+          'reason',
+          contains('NaN か Infinity があり、JSON で表せません。'),
+        ),
+      );
+    });
+
+    test(r'パーセントエンコードが正しくない $ref は MissingExample を返す', () {
+      final response = responseOf(r'''
+        "200":
+          $ref: "#/components/responses/100%"
+''');
+
+      expect(response, isA<MissingExample>());
     });
 
     test('example の値が null でも見つかったものとして扱う', () {
@@ -250,6 +364,28 @@ components:
       );
     });
 
+    test('2XX を default より先に書いていなくても、2XX を選ぶ', () {
+      final response = responseOf('''
+        default:
+          description: error
+          content:
+            application/json:
+              example:
+                message: error
+        2XX:
+          description: ok
+          content:
+            application/json:
+              example:
+                id: "1"
+''');
+
+      expect(
+        response,
+        isA<ExampleResponse>().having((r) => r.body, 'body', '{"id":"1"}'),
+      );
+    });
+
     test('2xx も default もなければ MissingExample を返す', () {
       final response = responseOf('''
         "404":
@@ -314,6 +450,37 @@ components:
         text,
         isA<ExampleResponse>()
             .having((r) => r.contentType, 'contentType', 'text/plain')
+            .having((r) => r.body, 'body', 'text'),
+      );
+    });
+
+    test('*/* の media type では、本文に合わせた Content-Type にする', () {
+      MockResponse wildcardOf(String example) => responseOf('''
+        "200":
+          description: ok
+          content:
+            "*/*":
+              example: $example
+''');
+
+      expect(
+        wildcardOf('{id: "1"}'),
+        isA<ExampleResponse>()
+            .having(
+              (r) => r.contentType,
+              'contentType',
+              'application/json; charset=utf-8',
+            )
+            .having((r) => r.body, 'body', '{"id":"1"}'),
+      );
+      expect(
+        wildcardOf('text'),
+        isA<ExampleResponse>()
+            .having(
+              (r) => r.contentType,
+              'contentType',
+              'text/plain; charset=utf-8',
+            )
             .having((r) => r.body, 'body', 'text'),
       );
     });
