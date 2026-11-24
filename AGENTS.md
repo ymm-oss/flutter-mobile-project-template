@@ -7,7 +7,9 @@
 
 - Flutter SDK は mise で管理している。
 - 複数のパッケージを Melos でまとめて管理しており、`dart run melos` で実行する。
-  - 共通の依存パッケージは各 `pubspec.yaml` を直接変更せず、ルートの `pubspec.yaml`（`melos.command.bootstrap`）を変更して `dart run melos bootstrap` を実行する。
+  - 共通の依存（ルートの `pubspec.yaml` の `melos.command.bootstrap`）のバージョンは、ルートだけで変える。
+  - 共通の依存をパッケージに足すときは、そのパッケージの `pubspec.yaml` にもルートと同じバージョンで書く。ルートに書いただけでは、パッケージに入らない。
+  - `pubspec.yaml` を変えたら `mise run bootstrap` を実行する。
 
 ## コマンド
 
