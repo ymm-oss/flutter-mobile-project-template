@@ -28,6 +28,7 @@
 - `*.g.dart`、`*.freezed.dart` などの生成されたファイルは直接直さない。元のファイルを直す。
 - 次のどれかを変えたら、`mise run gen` で作り直す。
   - `part` で `*.g.dart` や `*.freezed.dart` などを取り込んでいる Dart のファイル
+  - `apps/catalog` の `@UseCase`（追加、削除、名前の変更）
   - i18n の定義（`*.i18n.json`）
   - `pubspec.yaml` の `flutter.assets` に載っている画像などのファイル（追加、削除、名前の変更）
 
