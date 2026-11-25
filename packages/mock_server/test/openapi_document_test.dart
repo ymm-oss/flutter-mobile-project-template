@@ -258,6 +258,61 @@ components:
       );
     });
 
+    test('JSON でない media type では、NaN の数も文字列にして返す', () {
+      final response = responseOf('''
+        "200":
+          description: ok
+          content:
+            text/plain:
+              example: .nan
+''');
+
+      expect(
+        response,
+        isA<ExampleResponse>().having((r) => r.body, 'body', 'NaN'),
+      );
+    });
+
+    test('JSON でない media type でオブジェクトの example は MissingExample を返す', () {
+      final response = responseOf('''
+        "200":
+          description: ok
+          content:
+            application/xml:
+              example:
+                id: "1"
+''');
+
+      expect(
+        response,
+        isA<MissingExample>().having(
+          (r) => r.reason,
+          'reason',
+          contains('オブジェクトか配列のため、本文にできません。'),
+        ),
+      );
+    });
+
+    test(r'schema の $ref を読めなければ、そのことを理由に書く', () {
+      final response = responseOf(r'''
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Item.yaml
+''');
+
+      expect(
+        response,
+        isA<MissingExample>().having(
+          (r) => r.reason,
+          'reason',
+          contains(r'GET /items の 200 の応答（application/json）の $ref を読めません。'),
+        ),
+      );
+    });
+
     test(r'パーセントエンコードが正しくない $ref は MissingExample を返す', () {
       final response = responseOf(r'''
         "200":

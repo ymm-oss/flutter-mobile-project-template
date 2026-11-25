@@ -203,26 +203,53 @@ MockResponse _mockResponse(
   }
 
   final mediaType = _selectMediaType(content.keys);
+  final where = '$label の $key の応答（$mediaType）';
   final example = _findExample(resolver.resolve(content[mediaType]), resolver);
   if (example == null) {
     return MissingExample(
-      '$label の $key の応答（$mediaType）に example がありません。仕様書に example を書いてください。',
+      _hasUnresolvedRef(content[mediaType], resolver)
+          ? '$whereの \$ref を読めません。\$ref の参照先を確かめてください。ほかのファイルへの \$ref は読めません。'
+          : '$whereに example がありません。仕様書に example を書いてください。',
     );
   }
+  final value = example.value;
   final wildcard = _baseType(mediaType).contains('*');
-  final json = _isJson(mediaType) || (wildcard && example.value is! String);
-  if (json && _hasNonFiniteNumber(example.value)) {
-    const reason = 'NaN か Infinity があり、JSON で表せません。';
-    return MissingExample('$label の $key の応答（$mediaType）の example に $reason');
+  final json = _isJson(mediaType) || (wildcard && value is! String);
+  if (!json && (value is Map || value is List)) {
+    return MissingExample(
+      '$whereの example はオブジェクトか配列のため、本文にできません。example を文字列で書いてください。',
+    );
+  }
+  if (json && _hasNonFiniteNumber(value)) {
+    return MissingExample('$whereの example に NaN か Infinity があり、JSON で表せません。');
   }
   return ExampleResponse(
     statusCode: statusCode,
     contentType: _contentType(mediaType, json: json, wildcard: wildcard),
-    body: switch (example.value) {
-      final String value when !json => value,
-      final value => jsonEncode(value),
-    },
+    body: json ? jsonEncode(value) : '$value',
   );
+}
+
+/// media type、その `schema`、`examples` の最初の値に、読めない `$ref` があるかを返す。
+bool _hasUnresolvedRef(Object? mediaType, _RefResolver resolver) {
+  bool unresolved(Object? value) =>
+      value is Map<String, Object?> &&
+      value.containsKey(r'$ref') &&
+      resolver.resolve(value) == null;
+
+  if (unresolved(mediaType)) {
+    return true;
+  }
+  final resolved = resolver.resolve(mediaType);
+  if (resolved is! Map<String, Object?>) {
+    return false;
+  }
+  return unresolved(resolved['schema']) ||
+      switch (resolved['examples']) {
+        final Map<String, Object?> examples when examples.isNotEmpty =>
+          unresolved(examples.values.first),
+        _ => false,
+      };
 }
 
 /// `*/*` のようなワイルドカードは Content-Type に使えないため、本文に合わせて
