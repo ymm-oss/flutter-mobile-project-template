@@ -53,8 +53,8 @@ run = 'dart run melos run gen --no-select'
 description = "Run the tests of all packages, or only the given test files or directories."
 run = './tools/test.sh'
 
-# The one command to run before finishing work. It formats first, rewriting files
-# (only lib/ of each package). It does not regenerate code: run gen for that.
+# The one command to run before finishing work. It formats first, rewriting files.
+# It does not regenerate code: run gen for that.
 [tasks.check]
 description = "Run before finishing work: format (rewrites files), then analyze, check dependency cycles and test."
 run = [
