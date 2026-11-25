@@ -46,6 +46,11 @@ Future<void> main(List<String> arguments) async {
   } on FormatException catch (e) {
     stderr.writeln('${specFile.path} を読めません: ${e.message}');
     exit(1);
+  } on FileSystemException catch (e) {
+    stderr.writeln(
+      '${specFile.path} を読めません: ${e.osError?.message ?? e.message}',
+    );
+    exit(1);
   }
 
   final HttpServer server;
