@@ -29,7 +29,7 @@ OpenAPI Generator と、その実行に必要な Java のバージョンは [ope
 ルートの `mise.toml` に置くと、リポジトリ全体の `JAVA_HOME` が変わり、Android のビルドに使う JDK も変わるため、分けています。
 `mise bs` ではインストールされません。
 
-同じ仕様書の `example` を返すモックサーバー（[packages/mock_server]）も、`mise run mock <api_name>` で起動できます。使い方は [docs/GET_STARTED.md] を参照してください。
+同じ仕様書の `example` を返すモックサーバー（[packages/mock_server]）も、`mise run mock <api_name>` で起動できます。使い方は [docs/MOCK_SERVER.md] を参照してください。
 
 ## Todo
 
@@ -74,7 +74,7 @@ OpenAPI を使わない場合は、次を削除してください。
 - [ ] [mise.toml] の `mock` タスク
 - [ ] [dprint.jsonc]、[cspell.jsonc]、[.gitattributes] の `packages/api` の行
 - [ ] [docs/ARCHITECTURE.md] のディレクトリ構造の `openapi`、`packages/api`、`packages/mock_server` と、依存の図の `api`
-- [ ] [docs/GET_STARTED.md] の「モックサーバーの起動」
+- [ ] [docs/GET_STARTED.md] の「モックサーバーの起動」と、[docs/MOCK_SERVER.md]
 
 削除したあとに `mise bs` を実行し、更新された [.github/labeler.yml] と [.github/labels.yml] もコミットしてください。
 
@@ -95,4 +95,5 @@ OpenAPI を使わない場合は、次を削除してください。
 [.github/workflows/wc-changes.yml]: ../blob/main/.github/workflows/wc-changes.yml
 [docs/ARCHITECTURE.md]: ../blob/main/docs/ARCHITECTURE.md
 [docs/GET_STARTED.md]: ../blob/main/docs/GET_STARTED.md
+[docs/MOCK_SERVER.md]: ../blob/main/docs/MOCK_SERVER.md
 [packages/mock_server]: ../tree/main/packages/mock_server
