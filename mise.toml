@@ -21,6 +21,14 @@ description = "Initialize the workspace."
 run = './tools/bootstrap.sh'
 alias = "bs"
 
+# Runs bootstrap only when this workspace has no .dart_tool/package_config.json.
+# The tasks below depend on it: without that file, Dart resolves packages from a parent
+# directory, so a git worktree inside the repository would be checked against the main checkout.
+[tasks."bootstrap:ensure"]
+description = "Bootstrap this workspace if it has not been bootstrapped yet."
+hide = true
+run = './tools/ensure-bootstrap.sh'
+
 [tasks.clean]
 description = "Clean this workspace."
 run = [
@@ -39,24 +47,29 @@ run = [
 # Keep this list short. Only analyze and test take paths as arguments.
 [tasks.analyze]
 description = "Analyze all packages, or only the given files or directories. Fails on infos, as CI does."
+depends = ["bootstrap:ensure"]
 run = 'dart analyze --fatal-infos'
 
 [tasks.format]
 description = "Format all packages, excluding generated code."
+depends = ["bootstrap:ensure"]
 run = 'dart run melos run format --no-select'
 
 [tasks.gen]
 description = "Generate code with build_runner and slang."
+depends = ["bootstrap:ensure"]
 run = 'dart run melos run gen --no-select'
 
 [tasks.test]
 description = "Run the tests of all packages, or only the given test files or directories."
+depends = ["bootstrap:ensure"]
 run = './tools/test.sh'
 
 # The one command to run before finishing work. It formats first, rewriting files
 # (only lib/ of each package). It does not regenerate code: run gen for that.
 [tasks.check]
 description = "Run before finishing work: format (rewrites files), then analyze, check dependency cycles and test."
+depends = ["bootstrap:ensure"]
 run = [
   'dart run melos run format --no-select',
   'dart analyze --fatal-infos',
@@ -66,4 +79,5 @@ run = [
 
 [tasks."check:debug_tree_shaking"]
 description = "Check that the release build excludes the debug features. Builds a release snapshot."
+depends = ["bootstrap:ensure"]
 run = 'dart run melos run check:debug_tree_shaking'
