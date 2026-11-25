@@ -42,6 +42,13 @@ paths:
             application/json:
               schema:
                 type: array
+    post:
+      responses:
+        "205":
+          description: reset
+          content:
+            application/json:
+              example: reset
   /items/mine:
     get:
       responses:
@@ -109,6 +116,17 @@ paths:
 
     expect(response.statusCode, 204);
     expect(await response.readAsString(), isEmpty);
+  });
+
+  test('205 の応答には本文を付けない', () async {
+    final response = await send('POST', '/drafts');
+
+    expect(response.statusCode, 205);
+    expect(await response.readAsString(), isEmpty);
+  });
+
+  test('パスパラメーターの値が %2F を含んでも照合する', () async {
+    expect(await jsonOf(await send('GET', '/items/a%2Fb')), 'item');
   });
 
   test('仕様書にないパスには 404 を返す', () async {

@@ -61,8 +61,8 @@ Response _respond(MockResponse response) => switch (response) {
   ExampleResponse(:final statusCode, :final contentType, :final body) =>
     Response(
       statusCode,
-      // 204 と 304 は本文を持てない。
-      body: statusCode == 204 || statusCode == 304 ? null : body,
+      // 204、205、304 は本文を持てない。
+      body: const {204, 205, 304}.contains(statusCode) ? null : body,
       headers: {'content-type': ?contentType},
     ),
   MissingExample(:final reason) => _error(501, reason),
@@ -178,11 +178,12 @@ final class _Segment {
     if (!source.contains('{')) {
       return null;
     }
+    // 照合する区間はデコード済みで、%2F から戻した / を含むことがある。
     final pattern = source.splitMapJoin(
       _templateVariable,
-      onMatch: (_) => '[^/]+',
+      onMatch: (_) => '.+',
       onNonMatch: RegExp.escape,
     );
-    return RegExp('^$pattern\$');
+    return RegExp('^$pattern\$', dotAll: true);
   }
 }
