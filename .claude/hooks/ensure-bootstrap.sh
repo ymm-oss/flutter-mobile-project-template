@@ -51,12 +51,18 @@ if "$root_dir/tools/ensure-bootstrap.sh" "$session_dir" >"$log_file" 2>&1; then
 fi
 
 workspace_dir="$(git -C "$session_dir" rev-parse --show-toplevel 2>/dev/null || echo "$session_dir")"
+# Drop the color codes of bootstrap.sh.
+plain_log() {
+  sed $'s/\x1b\\[[0-9;]*m//g' "$log_file"
+}
 cat <<EOF
 Bootstrapping this workspace at session start failed: $workspace_dir
-It has no .dart_tool/package_config.json. Until bootstrap succeeds, Dart may resolve packages from a parent directory, so analysis and tests can pass against the wrong sources.
+It had no .dart_tool/package_config.json, so \`mise run bootstrap\` ran there and did not finish successfully. Until bootstrap succeeds, Dart may resolve packages from a parent directory, so analysis and tests can pass against the wrong sources.
 Tell the user about this, then run \`mise run bootstrap\` in that directory and fix the error before you analyze or test.
-Last lines of the log ($log_file):
+Failed steps, then the last lines of the log ($log_file):
 EOF
-# Drop the color codes of bootstrap.sh.
-tail -n 20 "$log_file" | sed $'s/\x1b\\[[0-9;]*m//g'
+# bootstrap.sh keeps going after a failed step, so the failure can be far from the end.
+plain_log | grep -F '[✖]' || true
+echo '...'
+plain_log | tail -n 10
 exit 0
