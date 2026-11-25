@@ -16,7 +16,8 @@
 
 set -uo pipefail
 
-# With CDPATH set, cd prints the directory it moved to, which breaks $(cd ... && pwd).
+# With CDPATH set, a relative cd can move to another directory, and cd prints
+# where it went, which breaks $(cd ... && pwd).
 unset CDPATH
 
 input="$(cat)"
@@ -44,22 +45,28 @@ common_dir() {
 session_common_dir="$(common_dir "$session_dir")" || exit 0
 [ "$session_common_dir" = "$(common_dir "$root_dir")" ] || exit 0
 
-log_file="$(mktemp "${TMPDIR:-/tmp}/ensure-bootstrap.XXXXXX")"
-if "$root_dir/tools/ensure-bootstrap.sh" "$session_dir" >"$log_file" 2>&1; then
-  rm -f "$log_file"
-  exit 0
-fi
+# Capture the output first: the script must run even when no temporary file can be created.
+log="$("$root_dir/tools/ensure-bootstrap.sh" "$session_dir" 2>&1)"
+status=$?
+[ "$status" -ne 0 ] || exit 0
 
 workspace_dir="$(git -C "$session_dir" rev-parse --show-toplevel 2>/dev/null || echo "$session_dir")"
+# Keep the whole output in a file for Claude to read. If that fails, only the excerpt below is shown.
+if log_file="$(mktemp "${TMPDIR:-/tmp}/ensure-bootstrap.XXXXXX" 2>/dev/null)" &&
+  printf '%s\n' "$log" >"$log_file"; then
+  log_note=" (the whole output: $log_file)"
+else
+  log_note=''
+fi
 # Drop the color codes of bootstrap.sh.
 plain_log() {
-  sed $'s/\x1b\\[[0-9;]*m//g' "$log_file"
+  printf '%s\n' "$log" | sed $'s/\x1b\\[[0-9;]*m//g'
 }
 cat <<EOF
-Bootstrapping this workspace at session start failed: $workspace_dir
-It had no .dart_tool/package_config.json, so \`mise run bootstrap\` ran there and did not finish successfully. Until bootstrap succeeds, Dart may resolve packages from a parent directory, so analysis and tests can pass against the wrong sources.
+The bootstrap check at session start failed (exit $status) for this workspace: $workspace_dir
+tools/ensure-bootstrap.sh runs \`mise run bootstrap\` there when .dart_tool/package_config.json is missing; the output below shows how far it got. Until bootstrap succeeds, Dart may resolve packages from a parent directory, so analysis and tests can pass against the wrong sources.
 Tell the user about this, then run \`mise run bootstrap\` in that directory and fix the error before you analyze or test.
-Failed steps, then the last lines of the log ($log_file):
+Failed steps, then the last lines of the output$log_note:
 EOF
 # bootstrap.sh keeps going after a failed step, so the failure can be far from the end.
 plain_log | grep -F '[✖]' || true

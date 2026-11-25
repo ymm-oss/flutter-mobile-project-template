@@ -11,8 +11,9 @@
 # under .claude/worktrees/ then resolves packages from the main checkout, so
 # analysis and tests pass against the wrong sources instead of failing.
 #
-# Only the existence of the file is checked: this does not notice that
-# pubspec.lock changed after the last bootstrap.
+# Only the existence of the file is checked. This does not notice that
+# pubspec.lock changed after the last bootstrap, or that a bootstrap failed
+# after it had created the file.
 #
 # Without a directory, this also fails when the mise task was started in another
 # workspace. mise reads the mise.toml of the parent directories too: in a worktree
@@ -21,7 +22,8 @@
 
 set -euo pipefail
 
-# With CDPATH set, cd prints the directory it moved to, which breaks $(cd ... && pwd).
+# With CDPATH set, a relative cd can move to another directory, and cd prints
+# where it went, which breaks $(cd ... && pwd).
 unset CDPATH
 
 if [ $# -gt 1 ]; then
@@ -35,8 +37,9 @@ if [ $# -eq 1 ]; then
     exit 1
   fi
   # The root of the clone or worktree that contains the directory.
-  if ! workspace_dir="$(git -C "$1" rev-parse --show-toplevel 2>/dev/null)"; then
-    echo "Not inside a git repository: $1" >&2
+  # git explains a failure on stderr (not a repository, git not found, ...).
+  if ! workspace_dir="$(git -C "$1" rev-parse --show-toplevel)"; then
+    echo "Could not find the git work tree that contains: $1" >&2
     exit 1
   fi
 else
@@ -77,6 +80,9 @@ if [ -z "$mise_bin" ]; then
   for candidate in "$HOME/.local/bin/mise" /opt/homebrew/bin/mise /usr/local/bin/mise; do
     if [ -x "$candidate" ]; then
       mise_bin="$candidate"
+      # bootstrap.sh looks for mise on PATH and skips `mise install` without it.
+      # Append, so that nothing already on PATH is hidden.
+      PATH="$PATH:$(dirname "$candidate")"
       break
     fi
   done
