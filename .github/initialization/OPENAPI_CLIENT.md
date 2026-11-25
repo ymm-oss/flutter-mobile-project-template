@@ -74,7 +74,7 @@ OpenAPI を使わない場合は、次を削除してください。
 - [ ] [mise.toml] の `mock` タスク
 - [ ] [dprint.jsonc]、[cspell.jsonc]、[.gitattributes] の `packages/api` の行
 - [ ] [docs/ARCHITECTURE.md] のディレクトリ構造の `openapi`、`packages/api`、`packages/mock_server` と、依存の図の `api`
-- [ ] [docs/GET_STARTED.md] の「モックサーバーの起動」と、[docs/MOCK_SERVER.md]
+- [ ] [docs/GET_STARTED.md] の「モックサーバーの起動」と、末尾の `[モックサーバー]` のリンク定義、[docs/MOCK_SERVER.md]
 
 削除したあとに `mise bs` を実行し、更新された [.github/labeler.yml] と [.github/labels.yml] もコミットしてください。
 

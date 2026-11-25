@@ -66,7 +66,7 @@ Future<void> main(List<String> arguments) async {
     );
   } on SocketException catch (e) {
     stderr
-      ..writeln('ポート $port で待ち受けられません: ${e.message}')
+      ..writeln('ポート $port で待ち受けられません: ${e.osError?.message ?? e.message}')
       ..writeln('--port で別のポートを指定してください。');
     exit(1);
   }

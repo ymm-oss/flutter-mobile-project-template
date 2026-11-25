@@ -80,7 +80,7 @@ Please check:
 
 ### モックサーバーの起動
 
-次のコマンドで、OpenAPI の仕様書（`openapi/<api_name>/openapi.yaml`）の `example` を返すモックサーバーが起動します。アプリからの接続と応答については、[モックサーバー] を参照してください。
+OpenAPI を使う場合は、次のコマンドで、仕様書（`openapi/<api_name>/openapi.yaml`）の `example` を返すモックサーバーが起動します。`openapi/` に API が複数あるときは、`mise run mock <api_name>` で API 名を指定してください。アプリからの接続と応答については、[モックサーバー] を参照してください。
 
 ```shell
 mise run mock
