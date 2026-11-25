@@ -88,11 +88,13 @@ mise run mock
 
 `openapi` に API が複数あるときは、`mise run mock <api_name>` で API 名を指定してください。
 
-モックサーバーの URL は `http://127.0.0.1:4000` に仕様書の `servers` の 1 つ目の URL のパスを付けたものです。たとえば `servers` の URL が `https://api.example.com/v1` なら `http://127.0.0.1:4000/v1` になります。起動時にもこの URL を表示します。生成したクライアントの接続先には、この URL を渡してください。
+モックサーバーの URL は `http://127.0.0.1:4000` に仕様書の `servers` の 1 つ目の URL のパスを付けたものです。たとえば `servers` の URL が `https://api.example.com/v1` なら `http://127.0.0.1:4000/v1` になります。起動時にもこの URL を表示します。生成したクライアントの接続先には、この URL を渡してください。Android エミュレーターでは `127.0.0.1` がエミュレーター自身を指すため、`127.0.0.1` を `10.0.2.2` に替えて渡してください。
 
 - 各 operation の 2xx（なければ `2XX`、`default` の順）の応答から、media type の `example`、`examples` の最初の `value`、`schema` の `example`、`schema` の `examples` の最初の値の順に探して返します。`example` がない operation には 501 を返し、起動時にもその一覧を表示します。
-- ほかのファイルへの `$ref` は読めません。起動時に読めなかったパスの一覧を表示します。
+- JSON でない media type（`text/plain` など）の `example` は文字列で書いてください。オブジェクトや配列の `example` には 501 を返します。
+- ほかのファイルへの `$ref` は読めません。起動時に、読めなかったパスと、`$ref` を読めずに 501 を返す operation の一覧を表示します。
 - ポートは `mise run mock --port 4011` のように変えられます。Firebase Local Emulator Suite の UI も既定で 4000 を使うため、同時に動かすときは別のポートにしてください。
+- 使い方は `mise run mock -- --help` で表示します。`--` を付けないと、mise が `--help` を受け取ります。
 - 仕様書を変えたときは、モックサーバーを起動し直してください。
 
 ## AI コーディングツール
