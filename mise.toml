@@ -58,10 +58,10 @@ run = './tools/test.sh'
 [tasks.check]
 description = "Run before finishing work: format (rewrites files), then analyze, check dependency cycles and test."
 run = [
-  'dart run melos run format --no-select',
-  'dart analyze --fatal-infos',
+  { task = "format" },
+  { task = "analyze" },
   'dart run melos list --cycles',
-  'dart run melos run test --no-select',
+  { task = "test" },
 ]
 
 [tasks."check:debug_tree_shaking"]
