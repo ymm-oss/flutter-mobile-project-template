@@ -24,6 +24,8 @@ alias = "bs"
 # Runs bootstrap only when this workspace has no .dart_tool/package_config.json.
 # The tasks below depend on it: without that file, Dart resolves packages from a parent
 # directory, so a git worktree inside the repository would be checked against the main checkout.
+# It also fails when the task was started in another workspace: a worktree whose mise.toml
+# does not define a task would otherwise run the task here, against these sources.
 [tasks."bootstrap:ensure"]
 description = "Bootstrap this workspace if it has not been bootstrapped yet."
 hide = true

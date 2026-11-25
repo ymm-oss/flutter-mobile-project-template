@@ -13,6 +13,11 @@
 #
 # Only the existence of the file is checked: this does not notice that
 # pubspec.lock changed after the last bootstrap.
+#
+# Without a directory, this also fails when the mise task was started in another
+# workspace. mise reads the mise.toml of the parent directories too: in a worktree
+# whose mise.toml does not define a task, the task of the main checkout runs, in
+# the main checkout. Its results would be about the wrong sources.
 
 set -euo pipefail
 
@@ -36,6 +41,25 @@ if [ $# -eq 1 ]; then
   fi
 else
   workspace_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+  # mise sets MISE_ORIGINAL_CWD to the directory where `mise run` was started.
+  # Both sides go through git, so symlinks in the paths do not matter.
+  # When either side cannot be resolved, the check is skipped.
+  caller_dir="${MISE_ORIGINAL_CWD:-}"
+  if [ -n "$caller_dir" ] && [ -d "$caller_dir" ]; then
+    caller_workspace="$(git -C "$caller_dir" rev-parse --show-toplevel 2>/dev/null || true)"
+    this_workspace="$(git -C "$workspace_dir" rev-parse --show-toplevel 2>/dev/null || true)"
+    if [ -n "$caller_workspace" ] && [ -n "$this_workspace" ] &&
+      [ "$caller_workspace" != "$this_workspace" ]; then
+      {
+        echo "This mise task was started in $caller_workspace, but it runs in $this_workspace."
+        echo "The mise.toml in $caller_workspace probably does not define the task, so mise took it from a parent directory."
+        echo "Its results would be about $this_workspace, not about $caller_workspace."
+        echo "Run the task on a branch whose mise.toml defines it, for example after merging main into the branch."
+      } >&2
+      exit 1
+    fi
+  fi
 fi
 
 package_config="$workspace_dir/.dart_tool/package_config.json"
