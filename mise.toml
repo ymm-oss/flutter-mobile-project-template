@@ -42,7 +42,7 @@ description = "Analyze all packages, or only the given files or directories. Fai
 run = 'dart analyze --fatal-infos'
 
 [tasks.format]
-description = "Format all packages, excluding generated code."
+description = "Format lib/ and test/ of each package (excluding generated code) and scripts/ and tools/ at the root."
 run = 'dart run melos run format --no-select'
 
 [tasks.gen]
