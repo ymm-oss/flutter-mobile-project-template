@@ -106,12 +106,13 @@ melos:
       description: |
         `dart format` を実行します。
         対象は、各パッケージの `lib/` と `test/`、ルートの `scripts/` と `tools/` です。
-        自動生成されたコードは対象外になるように設定しています。
       steps:
         - format:packages
         - format:root
     format:packages:
-      description: すべてのパッケージの `lib/` と `test/` に `dart format` を実行します。
+      description: |
+        すべてのパッケージの `lib/` と `test/` に `dart format` を実行します。
+        自動生成されたコードは対象外になるように設定しています。
       exec: >-
         find . -name "*.dart"
         \( -path "./lib/*" -o -path "./test/*" \)
@@ -129,12 +130,13 @@ melos:
       description: |
         `dart format --output=none --set-exit-if-changed` を実行します。
         対象は、各パッケージの `lib/` と `test/`、ルートの `scripts/` と `tools/` です。
-        自動生成されたコードは対象外になるように設定しています。
       steps:
         - format:check:packages
         - format:check:root
     format:check:packages:
-      description: すべてのパッケージの `lib/` と `test/` に `dart format --output=none --set-exit-if-changed` を実行します。
+      description: |
+        すべてのパッケージの `lib/` と `test/` に `dart format --output=none --set-exit-if-changed` を実行します。
+        自動生成されたコードは対象外になるように設定しています。
       exec: >-
         find . -name "*.dart"
         \( -path "./lib/*" -o -path "./test/*" \)
