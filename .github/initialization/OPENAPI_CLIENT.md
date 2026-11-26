@@ -52,7 +52,7 @@ OpenAPI Generator と、その実行に必要な Java のバージョンは [ope
   dart run melos run gen:build
   ```
 
-- [ ] [apps/app/lib/composition_root] で、生成したクライアントの Dio の `baseUrl` に `BuildConfig.apiBaseUrl` を渡す
+- [ ] [apps/app/lib/composition_root] で、生成したクライアントの Dio の `baseUrl` に、`buildConfigProvider` から読んだ `BuildConfig.apiBaseUrl` を渡す
 - [ ] [apps/app/flavor] の `dev.json`、`stg.json`、`prd.json` の `apiBaseUrl` を、各環境の API の URL に書き換える
   - 仕様書の `servers` の URL にパス（`/v1` など）があるときは、そのパスも含める
 - [ ] モックサーバーを起動し、仕様書の `example` が返ることを確かめる
