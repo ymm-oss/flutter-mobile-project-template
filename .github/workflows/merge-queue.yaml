@@ -11,7 +11,7 @@ permissions: {}
 
 jobs:
   changes:
-    uses: ./.github/workflows/wc-changes.yml
+    uses: $/.github/workflows/wc-changes.yml
     permissions:
       pull-requests: read
       contents: read
@@ -20,7 +20,6 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: read
-      pull-requests: write
     needs: changes
     if: ${{ needs.changes.outputs.actions == 'true' }}
     timeout-minutes: 10
@@ -32,14 +31,21 @@ jobs:
         with:
           persist-credentials: false
 
-      # https://github.com/marketplace/actions/actionlint-with-reviewdog
-      - uses: reviewdog/action-actionlint@ae857e78c1b42b3d0a49637181b09d3d56d402b4 # v1.84.1
+      - name: Install Mise dependencies
+        uses: jdx/mise-action@236a21c3b91f5db6d4e174b348674a0f0caac06d # v5.2.9
         with:
-          actionlint_flags: -ignore 'SC2153'
-          fail_on_error: true
-          filter_mode: nofilter
-          level: error
-          reporter: github-pr-review
+          install_args: "jactionlint shellcheck"
+
+      - name: Setup reviewdog
+        uses: reviewdog/action-setup@d8a7baabd7f3e8544ee4dbde3ee41d0011c3a93f # v1.5.0
+        with:
+          reviewdog_version: v0.21.2
+
+      - name: Run jactionlint
+        shell: bash
+        run: |
+          jactionlint --format sarif |
+            reviewdog -f=sarif -name=jactionlint -reporter=local -filter-mode=nofilter -fail-level=any
 
   check-actions-security:
     runs-on: ubuntu-slim
@@ -94,7 +100,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Application Runtime
-        uses: ./.github/actions/setup-application-runtime
+        uses: $/.github/actions/setup-application-runtime
         with:
           bootstrap-workspace: false
 
@@ -123,7 +129,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Application Runtime
-        uses: ./.github/actions/setup-application-runtime
+        uses: $/.github/actions/setup-application-runtime
         with:
           bootstrap-workspace: false
 
@@ -153,36 +159,36 @@ jobs:
           persist-credentials: false
 
       - name: Setup Application Runtime
-        uses: ./.github/actions/setup-application-runtime
+        uses: $/.github/actions/setup-application-runtime
         with:
           bootstrap-workspace: false
 
       - name: Run test
-        uses: ./.github/actions/run-test
+        uses: $/.github/actions/run-test
 
   diff-gen:
-    uses: ./.github/workflows/wc-check-diff.yaml
+    uses: $/.github/workflows/wc-check-diff.yaml
     permissions:
       contents: read
     needs: changes
     if: ${{ needs.changes.outputs.gen == 'true' }}
 
   check-openapi:
-    uses: ./.github/workflows/wc-check-openapi.yaml
+    uses: $/.github/workflows/wc-check-openapi.yaml
     permissions:
       contents: read
     needs: changes
     if: ${{ needs.changes.outputs.openapi == 'true' }}
 
   check-ai-skills:
-    uses: ./.github/workflows/wc-check-ai-skills.yaml
+    uses: $/.github/workflows/wc-check-ai-skills.yaml
     permissions:
       contents: read
     needs: changes
     if: ${{ needs.changes.outputs.ai_skills == 'true' }}
 
   check-vulnerabilities:
-    uses: ./.github/workflows/wc-check-vulnerabilities.yaml
+    uses: $/.github/workflows/wc-check-vulnerabilities.yaml
     permissions:
       contents: read
     needs: changes
@@ -190,6 +196,7 @@ jobs:
 
   status-check:
     runs-on: ubuntu-24.04
+    timeout-minutes: 5
     needs:
       - changes
       - check-actions

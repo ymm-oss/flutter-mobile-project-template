@@ -41,7 +41,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Application Runtime
-        uses: ./.github/actions/setup-application-runtime
+        uses: $/.github/actions/setup-application-runtime
 
       - name: Build web
         run: flutter build web --release --base-href "/$REPOSITORY_NAME/$CURRENT_BRANCH/"
@@ -60,6 +60,7 @@ jobs:
 
       - name: Get run IDs from the last 3 days for the triggering workflow
         id: get_run_ids
+        shell: bash
         run: |
           echo "Fetching runs for workflow: '$GITHUB_WORKFLOW' created since $START_DATE"
 
@@ -94,6 +95,7 @@ jobs:
           START_DATE: ${{ steps.date_calc.outputs.start_date }}
 
       - name: Download artifacts for each run ID
+        shell: bash
         run: |
           mkdir -p _site # GitHub Pagesのルートディレクトリ
 

@@ -4,6 +4,10 @@ on:
   pull_request:
     types: [opened, ready_for_review]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions: {}
 
 jobs:
@@ -50,6 +54,7 @@ jobs:
           TEAM_REVIEWERS: ${{ vars.TEAM_REVIEWERS }}
           APP_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+        shell: bash
         run: |
           reviewers=$(jq -R 'split(",")' <<< "${REVIEWERS:-}" | jq 'map(select(length > 0))')
           team_reviewers=$(jq -R 'split(",")' <<< "${TEAM_REVIEWERS:-}" | jq 'map(select(length > 0))')

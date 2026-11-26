@@ -45,7 +45,7 @@ runs:
         .configurations |= map(select(.cwd | strings | startswith("samples/") | not))
         '
         > "$LAUNCH_JSON_PATH"
-      shell: sh
+      shell: bash
       env:
         LAUNCH_JSON_PATH: ${{ inputs.vscode-launch-json-path }}
 

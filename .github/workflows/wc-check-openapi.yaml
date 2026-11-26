@@ -19,7 +19,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Application Runtime
-        uses: ./.github/actions/setup-application-runtime
+        uses: $/.github/actions/setup-application-runtime
         with:
           bootstrap-workspace: false
 

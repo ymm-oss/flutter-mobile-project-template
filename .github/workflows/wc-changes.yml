@@ -67,7 +67,6 @@ jobs:
               - '.github/actions/**/action.yaml'
               - '.github/workflows/*.yml'
               - '.github/workflows/*.yaml'
-              - '.github/zizmor.yml'
               # zizmor のバージョンを上げたときも検査する
               - 'mise.toml'
               - 'mise.lock'

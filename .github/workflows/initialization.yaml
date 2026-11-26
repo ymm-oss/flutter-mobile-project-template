@@ -5,12 +5,17 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 permissions: {}
 
 jobs:
   condition:
     runs-on: ubuntu-24.04
     permissions: {}
+    timeout-minutes: 5
     outputs:
       execute: ${{ steps.condition.outputs.execute }}
     steps:
@@ -30,6 +35,7 @@ jobs:
       contents: read
     needs: condition
     if: needs.condition.outputs.execute == 'true'
+    timeout-minutes: 20
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
@@ -41,7 +47,7 @@ jobs:
 
       - name: Generate Matrix Data
         id: matrix
-        uses: ./.github/actions/generate-issue-matrix-at-initialization
+        uses: $/.github/actions/generate-issue-matrix-at-initialization
 
   create-issues:
     runs-on: ubuntu-24.04
@@ -87,24 +93,24 @@ jobs:
           persist-credentials: false
 
       - name: Cleanup Copilot Settings
-        uses: ./.github/actions/cleanup-copilot-settings
+        uses: $/.github/actions/cleanup-copilot-settings
 
       - name: Cleanup Samples
-        uses: ./.github/actions/cleanup-samples
+        uses: $/.github/actions/cleanup-samples
 
       # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
       # Important: Please list the necessary steps above this line.
       # Reason: This step involves removing files from the project, which may lead to unexpected outcomes for your step.
       # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
       - name: Remove unnecessary files
-        uses: ./.github/actions/remove-unnecessary-files
+        uses: $/.github/actions/remove-unnecessary-files
 
       - name: Fill project name
-        uses: ./.github/actions/fill-project-name
+        uses: $/.github/actions/fill-project-name
 
       # generate labels
       - name: Setup Application Runtime
-        uses: ./.github/actions/setup-application-runtime
+        uses: $/.github/actions/setup-application-runtime
         with:
           # サンプルの削除で依存が変わり pubspec.lock を更新する必要があるため
           enforce-lockfile: "false"
