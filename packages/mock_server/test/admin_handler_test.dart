@@ -83,6 +83,64 @@ paths:
     });
   });
 
+  group('serveFavicon', () {
+    Future<Uint8List> assets(String path) async => utf8.encode('asset:$path');
+    Future<Response> get(Handler handler, String path) async =>
+        await handler(Request('GET', Uri.parse('http://localhost$path')));
+    Response mock(Request request) => Response.ok('mock');
+
+    test('/favicon.ico には管理画面のアイコンを返し、ほかは内側に渡す', () async {
+      final favicon = serveFavicon(document, mock, assets: assets);
+
+      final icon = await get(favicon, '/favicon.ico');
+      expect(icon.headers['content-type'], 'image/svg+xml');
+      expect(await icon.readAsString(), 'asset:admin/favicon.svg');
+      expect(await (await get(favicon, '/items/1')).readAsString(), 'mock');
+    });
+
+    test('仕様書に /favicon.ico があれば、内側に渡す', () async {
+      final favicon = serveFavicon(
+        OpenApiDocument.parse('''
+paths:
+  /favicon.ico:
+    get:
+      responses:
+        "200":
+          description: ok
+          content:
+            text/plain:
+              example: icon
+'''),
+        mock,
+        assets: assets,
+      );
+
+      expect(await (await get(favicon, '/favicon.ico')).readAsString(), 'mock');
+    });
+
+    test('servers にパスがあれば、仕様書に /favicon.ico があっても返す', () async {
+      final favicon = serveFavicon(
+        OpenApiDocument.parse('''
+servers:
+  - url: https://api.example.com/v1
+paths:
+  /favicon.ico:
+    get:
+      responses:
+        "200":
+          description: ok
+'''),
+        mock,
+        assets: assets,
+      );
+
+      expect(
+        await (await get(favicon, '/favicon.ico')).readAsString(),
+        'asset:admin/favicon.svg',
+      );
+    });
+  });
+
   group('画面のファイル', () {
     test('/_admin/ には index.html を返す', () async {
       final response = await send('GET', '/_admin/');
