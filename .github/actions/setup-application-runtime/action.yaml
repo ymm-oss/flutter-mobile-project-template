@@ -21,7 +21,7 @@ runs:
     # PR と merge queue のキャッシュはほかの実行から読めないため、既定ブランチでだけ保存する
     # schedule は既定ブランチでしか動かないため、ref を比べない
     - name: Setup flutter
-      uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+      uses: jdx/mise-action@236a21c3b91f5db6d4e174b348674a0f0caac06d # v5.2.9
       with:
         install_args: "flutter"
         cache_save: ${{ inputs.save-cache == 'true' && (github.event_name == 'schedule' || github.ref_name == github.event.repository.default_branch) }}

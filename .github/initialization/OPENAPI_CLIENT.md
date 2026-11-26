@@ -12,17 +12,22 @@ labels:
 このプロジェクトには、OpenAPI の仕様書から [OpenAPI Generator] で Dart Dio の API クライアントを生成する骨格が [openapi/sample] にあります。
 
 ```text
-openapi/<api_name>/
-  configs/dart-dio.yaml        # ジェネレーターのオプション
-  scripts/generate-client.sh   # 生成スクリプト
-  templates/                   # 既定のテンプレートを上書きするファイル
-  openapi.yaml                 # 仕様書
+openapi/
+  mise.toml                      # OpenAPI Generator と Java のバージョン
+  mise.lock
+  <api_name>/
+    configs/dart-dio.yaml        # ジェネレーターのオプション
+    scripts/generate-client.sh   # 生成スクリプト
+    templates/                   # 既定のテンプレートを上書きするファイル
+    openapi.yaml                 # 仕様書
 ```
 
 生成スクリプトは、ディレクトリ名の `<api_name>` を API 名として、`packages/api/<api_name>` に `internal_api_<api_name>` パッケージを生成します。
 API が複数ある場合は、API ごとにディレクトリを分けてください。
 
-OpenAPI Generator と、その実行に必要な Java のバージョンは [mise.toml] で固定しています。
+OpenAPI Generator と、その実行に必要な Java のバージョンは [openapi/mise.toml] で固定しています。
+ルートの `mise.toml` に置くと、リポジトリ全体の `JAVA_HOME` が変わり、Android のビルドに使う JDK も変わるため、分けています。
+`mise bs` ではインストールされません。
 
 ## Todo
 
@@ -33,7 +38,7 @@ OpenAPI Generator と、その実行に必要な Java のバージョンは [mis
 - [ ] クライアントを生成する
 
   ```shell
-  mise install
+  mise -C openapi install
   openapi/<api_name>/scripts/generate-client.sh
   ```
 
@@ -49,11 +54,12 @@ OpenAPI Generator と、その実行に必要な Java のバージョンは [mis
 - [ ] 生成したパッケージを `infrastructure` 以外から使う場合は、[docs/ARCHITECTURE.md] の依存の向きを書き換える
 
 仕様書を更新したときは、生成スクリプト、`mise bs`、`dart run melos run gen:build` を同じ順で実行してください。
+`openapi` か `packages/api`、ルートの依存や解析の設定を変えた PR では、CI が生成し直した結果とコミット済みのものが一致するかを確かめます。
 
 OpenAPI を使わない場合は、次を削除してください。
 
 - [ ] `openapi` ディレクトリ
-- [ ] [mise.toml] の `java` と `aqua:OpenAPITools/openapi-generator`（削除後に `mise lock` を実行する）
+- [ ] [.github/workflows/wc-check-openapi.yaml] と、[.github/workflows/check-pr.yaml]、[.github/workflows/merge-queue.yaml]、[.github/workflows/wc-changes.yml] の `openapi` の記述
 - [ ] [dprint.jsonc]、[cspell.jsonc]、[.gitattributes] の `packages/api` の行
 - [ ] [docs/ARCHITECTURE.md] のディレクトリ構造の `openapi` と `packages/api`、依存の図の `api`
 
@@ -61,11 +67,15 @@ OpenAPI を使わない場合は、次を削除してください。
 
 [OpenAPI Generator]: https://openapi-generator.tech/docs/generators/dart-dio/
 [openapi/sample]: ../tree/main/openapi/sample
-[mise.toml]: ../blob/main/mise.toml
+[openapi/mise.toml]: ../blob/main/openapi/mise.toml
 [pubspec.yaml]: ../blob/main/pubspec.yaml
 [dprint.jsonc]: ../blob/main/dprint.jsonc
 [cspell.jsonc]: ../blob/main/cspell.jsonc
 [.gitattributes]: ../blob/main/.gitattributes
 [.github/labeler.yml]: ../blob/main/.github/labeler.yml
 [.github/labels.yml]: ../blob/main/.github/labels.yml
+[.github/workflows/wc-check-openapi.yaml]: ../blob/main/.github/workflows/wc-check-openapi.yaml
+[.github/workflows/check-pr.yaml]: ../blob/main/.github/workflows/check-pr.yaml
+[.github/workflows/merge-queue.yaml]: ../blob/main/.github/workflows/merge-queue.yaml
+[.github/workflows/wc-changes.yml]: ../blob/main/.github/workflows/wc-changes.yml
 [docs/ARCHITECTURE.md]: ../blob/main/docs/ARCHITECTURE.md

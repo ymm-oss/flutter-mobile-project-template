@@ -47,7 +47,7 @@ labels: initialization
 
 ## `package.json` で管理する Node.js パッケージ
 
-以下のツールは `package.json` の `devDependencies` でバージョンが指定され、`bun install --ignore-scripts` コマンドでインストールされます。(一部抜粋)
+以下のツールは `package.json` の `devDependencies` でバージョンが指定され、`bun install --frozen-lockfile --ignore-scripts` コマンドでインストールされます。(一部抜粋)
 
 - **cspell (Spell Checker)**:
   - 確認: `bun --bun run cspell --version`
@@ -88,6 +88,7 @@ labels: initialization
   - [ ] `mise` 自体のバージョン確認・推奨
     - [ ] `mise.toml` の `min_version` の確認・更新
     - [ ] `mise.toml` の `[tools]` の確認・更新と、`mise.lock` の更新
+    - [ ] OpenAPI を使う場合は、`openapi/mise.toml` の `[tools]` の確認・更新と、`openapi/mise.lock` の更新
   - [ ] `package.json` の `devDependencies` 確認・更新:
   - [ ] Xcode バージョンの指定:
     - [ ] CocoaPods バージョンの指定
