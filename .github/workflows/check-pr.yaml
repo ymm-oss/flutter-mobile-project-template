@@ -228,6 +228,13 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.gen == 'true' }}
 
+  check-openapi:
+    uses: ./.github/workflows/wc-check-openapi.yaml
+    permissions:
+      contents: read
+    needs: changes
+    if: ${{ needs.changes.outputs.openapi == 'true' }}
+
   check-dependencies:
     uses: ./.github/workflows/wc-check-dependencies.yml
     permissions:
@@ -277,6 +284,7 @@ jobs:
       - check
       - test
       - diff-gen
+      - check-openapi
       - check-dependencies
       - check-style-dprint
       - check-code-spell

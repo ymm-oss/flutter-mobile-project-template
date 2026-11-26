@@ -13,6 +13,8 @@ on:
         value: ${{ jobs.changes.outputs.dprint }}
       markdown:
         value: ${{ jobs.changes.outputs.markdown }}
+      openapi:
+        value: ${{ jobs.changes.outputs.openapi }}
       src:
         value: ${{ jobs.changes.outputs.src }}
       spell:
@@ -35,6 +37,7 @@ jobs:
       dprint: ${{ steps.filter.outputs.dprint }}
       gen: ${{ steps.filter.outputs.gen }}
       markdown: ${{ steps.filter.outputs.markdown }}
+      openapi: ${{ steps.filter.outputs.openapi }}
       src: ${{ steps.filter.outputs.src }}
       spell: ${{ steps.filter.outputs.spell }}
       ai_skills: ${{ steps.filter.outputs.ai_skills }}
@@ -86,6 +89,15 @@ jobs:
               - "**/assets/**"
             markdown:
               - "**.md"
+            openapi:
+              - "openapi/**"
+              - "packages/api/**"
+              - ".github/workflows/wc-check-openapi.yaml"
+              # 依存や解析の設定、実行環境が変わったときも、生成したクライアントを検証する
+              - "pubspec.yaml"
+              - "pubspec.lock"
+              - "analysis_options.yaml"
+              - ".github/actions/setup-application-runtime/**"
             src:
               - "**.dart"
               - "**.yaml"

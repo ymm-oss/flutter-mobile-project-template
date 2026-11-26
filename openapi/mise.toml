@@ -1,0 +1,6 @@
+# mise release used in CI when this was set; it runs aqua packages shipped as a jar by name, which generate-client.sh relies on.
+min_version = "2026.11.10"
+
+[tools]
+java = "temurin-25.0.5+8.0.LTS"
+"aqua:OpenAPITools/openapi-generator" = "7.27.0"
