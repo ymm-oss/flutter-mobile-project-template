@@ -92,6 +92,9 @@ fix(api): ユーザー情報取得APIのエラーハンドリングを修正
 ただし、コミットメッセージの検査も飛ばされます。
 ファイルの検査の違反は CI で検出されますが、コミットメッセージは CI では検査しません。
 
+CI の `gitleaks git` は、リポジトリにある `.gitleaks.toml`、`.gitleaksignore`、`.gitattributes` と、行コメントの `gitleaks:allow` を使いません。
+手元の検査をこれらで通しても、CI では検出されます。
+
 <!-- Links -->
 
 [`@commitlint/config-conventional`]: https://github.com/conventional-changelog/commitlint/tree/master/%40commitlint/config-conventional

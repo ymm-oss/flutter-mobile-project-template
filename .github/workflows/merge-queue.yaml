@@ -78,6 +78,14 @@ jobs:
           zizmor --format sarif .github |
             reviewdog -f=sarif -name=zizmor -reporter=local -filter-mode=nofilter -fail-level=any
 
+  check-secrets:
+    uses: ./.github/workflows/wc-check-secrets.yaml
+    permissions:
+      contents: read
+    with:
+      base-sha: ${{ github.event.merge_group.base_sha }}
+      head-sha: ${{ github.event.merge_group.head_sha }}
+
   analyze:
     needs: changes
     if: ${{ needs.changes.outputs.src == 'true' }}
@@ -194,6 +202,7 @@ jobs:
       - changes
       - check-actions
       - check-actions-security
+      - check-secrets
       - analyze
       - check
       - test
