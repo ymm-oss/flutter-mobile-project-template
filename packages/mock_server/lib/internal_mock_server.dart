@@ -3,4 +3,5 @@ library;
 
 export 'src/api_directory.dart';
 export 'src/mock_handler.dart';
+export 'src/mock_settings.dart';
 export 'src/openapi_document.dart';
