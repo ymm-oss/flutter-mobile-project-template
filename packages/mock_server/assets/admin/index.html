@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>モックサーバーの管理画面</title>
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body>
+    <header>
+      <h1>モックサーバー</h1>
+      <nav>
+        <button type="button" class="tab" aria-current="page">operation</button>
+      </nav>
+      <button type="button" id="reset-all">すべて既定に戻す</button>
+    </header>
+    <p id="status" role="status"></p>
+    <main>
+      <section aria-label="operation の一覧">
+        <ul id="operations"></ul>
+      </section>
+      <section id="editor" aria-label="operation の設定" hidden>
+        <h2 id="editor-title"></h2>
+        <form id="settings-form">
+          <fieldset>
+            <legend>応答</legend>
+            <label>
+              <input type="radio" name="kind" value="success" checked />
+              正常系
+            </label>
+            <label>
+              <input type="radio" name="kind" value="error" />
+              異常系
+            </label>
+            <div class="options">
+              <label>
+                ステータスコード
+                <select id="status-select"></select>
+              </label>
+              <label id="custom-status-label">
+                そのほかのステータスコード
+                <input type="number" id="response-status" required />
+              </label>
+              <label>
+                Content-Type
+                <input type="text" id="response-content-type" />
+              </label>
+              <label>
+                本文
+                <textarea id="response-body" rows="12" spellcheck="false"></textarea>
+              </label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>遅延</legend>
+            <label>
+              <input type="number" id="delay" min="0" step="100" value="0" />
+              ミリ秒
+            </label>
+          </fieldset>
+          <div class="actions">
+            <button type="submit">保存</button>
+            <button type="button" id="reset">既定に戻す</button>
+          </div>
+        </form>
+      </section>
+    </main>
+    <script src="admin.js"></script>
+  </body>
+</html>
