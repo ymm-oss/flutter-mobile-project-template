@@ -6,6 +6,7 @@
 ## 環境
 
 - Flutter SDK は mise で管理している。
+- clone や worktree を新しく作ったら `mise bs` を実行する。実行しないと依存が入らず、コミット時のフック（husky）も動かない。
 - 複数のパッケージを Melos でまとめて管理しており、`dart run melos` で実行する。
   - ルートの `pubspec.yaml` の `melos.command.bootstrap` に載っている依存は、ルート側で管理する。
 
