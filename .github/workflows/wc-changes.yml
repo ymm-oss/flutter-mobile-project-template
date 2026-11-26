@@ -85,7 +85,7 @@ jobs:
               # コード生成の元になる Dart 以外のファイル
               # slang が読む i18n の定義
               - "**/*.i18n.json"
-              # flutter_gen が読むアセット
+              # アセット。flutter_gen が読まない launcher_icon などにも当たる
               - "**/assets/**"
             markdown:
               - "**.md"
