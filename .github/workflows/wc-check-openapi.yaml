@@ -26,7 +26,7 @@ jobs:
       # https://github.com/jdx/mise-action
       # キャッシュを使うと、前のステップで入れた Flutter も別のキーで保存されるため、使わない
       - name: Install OpenAPI Generator
-        uses: jdx/mise-action@d5574b52816a478f9d4e6529a3f6ff17a8a36785 # v5.2.8
+        uses: jdx/mise-action@90f833d396d0cc3674b631d2d225e306476c303a # v5.2.10
         with:
           working_directory: openapi
           install_args: "java aqua:OpenAPITools/openapi-generator"
