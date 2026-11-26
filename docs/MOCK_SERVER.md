@@ -18,11 +18,13 @@ mise run mock
 
 ## アプリからの接続
 
-モックサーバーの URL は `http://127.0.0.1:4000` に仕様書の `servers` の 1 つ目の URL のパスを付けたものです。たとえば `servers` の URL が `https://api.example.com/v1` なら `http://127.0.0.1:4000/v1` になります。起動時にもこの URL を表示します。生成したクライアントの接続先には、この URL を渡してください。
+モックサーバーの URL は `http://127.0.0.1:4000` に仕様書の `servers` の 1 つ目の URL のパスを付けたものです。たとえば `servers` の URL が `https://api.example.com/v1` なら `http://127.0.0.1:4000/v1` になります。起動時にもこの URL を表示します。
 
-iOS シミュレーターからは、この URL のままつながります。
+実行構成 `mock-debug` でアプリを起動すると、`apiBaseUrl` は `http://127.0.0.1:4000` になります。ほかの値は `dev-debug` と同じです。生成したクライアントの接続先に `BuildConfig.apiBaseUrl` を渡していれば、モックサーバーにつながります。モックサーバーのポートや仕様書の `servers` のパスを変えたときは、[.vscode/launch.json] と [.idea/runConfigurations/mock_debug.xml] の `mock-debug` の `apiBaseUrl` も書き換えてください。
 
-Android エミュレーターからつなぐときは、次のコマンドでエミュレーターの 4000 番のポートをホストの 4000 番に転送してから、同じ URL を渡してください。ポートを変えたときは、`4000` をそのポートに替えてください。エミュレーターを起動し直したときは、もう一度実行してください。
+iOS シミュレーターからは `mock-debug` で起動すればそのままつながります。
+
+Android エミュレーターからつなぐときは、次のコマンドでエミュレーターの 4000 番のポートをホストの 4000 番に転送してから、`mock-debug` で起動してください。ポートを変えたときは、`4000` をそのポートに替えてください。エミュレーターを起動し直したときは、もう一度実行してください。
 
 ```shell
 adb reverse tcp:4000 tcp:4000
@@ -41,3 +43,5 @@ Android の実機も、USB で接続していれば、同じ `adb reverse` で�
 <!-- Links -->
 
 [packages/mock_server]: ../packages/mock_server
+[.vscode/launch.json]: ../.vscode/launch.json
+[.idea/runConfigurations/mock_debug.xml]: ../.idea/runConfigurations/mock_debug.xml
