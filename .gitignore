@@ -15,3 +15,6 @@
 
 # dependencies (bun install)
 node_modules
+
+# Profiles of the mock server saved from its admin page (docs/MOCK_SERVER.md).
+/openapi/*/mock_profiles/local/

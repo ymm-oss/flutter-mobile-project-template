@@ -62,6 +62,9 @@ Future<void> main(List<String> arguments) async {
       settings,
       assets: await packageAssetResolver(),
       log: log,
+      profiles: DirectoryProfileStore(
+        Directory.fromUri(specFile.parent.uri.resolve('mock_profiles/')),
+      ),
     ),
     const Pipeline()
         .addMiddleware(logTraffic(log))

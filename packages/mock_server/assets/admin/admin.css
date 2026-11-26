@@ -28,8 +28,19 @@ header h1 {
   font-size: 1.1rem;
 }
 
+header {
+  flex-wrap: wrap;
+}
+
 nav {
   flex: 1;
+}
+
+#operation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
 }
 
 .tab {

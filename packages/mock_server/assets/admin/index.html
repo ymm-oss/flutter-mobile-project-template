@@ -15,7 +15,16 @@
         <button type="button" class="tab" data-tab="operations" aria-current="page">operation</button>
         <button type="button" class="tab" data-tab="traffic">通信</button>
       </nav>
-      <button type="button" id="reset-all">すべて既定に戻す</button>
+      <div id="operation-actions">
+        <label>
+          プロファイル
+          <select id="profile-select"></select>
+        </label>
+        <button type="button" id="profile-apply">適用</button>
+        <button type="button" id="profile-save">今の設定を保存</button>
+        <button type="button" id="profile-delete">削除</button>
+        <button type="button" id="reset-all">すべて既定に戻す</button>
+      </div>
     </header>
     <p id="status" role="status"></p>
     <main id="tab-operations">
@@ -91,5 +100,6 @@
     </main>
     <script src="admin.js"></script>
     <script src="traffic.js"></script>
+    <script src="profile.js"></script>
   </body>
 </html>

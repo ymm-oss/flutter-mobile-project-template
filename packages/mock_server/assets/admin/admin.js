@@ -2,7 +2,8 @@
 // 応答は、仕様書のステータスコードを選んで example を編集欄に入れ、必要なら編集する。
 // 編集しなければ、仕様書の応答を返す。
 // ビルドせずに動くよう、ブラウザーの標準の機能だけで書く。
-// 通信タブは traffic.js にある。このファイルの関数を使うため、あとに読み込む。
+// 通信タブは traffic.js、プロファイルは profile.js にある。このファイルの関数を使うため、
+// あとに読み込む。
 
 const api = "api/operations";
 
@@ -20,6 +21,7 @@ const elements = {
   delay: document.getElementById("delay"),
   reset: document.getElementById("reset"),
   resetAll: document.getElementById("reset-all"),
+  operationActions: document.getElementById("operation-actions"),
   tabs: document.querySelectorAll(".tab"),
 };
 
@@ -363,7 +365,7 @@ function showTab(name) {
     }
     document.getElementById(`tab-${tab.dataset.tab}`).hidden = tab.dataset.tab !== name;
   }
-  elements.resetAll.hidden = name !== "operations";
+  elements.operationActions.hidden = name !== "operations";
   showStatus("");
   if (name === "traffic") {
     history.replaceState(null, "", trafficHash);
@@ -486,9 +488,10 @@ for (const tab of elements.tabs) {
   tab.addEventListener("click", () => showTab(tab.dataset.tab));
 }
 
-// traffic.js を読み込んでから始める。
+// traffic.js と profile.js を読み込んでから始める。
 document.addEventListener("DOMContentLoaded", () => {
   run(load, "");
+  run(loadProfiles, "");
   if (location.hash === trafficHash) {
     showTab("traffic");
   }
