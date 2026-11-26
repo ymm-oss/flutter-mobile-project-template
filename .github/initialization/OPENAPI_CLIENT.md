@@ -50,7 +50,7 @@ OpenAPI Generator と、その実行に必要な Java のバージョンは [ope
   dart run melos run gen:build
   ```
 
-- [ ] 生成した `packages/api/<api_name>` と、`mise bs` が更新した [.github/labeler.yml] と [.github/labels.yml] をコミットする
+- [ ] 生成した `packages/api/<api_name>` と、ルートの [pubspec.yaml]・`pubspec.lock` をコミットする
 - [ ] 生成したパッケージを `infrastructure` 以外から使う場合は、[docs/ARCHITECTURE.md] の依存の向きを書き換える
 
 仕様書を更新したときは、生成スクリプト、`mise bs`、`dart run melos run gen:build` を同じ順で実行してください。
@@ -72,8 +72,6 @@ OpenAPI を使わない場合は、次を削除してください。
 [dprint.jsonc]: ../blob/main/dprint.jsonc
 [cspell.jsonc]: ../blob/main/cspell.jsonc
 [.gitattributes]: ../blob/main/.gitattributes
-[.github/labeler.yml]: ../blob/main/.github/labeler.yml
-[.github/labels.yml]: ../blob/main/.github/labels.yml
 [.github/workflows/wc-check-openapi.yaml]: ../blob/main/.github/workflows/wc-check-openapi.yaml
 [.github/workflows/check-pr.yaml]: ../blob/main/.github/workflows/check-pr.yaml
 [.github/workflows/merge-queue.yaml]: ../blob/main/.github/workflows/merge-queue.yaml

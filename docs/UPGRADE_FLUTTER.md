@@ -19,7 +19,7 @@ melos:
 ```
 
 > [!NOTE]
-> `analysis_options.yaml`でyumemi_lintsのルールバージョンの更新が必要ですが、こちらは`dart run melos bootstrap`のpost hooksで自動化的に更新されます。
+> `analysis_options.yaml`でyumemi_lintsのルールバージョンの更新が必要です。手順 7 の`dart run melos run update:yumemi_lints --no-select`で更新されます。更新を忘れると、CI の diff-gen が失敗します。
 >
 > ```yaml
 > include: package:yumemi_lints/flutter/x.x.x/recommended.yaml
@@ -28,9 +28,10 @@ melos:
 > ただしyumemi_lints自体のバージョンが古くて最新Flutterバージョンに対応していない場合があるので、その場合はyumemi_lintsを更新してください。
 
 6. `dart run melos bootstrap`コマンドを実行
-7. iOS でアプリが起動できることを確認
-8. Android でアプリが起動できることを確認
-9. [Migration Guide](https://docs.flutter.dev/release/breaking-changes) に従い、必要に応じて deprecate 箇所を修正
+7. `dart run melos run update:yumemi_lints --no-select`コマンドを実行
+8. iOS でアプリが起動できることを確認
+9. Android でアプリが起動できることを確認
+10. [Migration Guide](https://docs.flutter.dev/release/breaking-changes) に従い、必要に応じて deprecate 箇所を修正
 
 ### 注意ポイント
 

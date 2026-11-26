@@ -102,7 +102,6 @@ jobs:
       - name: Fill project name
         uses: ./.github/actions/fill-project-name
 
-      # generate labels
       - name: Setup Application Runtime
         uses: ./.github/actions/setup-application-runtime
         with:

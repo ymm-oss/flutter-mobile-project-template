@@ -10,7 +10,6 @@
 | [merge-queue.yaml]              | merge queue での検査                          |
 | [create-cache.yaml]             | 既定ブランチの mise と pub のキャッシュの作成 |
 | [auto-assign.yaml]              | レビュアーと担当者の設定                      |
-| [labeler.yml]                   | 変更したパッケージのラベルの付与              |
 | [labels.yml]                    | リポジトリのラベルの同期（PR では dry-run）   |
 | [pr-rebase-detector.yaml]       | rebase や force push の検知                   |
 | [github-pages-pull-request.yml] | catalog の GitHub Pages へのデプロイ          |
@@ -58,16 +57,11 @@ check-pr の diff-gen は、既定ブランチとの差分があるパッケー�
 
 melos の `diff` フィルタは、ファイルが変わったパッケージだけを選びます。たとえば、ルートの `pubspec.lock` だけが変わる生成器の更新では、どのパッケージも選ばれず、古い生成コードのまま check-pr を通ります。merge queue で全パッケージを生成して、こうした漏れを止めます。
 
-## melos bootstrap を省くジョブ
+## melos bootstrap と yumemi_lints
 
-analyze、check、test は、[Setup Application Runtime] の `bootstrap-workspace: false` で `melos bootstrap` を省きます。bootstrap が生成し直すファイル（`pubspec.yaml` の共通の依存、`analysis_options.yaml` の `include:`）が最新であることは、bootstrap を実行する diff-gen が確かめます。
+[Setup Application Runtime] は、すべてのジョブで `melos bootstrap` を実行します。bootstrap の post フックは使っていないため、増える時間はわずかです。時間のかかる処理を post フックに足さないでください。
 
-この分担を保つため、次の点を守ってください。
-
-- bootstrap の入力（`pubspec.yaml`、`pubspec.lock`、`analysis_options.yaml`、`tools/` の Dart ファイル）は、diff-gen の `gen` フィルタに含めてください。含めないと、古いファイルが diff-gen をすり抜け、analyze が古い設定のまま通ります。
-- コミットしない生成物で、analyze、check、test が使うものを bootstrap の post フックに足すときは、それらのジョブでも bootstrap を実行してください。
-
-create-cache も `bootstrap-workspace: false` で `melos bootstrap` を省きます。キャッシュに入れる Flutter tool と pub のパッケージは、bootstrap の前の `flutter pub get` までにそろうためです。
+`analysis_options.yaml` の `include:` は bootstrap では更新しません。diff-gen が bootstrap の後に `melos run update:yumemi_lints` を実行し、差分が出たら失敗します。yumemi_lints は各パッケージの `pubspec.yaml` の `environment` と、yumemi_lints のバージョンから `include:` を決めます。どちらも diff-gen の `gen` フィルタ（`**.yaml`、`**/pubspec.lock`）に含まれます。
 
 ## キャッシュ
 
@@ -84,7 +78,6 @@ mise のキャッシュのキーは 30 日ごとに変わるため、create-cach
 [initialization.yaml]: https://github.com/ymm-oss/flutter-mobile-project-template/blob/main/.github/workflows/initialization.yaml
 [issue-dependabot.yml]: ../.github/workflows/issue-dependabot.yml
 [issue-vulnerabilities.yaml]: ../.github/workflows/issue-vulnerabilities.yaml
-[labeler.yml]: ../.github/workflows/labeler.yml
 [labels.yml]: ../.github/workflows/labels.yml
 [merge-queue.yaml]: ../.github/workflows/merge-queue.yaml
 [pr-rebase-detector.yaml]: ../.github/workflows/pr-rebase-detector.yaml
