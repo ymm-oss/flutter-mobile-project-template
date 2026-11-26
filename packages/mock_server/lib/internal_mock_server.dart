@@ -7,3 +7,5 @@ export 'src/asset_resolver.dart';
 export 'src/mock_handler.dart';
 export 'src/mock_settings.dart';
 export 'src/openapi_document.dart';
+export 'src/request_log.dart';
+export 'src/traffic_middleware.dart';

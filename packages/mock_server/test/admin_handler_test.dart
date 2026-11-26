@@ -38,13 +38,15 @@ paths:
   final itemPath = '/_admin/api/operations/${Uri.encodeComponent(itemKey)}';
 
   late MockSettings settings;
+  late RequestLog log;
   late Handler handler;
 
   setUp(() {
     settings = MockSettings();
+    log = RequestLog();
     Future<Uint8List> assets(String path) async => utf8.encode('asset:$path');
     handler = mountAdmin(
-      createAdminHandler(document, settings, assets: assets),
+      createAdminHandler(document, settings, assets: assets, log: log),
       (request) => Response.ok('mock'),
     );
   });
@@ -96,6 +98,8 @@ paths:
       expect(js.headers['content-type'], 'text/javascript; charset=utf-8');
       expect(await js.readAsString(), 'asset:admin/admin.js');
       expect(css.headers['content-type'], 'text/css; charset=utf-8');
+      final traffic = await send('GET', '/_admin/traffic.js');
+      expect(await traffic.readAsString(), 'asset:admin/traffic.js');
     });
 
     test('決まったファイルのほかには、リクエストのパスを示して 404 を返す', () async {
@@ -112,6 +116,7 @@ paths:
         document,
         settings,
         assets: (path) async => throw Exception('missing'),
+        log: log,
       );
 
       final response = await failing(
@@ -348,6 +353,82 @@ paths:
           expect(settings.changed, isEmpty);
         });
       }
+    });
+  });
+
+  group('通信の履歴の API', () {
+    void addEntry(String path) => log.add(
+      time: DateTime.utc(2026),
+      method: 'GET',
+      path: path,
+      operationKey: itemKey,
+      source: ResponseSource.spec,
+      statusCode: 200,
+      duration: const Duration(milliseconds: 5),
+      requestHeaders: {'accept': 'application/json'},
+      requestBody: '',
+      responseContentType: 'application/json',
+      responseBody: '{"id":"1"}',
+    );
+
+    test('after より新しい履歴の一覧を、中身を除いて返す', () async {
+      addEntry('/items/1');
+      addEntry('/items/2');
+
+      final json = await jsonOf(
+        await send('GET', '/_admin/api/traffic?after=1'),
+      );
+
+      expect(json, {
+        'lastId': 2,
+        'entries': [
+          {
+            'id': 2,
+            'time': '2026-01-01T00:00:00.000Z',
+            'method': 'GET',
+            'path': '/items/2',
+            'operationKey': itemKey,
+            'source': 'spec',
+            'statusCode': 200,
+            'durationMs': 5,
+          },
+        ],
+      });
+    });
+
+    test('1 件の中身を返す', () async {
+      addEntry('/items/1');
+
+      final json = await jsonOf(await send('GET', '/_admin/api/traffic/1'));
+
+      expect(
+        json,
+        allOf(
+          containsPair('requestHeaders', {'accept': 'application/json'}),
+          containsPair('responseBody', '{"id":"1"}'),
+          containsPair('responseBodyTruncated', false),
+        ),
+      );
+    });
+
+    test('ない履歴には 404 を返す', () async {
+      expect((await send('GET', '/_admin/api/traffic/1')).statusCode, 404);
+    });
+
+    test('整数でない after には 400 を返す', () async {
+      expect(
+        (await send('GET', '/_admin/api/traffic?after=x')).statusCode,
+        400,
+      );
+    });
+
+    test('DELETE で履歴を消す', () async {
+      addEntry('/items/1');
+
+      final response = await send('DELETE', '/_admin/api/traffic');
+
+      expect(response.statusCode, 204);
+      expect(log.entries, isEmpty);
     });
   });
 }

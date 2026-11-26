@@ -55,16 +55,22 @@ Future<void> main(List<String> arguments) async {
   }
 
   final settings = MockSettings();
+  final log = RequestLog();
   final handler = mountAdmin(
     createAdminHandler(
       document,
       settings,
       assets: await packageAssetResolver(),
+      log: log,
     ),
-    mountAtBasePath(
-      document.basePath,
-      createMockHandler(document, settings: settings),
-    ),
+    const Pipeline()
+        .addMiddleware(logTraffic(log))
+        .addHandler(
+          mountAtBasePath(
+            document.basePath,
+            createMockHandler(document, settings: settings),
+          ),
+        ),
   );
 
   final HttpServer server;

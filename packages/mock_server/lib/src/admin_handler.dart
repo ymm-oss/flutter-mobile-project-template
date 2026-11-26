@@ -4,6 +4,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:internal_mock_server/src/asset_resolver.dart';
 import 'package:internal_mock_server/src/mock_settings.dart';
 import 'package:internal_mock_server/src/openapi_document.dart';
+import 'package:internal_mock_server/src/request_log.dart';
 import 'package:shelf/shelf.dart';
 
 /// 管理画面を置くパス。
@@ -32,12 +33,16 @@ Handler mountAdmin(Handler admin, Handler handler) {
 /// - `PUT /api/operations/<key>`: operation の設定を変える
 /// - `DELETE /api/operations/<key>`: operation の設定を既定に戻す
 /// - `DELETE /api/operations`: すべての operation の設定を既定に戻す
+/// - `GET /api/traffic?after=<id>`: [log] の、`<id>` より新しい履歴の一覧
+/// - `GET /api/traffic/<id>`: [log] の 1 件の、リクエストと応答の中身
+/// - `DELETE /api/traffic`: [log] の履歴を消す
 ///
 /// `<key>` は `Operation.key` をパーセントエンコードしたもの。
 Handler createAdminHandler(
   OpenApiDocument document,
   MockSettings settings, {
   required AssetResolver assets,
+  required RequestLog log,
 }) {
   final operations = {
     for (final operation in document.operations) operation.key: operation,
@@ -100,6 +105,48 @@ Handler createAdminHandler(
             return operationResponse(operation);
         }
         return _error(405, '$method には応答しません。', allow: 'GET, PUT, DELETE');
+      case ['api', 'traffic']:
+        switch (method) {
+          case 'GET':
+            final after = switch (request.url.queryParameters['after']) {
+              null => 0,
+              final value => int.tryParse(value),
+            };
+            if (after == null) {
+              return _error(400, 'after には整数を指定してください。');
+            }
+            return _json(200, {
+              'lastId': log.lastId,
+              'entries': [
+                for (final entry in log.after(after))
+                  _trafficSummaryToJson(entry),
+              ],
+            });
+          case 'DELETE':
+            log.clear();
+            return Response(204);
+        }
+        return _error(405, '$method には応答しません。', allow: 'GET, DELETE');
+      case ['api', 'traffic', final id]:
+        if (method != 'GET') {
+          return _error(405, '$method には応答しません。', allow: 'GET');
+        }
+        final entry = switch (int.tryParse(id)) {
+          null => null,
+          final id => log.entry(id),
+        };
+        if (entry == null) {
+          return _error(404, '履歴に $id はありません。古い履歴は消えます。');
+        }
+        return _json(200, {
+          ..._trafficSummaryToJson(entry),
+          'requestHeaders': entry.requestHeaders,
+          'requestBody': entry.requestBody,
+          'requestBodyTruncated': entry.requestBodyTruncated,
+          'responseContentType': entry.responseContentType,
+          'responseBody': entry.responseBody,
+          'responseBodyTruncated': entry.responseBodyTruncated,
+        });
     }
     return _error(404, '管理画面に ${request.requestedUri.path} はありません。');
   };
@@ -110,6 +157,7 @@ const _assetContentTypes = {
   'index.html': 'text/html; charset=utf-8',
   'admin.css': 'text/css; charset=utf-8',
   'admin.js': 'text/javascript; charset=utf-8',
+  'traffic.js': 'text/javascript; charset=utf-8',
 };
 
 Future<Response> _asset(AssetResolver assets, String file) async {
@@ -157,6 +205,17 @@ Map<String, Object?> _operationToJson(
     },
     'delayMs': settings.delay.inMilliseconds,
   },
+};
+
+Map<String, Object?> _trafficSummaryToJson(TrafficEntry entry) => {
+  'id': entry.id,
+  'time': entry.time.toUtc().toIso8601String(),
+  'method': entry.method,
+  'path': entry.path,
+  'operationKey': entry.operationKey,
+  'source': entry.source.name,
+  'statusCode': entry.statusCode,
+  'durationMs': entry.duration.inMilliseconds,
 };
 
 Map<String, Object?> _mockResponseToJson(MockResponse response) =>

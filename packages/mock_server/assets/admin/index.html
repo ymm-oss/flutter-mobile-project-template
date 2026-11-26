@@ -4,18 +4,21 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>モックサーバーの管理画面</title>
+    <!-- 仕様書の servers にパスがないとき、favicon のリクエストが通信の履歴に残らないようにする。 -->
+    <link rel="icon" href="data:," />
     <link rel="stylesheet" href="admin.css" />
   </head>
   <body>
     <header>
       <h1>モックサーバー</h1>
       <nav>
-        <button type="button" class="tab" aria-current="page">operation</button>
+        <button type="button" class="tab" data-tab="operations" aria-current="page">operation</button>
+        <button type="button" class="tab" data-tab="traffic">通信</button>
       </nav>
       <button type="button" id="reset-all">すべて既定に戻す</button>
     </header>
     <p id="status" role="status"></p>
-    <main>
+    <main id="tab-operations">
       <section aria-label="operation の一覧">
         <ul id="operations"></ul>
       </section>
@@ -65,6 +68,28 @@
         </form>
       </section>
     </main>
+    <main id="tab-traffic" hidden>
+      <section aria-label="通信の一覧">
+        <div class="actions">
+          <button type="button" id="traffic-pause" aria-pressed="false">一時停止</button>
+          <button type="button" id="traffic-clear">履歴を消す</button>
+        </div>
+        <p id="traffic-empty">まだリクエストを受けていません。</p>
+        <ul id="traffic-list"></ul>
+      </section>
+      <section id="traffic-detail" aria-label="通信の中身" hidden>
+        <h2 id="traffic-title"></h2>
+        <p id="traffic-meta"></p>
+        <button type="button" id="traffic-operation" hidden>この operation の設定を開く</button>
+        <h3>リクエスト</h3>
+        <pre id="traffic-request-headers"></pre>
+        <pre id="traffic-request-body"></pre>
+        <h3>応答</h3>
+        <pre id="traffic-response-headers"></pre>
+        <pre id="traffic-response-body"></pre>
+      </section>
+    </main>
     <script src="admin.js"></script>
+    <script src="traffic.js"></script>
   </body>
 </html>
