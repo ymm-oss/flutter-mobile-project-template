@@ -303,6 +303,17 @@ paths:
           },
           'Content-Type「json」を読めません。application/json のように指定してください。',
         ),
+        'ASCII でない文字を含む Content-Type': (
+          {
+            'response': {
+              'type': 'edited',
+              'statusCode': 200,
+              'contentType': 'application/json　',
+              'body': '',
+            },
+          },
+          'Content-Type「application/json　」には、表示できる ASCII の文字だけを指定してください。',
+        ),
         '仕様書にないエラーの応答': (
           {
             'response': {'type': 'specError', 'statusCode': 500},

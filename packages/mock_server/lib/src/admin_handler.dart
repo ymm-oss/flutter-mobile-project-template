@@ -229,7 +229,15 @@ int _statusCode(int statusCode) {
 
 /// shelf は ASCII でない本文を返すときに Content-Type を読み、読めないと例外を
 /// 投げる。応答を返すときに 500 にならないよう、受けた時点で確かめる。
+///
+/// dart:io は、表示できる ASCII の文字でないヘッダーの値を書き出せず、応答を
+/// 返さないまま止まる。全角の空白などが入らないよう、これも受けた時点で確かめる。
 String _contentType(String contentType) {
+  if (contentType.codeUnits.any((unit) => unit < 0x20 || unit > 0x7e)) {
+    throw FormatException(
+      'Content-Type「$contentType」には、表示できる ASCII の文字だけを指定してください。',
+    );
+  }
   try {
     MediaType.parse(contentType);
   } on FormatException {
