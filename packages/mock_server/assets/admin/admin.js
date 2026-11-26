@@ -142,6 +142,8 @@ function fillFromSpec(operation, statusCode) {
   }
   fillEditedResponse(operation, { statusCode, contentType, body });
   filled = {
+    statusCode,
+    fromSpec: spec !== undefined,
     contentType: elements.responseContentType.value,
     body: elements.responseBody.value,
   };
@@ -175,6 +177,7 @@ function isEdited() {
   const contentType = elements.responseContentType.value;
   return (
     filled === null ||
+    currentStatusCode() !== filled.statusCode ||
     contentType !== filled.contentType ||
     !sameBody(elements.responseBody.value, filled.body, contentType)
   );
@@ -279,7 +282,6 @@ function readEditedResponse() {
 }
 
 function readResponse() {
-  const operation = selectedOperation();
   const edited = readEditedResponse();
   if (!Number.isInteger(edited.statusCode) || isErrorStatus(edited.statusCode) !== isError()) {
     throw new Error(
@@ -288,13 +290,14 @@ function readResponse() {
         : "正常系のステータスコードには 200 から 299 を指定してください。",
     );
   }
-  const spec = specResponseOf(operation, edited.statusCode);
-  // example がない仕様書の応答は、本文が空なら編集していないものとして扱う。
-  const unchanged = spec?.missing ? edited.body.trim() === "" : spec && !isEdited();
-  if (!unchanged) {
+  if (isEdited()) {
     return { type: "edited", ...edited };
   }
-  return isError() ? { type: "specError", statusCode: spec.statusCode } : null;
+  if (filled.fromSpec) {
+    return isError() ? { type: "specError", statusCode: edited.statusCode } : null;
+  }
+  // 仕様書に正常系の応答がなく、空の応答を入れただけなら、既定の応答（501）のままにする。
+  return isError() ? { type: "edited", ...edited } : null;
 }
 
 function readSettings() {
