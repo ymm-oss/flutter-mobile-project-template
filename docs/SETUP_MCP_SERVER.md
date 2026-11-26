@@ -15,6 +15,7 @@ MCPサーバーは、特定のドメインやサービス（Git、GitHub等）�
 - [GitHub MCP Server](#github-model-context-protocol-mcp-server)
 - [git MCP Server](#git-model-context-protocol-mcp-server)
 - [Marionette MCP Server](#marionette-mcp-server)
+- [Dart and Flutter MCP Server](#dart-and-flutter-mcp-server)
 
 の設定方法を記載する。
 
@@ -146,11 +147,66 @@ mise exec -- flutter run \
 - Marionette用entrypointはDebug/Profile確認専用です。Release buildには通常の`main.dart`を使用してください。
 - セッションレポートは`.marionette/sessions/`へ出力されます。
 
+## Dart and Flutter MCP Server
+
+### Dart and Flutter MCP Server 概要
+
+[Dart and Flutter MCP Server]は、Dart SDK に含まれる MCP Server です。mise で管理している Dart SDK の `dart mcp-server` で起動するため、追加のインストールは不要です。AI アシスタントから次の操作ができます。
+
+- 実行中のアプリのランタイムエラーと Widget ツリーの取得
+- Hot reload、Hot restart
+- 静的解析、シンボルの定義や参照の検索
+- pub.dev の検索、依存パッケージのソースの参照
+- アプリの起動と停止（既定では無効）
+
+一部の公式スキルは、この Server のツールを前提にしています。対象のスキルは [AI スキルの配置] を見てください。
+
+### Dart and Flutter MCP Server 有効化
+
+1. [mcp.sample.json] を `.cursor/mcp.json` へコピーし、`dart` を有効化する。
+2. Cursor が Server を認識しない場合は、MCP 設定画面から再読み込みする。
+
+[mcp.sample.json] では、既定で有効なツールだけを使います。アプリは `flutter run` か IDE で起動し、AI アシスタントは DTD を経由して接続します（[実行中のアプリへの接続](#実行中のアプリへの接続)）。
+
+`launch_app` を使うスキル（`flutter-add-integration-test` など）を使うときは、`args` の末尾に `--enable` と `flutter_app_lifecycle` を足してください。`launch_app`、`stop_app`、`list_devices`、`get_app_logs`、`list_running_apps` が有効になります。
+
+```json
+"args": ["exec", "--", "dart", "mcp-server", "--enable", "flutter_app_lifecycle"]
+```
+
+`dart_fix`、`dart_format`、`run_tests`、`create_project` も既定では無効です。フォーマット、解析、テストは [AGENTS.md] のとおり `mise run` のタスクで実行するため、有効にしません。
+
+### 実行中のアプリへの接続
+
+ランタイムエラーや Widget ツリーの取得など、実行中のアプリを扱うツールは、Dart Tooling Daemon（DTD）への接続が必要です。AI アシスタントが `dtd` ツールで DTD を探し、接続します。
+
+`flutter run` や IDE で起動したアプリに接続できます。`flutter run` に追加の引数は不要です。`launch_app` を有効にした場合は、`launch_app` で起動したアプリにも接続できます。
+
+### Flutter Driver の制約
+
+`flutter_driver_command`（`tap`、`enter_text` など）を使うには、アプリで `enableFlutterDriverExtension()` を呼び出す必要があります。呼び出していないアプリでは、このツールはエラーになります。
+
+- `enableFlutterDriverExtension()` は Flutter Driver 用の Binding を初期化します。Flutter のアプリが持てる Binding は 1 つだけのため、`MarionetteBinding` を使う `main_marionette.dart` とは同時に使えません。
+- テンプレートには Flutter Driver 用の entrypoint がありません。使う場合は、`flutter_driver` を `dev_dependencies` に追加し、別の entrypoint を用意してください。
+
+### Marionette MCP との使い分け
+
+| 目的                                                 | 使う Server                 |
+| ---------------------------------------------------- | --------------------------- |
+| 画面をタップ、スクロール、文字入力して動作を確かめる | Marionette MCP              |
+| ランタイムエラーや Widget ツリーを調べる             | Dart and Flutter MCP Server |
+| 静的解析、シンボルの検索、依存パッケージを調べる     | Dart and Flutter MCP Server |
+
+- Marionette MCP は、Flutter Driver の拡張を入れなくても、テキストや Widget の種類で要素を指定して操作できます。
+- Marionette MCP は、ランタイムエラーの取得、Widget ツリーの検査、静的解析の代わりになりません。
+- どちらも、実行中のアプリには VM Service を経由して接続するため、Debug または Profile モードのアプリにしか接続できません。OS のネイティブの UI（許可ダイアログなど）も操作できません。
+
 ## 参考
 
 - [GitHub's official MCP Server]
 - [git README]
 - [Marionette MCP]
+- [Dart and Flutter MCP Server]
 
 <!-- URLs -->
 
@@ -161,3 +217,6 @@ mise exec -- flutter run \
 [2025.4.24]: https://github.com/modelcontextprotocol/servers/releases/tag/2025.4.24
 [git README]: https://github.com/modelcontextprotocol/servers/tree/2025.4.24/src/git
 [Marionette MCP]: https://marionette.leancode.co/docs/
+[Dart and Flutter MCP Server]: https://github.com/dart-lang/ai/tree/main/pkgs/dart_mcp_server
+[AI スキルの配置]: AI_SKILLS.md#dart-and-flutter-mcp-server-を前提にするスキル
+[AGENTS.md]: ../AGENTS.md

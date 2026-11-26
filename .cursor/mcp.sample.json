@@ -36,6 +36,15 @@
         "run",
         "marionette_mcp"
       ]
+    },
+    "dart": {
+      "command": "mise",
+      "args": [
+        "exec",
+        "--",
+        "dart",
+        "mcp-server"
+      ]
     }
   }
 }

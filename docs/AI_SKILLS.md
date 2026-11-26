@@ -142,6 +142,20 @@ dart run skills@1.0.4 get --agent generic --git <取り込み元の URL> --skill
 
 公式スキルはこのリポジトリに合わせて書き換えない。書き換えると上流の更新を取り込めなくなる。補足が必要な場合は、[AGENTS.md] かドキュメントに書く。
 
+### Dart and Flutter MCP Server を前提にするスキル
+
+次の公式スキルは、Dart and Flutter MCP Server のツールを前提にしている。Server を有効にしていないと、スキルが呼ぶツールが存在しない。有効にする手順は [MCP Server の設定] を見る。
+
+| スキル                         | 前提にしているツール                                                                                                                  |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `dart-fix-runtime-errors`      | `get_runtime_errors`、`lsp`、`hot_reload`                                                                                             |
+| `flutter-add-integration-test` | `launch_app`、`get_widget_tree`、`tap` など。`get_widget_tree` は `widget_inspector` の、`tap` は `flutter_driver_command` のコマンド |
+| `flutter-fix-layout-issues`    | `description` に MCP のツールを使うとある。ツール名は書かれていない                                                                   |
+
+`flutter-add-integration-test` の `launch_app` は既定では無効なため、このスキルを使うときは Server の起動時に `--enable flutter_app_lifecycle` を足す。`tap` などは、アプリが Flutter Driver の拡張を有効にしていないと使えない。Flutter Driver の拡張は Marionette と同じアプリでは使えない（[MCP Server の設定] の「Flutter Driver の制約」）。
+
+`dart-run-static-analysis` と `dart-use-ffigen` も Server のツールに触れるが、Server がなければ CLI や pub.dev で同じことをするよう書かれており、前提にはしていない。
+
 ### 検査の対象外
 
 公式スキルは上流の書式のまま取り込む。そのため、次の検査からは公式スキルを外す。
@@ -181,3 +195,4 @@ symlink を作成できない環境では、同じスクリプトが `.claude/sk
 [skills]: https://pub.dev/packages/skills
 [AGENTS.md]: ../AGENTS.md
 [アーキテクチャ]: ARCHITECTURE.md
+[MCP Server の設定]: SETUP_MCP_SERVER.md#dart-and-flutter-mcp-server
