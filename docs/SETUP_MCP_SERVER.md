@@ -8,12 +8,10 @@ Model Context Protocol (MCP) は、AIアシスタントがローカル環境や�
 - 標準化されたインターフェースによる安全な操作
 - 拡張可能なツールセットの提供
 
-MCPサーバーは、特定のドメインやサービス（Git、GitHub等）に対して、AIアシスタントが実行可能な操作を提供します。各サーバーは独自の機能セットを持ち、それらを安全に実行するための仕組みを提供します。
+MCPサーバーは、特定のドメインやサービス（Flutterアプリの操作、Dartの解析等）に対して、AIアシスタントが実行可能な操作を提供します。各サーバーは独自の機能セットを持ち、それらを安全に実行するための仕組みを提供します。
 
 本ドキュメントでは、
 
-- [GitHub MCP Server](#github-model-context-protocol-mcp-server)
-- [git MCP Server](#git-model-context-protocol-mcp-server)
 - [Marionette MCP Server](#marionette-mcp-server)
 - [Dart and Flutter MCP Server](#dart-and-flutter-mcp-server)
 
@@ -22,12 +20,14 @@ MCPサーバーは、特定のドメインやサービス（Git、GitHub等）�
 ## 前提条件
 
 > [!Note]
-> Cursor で使用されることを想定しています。
+> Claude Code で使用されることを想定しています。
 
-1. プロジェクトの要件に応じ、有効化する`MCP Server`を選定し、以後の作業を実施する
-2. [mcp.sample.json] を `mcp.json` にファイル名を変更する
-3. 後述する各種`MCP Server`の設定値を変更する
-4. `Cursor`の設定から必要な`MCP Server`のみを有効化する
+1. プロジェクトの要件に応じ、有効化する MCP Server を選定し、以後の作業を実施する
+2. [.mcp.sample.json] をリポジトリのルートに `.mcp.json` としてコピーし、使わない MCP Server を消す。`.mcp.json` は gitignore しているため、各自の設定はコミットされない
+3. 後述する各種 MCP Server のセットアップを実施する
+4. Claude Code を起動し直す。`.mcp.json` の MCP Server を使ってよいか確認されたら承認する。接続の状態は `/mcp` で確かめられる
+
+Cursor を使う場合は、`.mcp.json` と同じ内容を `.cursor/mcp.json` に書いてください。
 
 ## 利用上の注意点
 
@@ -35,60 +35,10 @@ MCPサーバーは、特定のドメインやサービス（Git、GitHub等）�
 
 - AIアシスタントとのやり取りでも機密情報の共有は避けてください
 
-### 権限の制限
-
-- MCP Server はユーザーに付与されたGitHub権限の範囲内でのみ操作が可能です
-- 組織のリポジトリへのアクセスには適切な権限が必要です
-
 ### コミュニケーションのベストプラクティス
 
 - 明確で具体的な指示を出すことで、意図した操作が行われやすくなります
 - 複雑な操作は、段階的に指示することをおすすめします
-
-## GitHub Model Context Protocol (MCP) Server
-
-### GitHub MCP Server 概要
-
-GitHub MCP Server はAIアシスタントからGitHubリポジトリを操作するための機能です。以下のような操作が可能です
-
-- プルリクエストの作成・更新・マージ
-- イシューの作成・更新・コメント
-- コードのレビュー
-
-その他の機能については、[GitHub's official MCP Server] をご覧ください。
-
-### GitHub MCP Server 有効化
-
-1. Personal Access Token （PAT）を取得する （[個人用アクセス トークンを管理する]）
-   - プライベートリポジトリを操作する場合: `repo` スコープ（「プライベートリポジトリの完全な制御」）を選択
-   - パブリックリポジトリのみを操作する場合: `public_repo` スコープのみを選択
-2. `"<YOUR_TOKEN>"` を取得した PAT に書き換える
-3. 現在 v0.3.0 の Github MCP Server を使用していますが、必要であれば別のバージョンハッシュ値に書き得てください（不要であればスキップ）
-
-### PR の作成
-
-Cursor の Chat でプルリクエストの作成を依頼してください。手順は [pr-creation] スキルにあります。
-
-## git Model Context Protocol (MCP) Server
-
-### git MCP Server 概要
-
-Git MCP Server はAIアシスタントからGitコマンドを操作するためのツールです。以下のような操作が可能です
-
-- Git リポジトリの状態確認（status、diff、log の表示）
-- ファイルの変更管理（add、commit、reset の操作）
-- ブランチ操作（作成、切り替え、初期化）
-
-### git MCP Server 有効化
-
-1. `servers`リポジトリをcloneする
-
-   ```bash
-   git clone -b 2025.4.24 https://github.com/modelcontextprotocol/servers.git
-   ```
-
-   ※ 本ドキュメントでは、[2025.4.24] tagを指定し`clone`するが、状況に応じて臨機応変にtagを更新してください
-2. `<GIT_DOCKER_PATH>`を1でcloneしたリポジトリの`servers/src/git/Dockerfile`までの相対パスもしくは絶対パスを指定する
 
 ## Marionette MCP Server
 
@@ -111,8 +61,7 @@ Releaseビルドや自動回帰テストの代替には使用しません。再�
    mise exec -- dart pub global activate marionette_mcp 0.7.0
    ```
 
-2. [mcp.sample.json]を`.cursor/mcp.json`へコピーし、`marionette`を有効化する。
-3. CursorがServerを認識しない場合は、MCP設定画面から再読み込みする。
+2. [前提条件](#前提条件)のとおり`.mcp.json`を用意し、`marionette`を残す。
 
 ### アプリの起動
 
@@ -163,12 +112,11 @@ mise exec -- flutter run \
 
 ### Dart and Flutter MCP Server 有効化
 
-1. [mcp.sample.json] を `.cursor/mcp.json` へコピーし、`dart` を有効化する。
-2. Cursor が Server を認識しない場合は、MCP 設定画面から再読み込みする。
+[前提条件](#前提条件)のとおり `.mcp.json` を用意し、`dart` を残してください。追加のインストールは不要です。
 
-[mcp.sample.json] では、既定で有効なツールだけを使います。アプリは `flutter run` か IDE で起動し、AI アシスタントは DTD を経由して接続します（[実行中のアプリへの接続](#実行中のアプリへの接続)）。
+[.mcp.sample.json] では、既定で有効なツールだけを使います。アプリは `flutter run` か IDE で起動し、AI アシスタントは DTD を経由して接続します（[実行中のアプリへの接続](#実行中のアプリへの接続)）。
 
-`launch_app` を使うスキル（`flutter-add-integration-test` など）を使うときは、`args` の末尾に `--enable` と `flutter_app_lifecycle` を足してください。`launch_app`、`stop_app`、`list_devices`、`get_app_logs`、`list_running_apps` が有効になります。
+`launch_app` を使うスキル（`flutter-add-integration-test` など）を使うときは、`.mcp.json` の `dart` の `args` の末尾に `--enable` と `flutter_app_lifecycle` を足してください。`launch_app`、`stop_app`、`list_devices`、`get_app_logs`、`list_running_apps` が有効になります。
 
 ```json
 "args": ["exec", "--", "dart", "mcp-server", "--enable", "flutter_app_lifecycle"]
@@ -203,19 +151,12 @@ mise exec -- flutter run \
 
 ## 参考
 
-- [GitHub's official MCP Server]
-- [git README]
 - [Marionette MCP]
 - [Dart and Flutter MCP Server]
 
 <!-- URLs -->
 
-[mcp.sample.json]: ../.cursor/mcp.sample.json
-[GitHub's official MCP Server]: https://github.com/github/github-mcp-server
-[個人用アクセス トークンを管理する]: https://docs.github.com/ja/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
-[pr-creation]: ../.agents/skills/pr-creation/SKILL.md
-[2025.4.24]: https://github.com/modelcontextprotocol/servers/releases/tag/2025.4.24
-[git README]: https://github.com/modelcontextprotocol/servers/tree/2025.4.24/src/git
+[.mcp.sample.json]: ../.mcp.sample.json
 [Marionette MCP]: https://marionette.leancode.co/docs/
 [Dart and Flutter MCP Server]: https://github.com/dart-lang/ai/tree/main/pkgs/dart_mcp_server
 [AI スキルの配置]: AI_SKILLS.md#dart-and-flutter-mcp-server-を前提にするスキル
