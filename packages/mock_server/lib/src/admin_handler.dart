@@ -101,7 +101,7 @@ Handler createAdminHandler(
         }
         return _error(405, '$method には応答しません。', allow: 'GET, PUT, DELETE');
     }
-    return _error(404, '管理画面に /${request.url.path} はありません。');
+    return _error(404, '管理画面に ${request.requestedUri.path} はありません。');
   };
 }
 

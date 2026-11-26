@@ -98,8 +98,13 @@ paths:
       expect(css.headers['content-type'], 'text/css; charset=utf-8');
     });
 
-    test('決まったファイルのほかには 404 を返す', () async {
-      expect((await send('GET', '/_admin/secret.txt')).statusCode, 404);
+    test('決まったファイルのほかには、リクエストのパスを示して 404 を返す', () async {
+      final response = await send('GET', '/_admin/secret.txt');
+
+      expect(response.statusCode, 404);
+      expect(await jsonOf(response), {
+        'message': '管理画面に /_admin/secret.txt はありません。',
+      });
     });
 
     test('ファイルを読めなければ 500 を返す', () async {
