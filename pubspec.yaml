@@ -135,6 +135,10 @@ melos:
       steps:
         - gen:i18n
         - gen:build
+        - gen:embedded_mock_spec
+    gen:embedded_mock_spec:
+      description: アプリに組み込むモックサーバーが読む仕様書を、Dart の定数にして生成します。
+      run: dart run internal_mock_server:generate_embedded_spec --output apps/app/lib/mock_server/embedded_mock_spec.g.dart
     gen:diff:default:
       description: 既定ブランチと差分のあるパッケージのみ build_runner と i18n の生成コマンドを実行します。
       steps:
