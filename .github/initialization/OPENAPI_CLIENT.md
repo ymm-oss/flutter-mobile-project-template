@@ -45,6 +45,13 @@ OpenAPI Generator と、その実行に必要な Java のバージョンは [ope
   ```
 
 - [ ] ルートの [pubspec.yaml] の `workspace` に `packages/api/<api_name>` を追加する
+- [ ] [packages/infrastructure/pubspec.yaml] の `dependencies` に `internal_api_<api_name>` を追加する
+
+  ```yaml
+  internal_api_<api_name>:
+    path: ../api/<api_name>
+  ```
+
 - [ ] 依存関係を解決し、`*.g.dart` を生成する
 
   ```shell
@@ -63,7 +70,7 @@ OpenAPI Generator と、その実行に必要な Java のバージョンは [ope
 
   `example` がない operation には 501 を返すため、モックで確かめたい operation には `example` を書く
 
-- [ ] アプリを実行構成 `mock-debug` で起動し、API のリクエストがモックサーバーのログに出ることを確かめる
+- [ ] アプリを実行構成 `mock-debug` で起動し、API のリクエストがモックサーバーのログに出ることを確かめる。Android では先に `adb reverse` を実行する（[docs/MOCK_SERVER.md] の「アプリからの接続」を参照）
 
 - [ ] 生成した `packages/api/<api_name>` と、`mise bs` が更新した [.github/labeler.yml] と [.github/labels.yml] をコミットする
 - [ ] 生成したパッケージを `infrastructure` 以外から使う場合は、[docs/ARCHITECTURE.md] の依存の向きを書き換える
@@ -84,12 +91,15 @@ OpenAPI を使わない場合は、次を削除してください。
 
 削除したあとに `mise bs` を実行し、更新された [.github/labeler.yml] と [.github/labels.yml] もコミットしてください。
 
+`BuildConfig.apiBaseUrl` と [apps/app/flavor] の `apiBaseUrl` は削除しません。OpenAPI を使わずに API を呼ぶときも、`apiBaseUrl` を各環境の API の URL に書き換えてください。
+
 <!-- Links -->
 
 [OpenAPI Generator]: https://openapi-generator.tech/docs/generators/dart-dio/
 [openapi/sample]: ../tree/main/openapi/sample
 [openapi/mise.toml]: ../blob/main/openapi/mise.toml
 [pubspec.yaml]: ../blob/main/pubspec.yaml
+[packages/infrastructure/pubspec.yaml]: ../blob/main/packages/infrastructure/pubspec.yaml
 [dprint.jsonc]: ../blob/main/dprint.jsonc
 [cspell.jsonc]: ../blob/main/cspell.jsonc
 [.gitattributes]: ../blob/main/.gitattributes

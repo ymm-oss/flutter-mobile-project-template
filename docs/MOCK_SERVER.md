@@ -20,7 +20,7 @@ mise run mock
 
 モックサーバーの URL は `http://127.0.0.1:4000` に仕様書の `servers` の 1 つ目の URL のパスを付けたものです。たとえば `servers` の URL が `https://api.example.com/v1` なら `http://127.0.0.1:4000/v1` になります。起動時にもこの URL を表示します。
 
-実行構成 `mock-debug` でアプリを起動すると、`apiBaseUrl` は `http://127.0.0.1:4000` になります。ほかの値は `dev-debug` と同じです。生成したクライアントの接続先に `BuildConfig.apiBaseUrl` を渡していれば、モックサーバーにつながります。モックサーバーのポートを変えたときは、[.vscode/launch.json] と [.idea/runConfigurations/mock_debug.xml] の `mock-debug` の `apiBaseUrl` のポートも書き換えてください。仕様書の `servers` の URL にパス（`/v1` など）があるときは、同じ `apiBaseUrl` にそのパスも付けてください。
+実行構成 `mock-debug` でアプリを起動すると、`apiBaseUrl` は `http://127.0.0.1:4000` になります。アプリ ID などのほかの値は `dev-debug` と同じため、端末では同じアプリとして入れ替わり、保存したデータも引き継がれます。生成したクライアントの接続先に `BuildConfig.apiBaseUrl` を渡していれば、モックサーバーにつながります。モックサーバーのポートを変えたときは、[.vscode/launch.json] と [.idea/runConfigurations/mock_debug.xml] の `mock-debug` の `apiBaseUrl` のポートも書き換えてください。仕様書の `servers` の URL にパス（`/v1` など）があるときは、同じ `apiBaseUrl` にそのパスも付けてください。
 
 iOS シミュレーターからは `mock-debug` で起動すればそのままつながります。
 

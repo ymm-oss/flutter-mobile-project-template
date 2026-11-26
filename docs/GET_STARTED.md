@@ -86,7 +86,7 @@ OpenAPI を使う場合は、次のコマンドで、仕様書（`openapi/<api_n
 mise run mock
 ```
 
-実行構成 `mock-debug` でアプリを起動すると、`apiBaseUrl` がこのモックサーバーの URL になります。生成したクライアントに `BuildConfig.apiBaseUrl` を渡していれば、アプリは API のリクエストをこのモックサーバーに送ります。Android からつなぐときは、先に `adb reverse` を実行してください。手順は [モックサーバー] を参照してください。
+実行構成 `mock-debug` でアプリを起動すると、`apiBaseUrl` が `http://127.0.0.1:4000` になります。生成したクライアントに `BuildConfig.apiBaseUrl` を渡していれば、アプリは API のリクエストをこのモックサーバーに送ります。Android からつなぐときは、先に `adb reverse` を実行してください。手順は [モックサーバー] を参照してください。
 
 ## AI コーディングツール
 
