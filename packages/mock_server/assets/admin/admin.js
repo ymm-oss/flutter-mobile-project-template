@@ -31,7 +31,14 @@ let filled = null;
 
 let operations = [];
 // 選んでいる operation のキー。再読み込みしても同じ operation を開けるよう、URL の # に置く。
-let selectedKey = decodeURIComponent(location.hash.slice(1));
+// # を読めないときは、どの operation も選んでいないものとして扱う。
+let selectedKey = (() => {
+  try {
+    return decodeURIComponent(location.hash.slice(1));
+  } catch {
+    return "";
+  }
+})();
 
 function showStatus(message, { error = false } = {}) {
   elements.status.textContent = message;
