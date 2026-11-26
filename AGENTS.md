@@ -32,12 +32,14 @@
   - `apps/catalog` の `@UseCase`（追加、削除、名前の変更）
   - i18n の定義（`*.i18n.json`）
   - `pubspec.yaml` の `flutter.assets` に載っている画像などのファイル（追加、削除、名前の変更）
+  - `openapi/<api_name>/openapi.yaml`（アプリに組み込むモックサーバーが読む）
 
 ## レイヤーと置き場所
 
 - ドメインのロジックは `domain_logic` に、データ取得や外部連携は `infrastructure` に置く。`presentation` に直接書かない。
 - `presentation` から `application` や `infrastructure` を直接 import しない。依存性の注入は `apps/app/lib/composition_root` で行う。
 - `debug` は `apps/app/lib/debug/debug_features_impl.dart` からだけ参照する。リリースビルドから外すため。
+- `internal_mock_server` は `apps/app/lib/mock_server/embedded_mock_server.dart` からだけ参照する。組み込みを有効にしないビルドから外すため。
 - パッケージの依存や import を足す前に、[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) の図で依存方向を確かめる。
 
 ## 公式スキルとの関係

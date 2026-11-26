@@ -89,6 +89,17 @@ operation タブの設定をまとめて名前を付けて保存し、切り替�
 
 仕様書の `servers` の URL にパスがなく、`paths` に `/_admin` から始まるパスがあると、そのパスへのリクエストは管理画面が受けます。その operation は管理画面の一覧に出て設定もできますが、アプリのリクエストはモックに届きません。避けるには、`servers` の URL にパス（`https://api.example.com/v1` など）を付けます。
 
+## アプリへの組み込み
+
+iOS の実機や配布するビルドからは、手元のモックサーバーにつながりません。そのときは、モックサーバーをアプリの中で起動し、API の向き先をそこにします。
+
+`--dart-define=embedMockServer=true` を付けてビルドすると、アプリは起動時に `127.0.0.1` でモックサーバーを起動し、`BuildConfig.apiBaseUrl` をその URL にします。flavor ファイルの `apiBaseUrl` は使いません。実行構成では `mock-embedded-debug` で起動できます。配布するビルドでは、選んだ flavor の `--dart-define-from-file` に `--dart-define=embedMockServer=true` を足してビルドしてください。
+
+- 返す応答は、手元のモックサーバーの既定と同じく、仕様書の[応答](#応答)です。管理画面はなく、応答の切り替えとプロファイルは使えません。
+- ポートは OS が空いているものを選びます。URL は起動時のログ（`BuildConfig`）に出ます。iOS シミュレーターは Mac とループバックを共有するため、Mac からその URL に `curl` でつながります。
+- 仕様書は `apps/app/lib/mock_server/embedded_mock_spec.g.dart` に Dart の定数として持たせます。仕様書を変えたら、`mise run gen` で作り直してください。`openapi` に API が複数あると生成に失敗します。
+- `embedMockServer` を付けないビルドからは、モックサーバーと仕様書が tree shaking で除外されます。`mise run check:debug_tree_shaking` で確かめられます。assets は tree shaking で除外されないため、仕様書を assets に載せないでください。
+
 <!-- Links -->
 
 [packages/mock_server]: ../packages/mock_server
