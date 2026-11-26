@@ -92,8 +92,10 @@ fix(api): ユーザー情報取得APIのエラーハンドリングを修正
 ただし、コミットメッセージの検査も飛ばされます。
 ファイルの検査の違反は CI で検出されますが、コミットメッセージは CI では検査しません。
 
-CI の `gitleaks git` は、リポジトリにある `.gitleaks.toml`、`.gitleaksignore`、`.gitattributes` と、行コメントの `gitleaks:allow` を使いません。
-手元の検査をこれらで通しても、CI では検出されます。
+CI の `gitleaks git` は、`.gitleaks.toml` と `.gitleaksignore` を PR のマージ先のブランチから読みます。
+PR で足したり変えたりした設定と除外は、マージされるまで CI では使われません。
+`.gitattributes` と行コメントの `gitleaks:allow` は使いません。
+`.gitleaks.toml` の `[extend] path` で別のファイルを読むと、CI の検査は失敗します。
 
 <!-- Links -->
 
