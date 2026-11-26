@@ -27,40 +27,25 @@ Handler mountAdmin(Handler admin, Handler handler) {
   };
 }
 
-/// ブラウザーが読みに来る `/favicon.ico` に、管理画面のアイコンを返す
-/// [Handler] を作る。ほかのリクエストは [handler] に渡す。
+/// ブラウザーが読みに来る `/favicon.ico` に、本文のない 204 を返す [Handler] を
+/// 作る。ほかのリクエストは [handler] に渡す。
 ///
 /// ブラウザーは、開いたページの指定と関係なく `/favicon.ico` を読みに来る。
 /// [handler] に渡すと、仕様書にないパスとして 404 を返し、そのたびに通信の
 /// 履歴に残る。仕様書に `/favicon.ico` の operation があれば、[handler] に渡す。
-Handler serveFavicon(
-  OpenApiDocument document,
-  Handler handler, {
-  required AssetResolver assets,
-}) {
+Handler serveFavicon(OpenApiDocument document, Handler handler) {
   final inSpec =
       document.basePath.isEmpty &&
       document.operations.any((operation) => operation.path == '/favicon.ico');
   if (inSpec) {
     return handler;
   }
-  return (request) async {
-    if (request.url.path != 'favicon.ico' ||
-        (request.method != 'GET' && request.method != 'HEAD')) {
-      return await handler(request);
+  return (request) {
+    if (request.url.path == 'favicon.ico' &&
+        (request.method == 'GET' || request.method == 'HEAD')) {
+      return Response(204);
     }
-    try {
-      return Response.ok(
-        await assets('admin/favicon.svg'),
-        headers: {
-          'content-type': 'image/svg+xml',
-          // 読み直す回数を減らす。
-          'cache-control': 'max-age=86400',
-        },
-      );
-    } on Exception catch (e) {
-      return _error(500, '管理画面のファイル admin/favicon.svg を読めません: $e');
-    }
+    return handler(request);
   };
 }
 
@@ -252,7 +237,6 @@ const _assetContentTypes = {
   'admin.js': 'text/javascript; charset=utf-8',
   'traffic.js': 'text/javascript; charset=utf-8',
   'profile.js': 'text/javascript; charset=utf-8',
-  'favicon.svg': 'image/svg+xml',
 };
 
 Future<Response> _asset(AssetResolver assets, String file) async {

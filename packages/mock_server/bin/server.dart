@@ -56,12 +56,11 @@ Future<void> main(List<String> arguments) async {
 
   final settings = MockSettings();
   final log = RequestLog();
-  final assets = await packageAssetResolver();
   final handler = mountAdmin(
     createAdminHandler(
       document,
       settings,
-      assets: assets,
+      assets: await packageAssetResolver(),
       log: log,
       profiles: DirectoryProfileStore(
         Directory.fromUri(specFile.parent.uri.resolve('mock_profiles/')),
@@ -79,7 +78,6 @@ Future<void> main(List<String> arguments) async {
               createMockHandler(document, settings: settings),
             ),
           ),
-      assets: assets,
     ),
   );
 

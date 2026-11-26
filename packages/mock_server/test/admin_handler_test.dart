@@ -84,17 +84,16 @@ paths:
   });
 
   group('serveFavicon', () {
-    Future<Uint8List> assets(String path) async => utf8.encode('asset:$path');
     Future<Response> get(Handler handler, String path) async =>
         await handler(Request('GET', Uri.parse('http://localhost$path')));
     Response mock(Request request) => Response.ok('mock');
 
-    test('/favicon.ico には管理画面のアイコンを返し、ほかは内側に渡す', () async {
-      final favicon = serveFavicon(document, mock, assets: assets);
+    test('/favicon.ico には 204 を返し、ほかは内側に渡す', () async {
+      final favicon = serveFavicon(document, mock);
 
       final icon = await get(favicon, '/favicon.ico');
-      expect(icon.headers['content-type'], 'image/svg+xml');
-      expect(await icon.readAsString(), 'asset:admin/favicon.svg');
+      expect(icon.statusCode, 204);
+      expect(await icon.readAsString(), isEmpty);
       expect(await (await get(favicon, '/items/1')).readAsString(), 'mock');
     });
 
@@ -112,7 +111,6 @@ paths:
               example: icon
 '''),
         mock,
-        assets: assets,
       );
 
       expect(await (await get(favicon, '/favicon.ico')).readAsString(), 'mock');
@@ -131,13 +129,9 @@ paths:
           description: ok
 '''),
         mock,
-        assets: assets,
       );
 
-      expect(
-        await (await get(favicon, '/favicon.ico')).readAsString(),
-        'asset:admin/favicon.svg',
-      );
+      expect((await get(favicon, '/favicon.ico')).statusCode, 204);
     });
   });
 
