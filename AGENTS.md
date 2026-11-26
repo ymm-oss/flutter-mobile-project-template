@@ -7,21 +7,38 @@
 
 - Flutter SDK は mise で管理している。
 - clone や worktree を新しく作ったら `mise bs` を実行する。実行しないと依存が入らず、コミット時のフック（husky）も動かない。
-- 複数のパッケージを Melos でまとめて管理しており、`dart run melos` で実行する。
-  - ルートの `pubspec.yaml` の `melos.command.bootstrap` に載っている依存は、ルート側で管理する。
+- 複数のパッケージを Melos でまとめて管理している。
+  - 共通の依存（ルートの `pubspec.yaml` の `melos.command.bootstrap`）のバージョンは、ルートだけで変える。
+  - 共通の依存をパッケージに足すときは、そのパッケージの `pubspec.yaml` にもルートと同じバージョンで書く。ルートに書いただけでは、パッケージに入らない。
+  - `pubspec.yaml` を変えたら `mise run bootstrap` を実行する。
+
+## コマンド
+
+- コマンドは原則 `mise run <タスク>` で実行する。中身は `mise.toml` の `[tasks]` にある。タスクに無い操作だけ、`mise exec -- <コマンド>` で実行する。
+- 作業中は、変えたところだけを確かめる。パスはリポジトリのルートから書く。空白で区切って、複数渡せる。
+  - 解析: `mise run analyze <ファイルやディレクトリ>...`
+  - テスト: `mise run test <テストファイルやパッケージのディレクトリ>...`
+- 作業を終える前に `mise run check` を実行する。失敗したら直し、通るまで繰り返す。
+  - フォーマットを実行してから、解析（info も含む）、循環参照、テストを検査する。フォーマットはファイルを書き換える。対象は各パッケージの `lib/` だけで、`test/` は直さない。
+  - 生成されたファイルが最新かは検査しない。作り直すのを忘れても `check` は通る。CI でも検出されないことがある。
+  - 失敗した検査だけをやり直すときは、解析は `mise run analyze`、テストは `mise run test` を使う。フォーマットと循環参照は `check` をやり直す。
+- `debug` への参照を変えたときは、`mise run check:debug_tree_shaking` も通ることを確かめる。リリースビルドを作るため時間がかかり、`check` には含めていない。
 
 ## 生成されたファイル
 
-- `*.g.dart`、`*.freezed.dart` などの生成されたファイルは直接直さない。元のファイルを直し、コード生成で作り直す。
+- `*.g.dart`、`*.freezed.dart` などの生成されたファイルは直接直さない。元のファイルを直す。
+- 次のどれかを変えたら、`mise run gen` で作り直す。
+  - `part` で `*.g.dart` や `*.freezed.dart` などを取り込んでいる Dart のファイル
+  - `apps/catalog` の `@UseCase`（追加、削除、名前の変更）
+  - i18n の定義（`*.i18n.json`）
+  - `pubspec.yaml` の `flutter.assets` に載っている画像などのファイル（追加、削除、名前の変更）
 
-## レイヤーの依存方向
+## レイヤーと置き場所
 
-- 依存の向きは `presentation` → `composition_root` → `application` / `infrastructure` → `domain_logic` → `domain_model` の一方向にする。逆向きの依存や循環参照は作らない。
-- `domain_model` はほかのレイヤーに依存しない。`shared` と `util_*` はどこにも依存せず、どこからでも参照できる。
-- `application` と `infrastructure` は互いに依存しない。データ取得や外部連携は `infrastructure` に置き、`domain_logic` のインターフェースを通して使う。
-- 依存性の注入は `apps/app/lib/composition_root` で行う。
+- ドメインのロジックは `domain_logic` に、データ取得や外部連携は `infrastructure` に置く。`presentation` に直接書かない。
+- `presentation` から `application` や `infrastructure` を直接 import しない。依存性の注入は `apps/app/lib/composition_root` で行う。
 - `debug` は `apps/app/lib/debug/debug_features_impl.dart` からだけ参照する。リリースビルドから外すため。
-- 詳しくは [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) を見る。
+- パッケージの依存や import を足す前に、[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) の図で依存方向を確かめる。
 
 ## 公式スキルとの関係
 

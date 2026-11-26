@@ -31,3 +31,37 @@ description = "Run cspell to check spelling."
 run = [
   'bun --bun run cspell lint',
 ]
+
+# The tasks below are the entry points for people and AI agents.
+# Most of them call the melos scripts in pubspec.yaml; the analysis runs dart directly, as CI does.
+# Keep this list short. Only analyze and test take paths as arguments.
+[tasks.analyze]
+description = "Analyze all packages, or only the given files or directories. Fails on infos, as CI does."
+run = 'dart analyze --fatal-infos'
+
+[tasks.format]
+description = "Format all packages, excluding generated code."
+run = 'dart run melos run format --no-select'
+
+[tasks.gen]
+description = "Generate code with build_runner and slang."
+run = 'dart run melos run gen --no-select'
+
+[tasks.test]
+description = "Run the tests of all packages, or only the given test files or directories."
+run = './tools/test.sh'
+
+# The one command to run before finishing work. It formats first, rewriting files
+# (only lib/ of each package). It does not regenerate code: run gen for that.
+[tasks.check]
+description = "Run before finishing work: format (rewrites files), then analyze, check dependency cycles and test."
+run = [
+  { task = "format" },
+  { task = "analyze" },
+  'dart run melos list --cycles',
+  { task = "test" },
+]
+
+[tasks."check:debug_tree_shaking"]
+description = "Check that the release build excludes the debug features. Builds a release snapshot."
+run = 'dart run melos run check:debug_tree_shaking'
