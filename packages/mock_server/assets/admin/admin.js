@@ -102,10 +102,71 @@ function formatBody(body, contentType) {
     return body;
   }
   try {
-    return JSON.stringify(JSON.parse(body), null, 2);
+    JSON.parse(body);
   } catch {
     return body;
   }
+  return indentJson(body);
+}
+
+// JSON.parse で読み直すと、大きな整数の精度、1.0 の小数点、キーの順が変わる。
+// 値を変えないよう、文字列の外の空白だけを入れ替える。
+function indentJson(json) {
+  let result = "";
+  let depth = 0;
+  let inString = false;
+  const newline = () => `\n${"  ".repeat(depth)}`;
+  for (let i = 0; i < json.length; i++) {
+    const char = json[i];
+    if (inString) {
+      result += char;
+      if (char === "\\") {
+        i++;
+        result += json[i];
+      } else if (char === '"') {
+        inString = false;
+      }
+      continue;
+    }
+    switch (char) {
+      case '"':
+        inString = true;
+        result += char;
+        break;
+      case "{":
+      case "[": {
+        // 空のオブジェクトと配列は、1 行のままにする。
+        const empty = json.slice(i + 1).match(/^\s*[}\]]/);
+        if (empty) {
+          result += char + json[i + empty[0].length];
+          i += empty[0].length;
+          break;
+        }
+        depth++;
+        result += char + newline();
+        break;
+      }
+      case "}":
+      case "]":
+        depth--;
+        result += newline() + char;
+        break;
+      case ",":
+        result += char + newline();
+        break;
+      case ":":
+        result += ": ";
+        break;
+      case " ":
+      case "\t":
+      case "\n":
+      case "\r":
+        break;
+      default:
+        result += char;
+    }
+  }
+  return result;
 }
 
 function selectedOperation() {
