@@ -1,0 +1,70 @@
+name: Check OpenAPI client generation
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      # https://github.com/actions/checkout
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Application Runtime
+        uses: ./.github/actions/setup-application-runtime
+        with:
+          bootstrap-workspace: false
+
+      # https://github.com/jdx/mise-action
+      # キャッシュを使うと、前のステップで入れた Flutter も別のキーで保存されるため、使わない
+      - name: Install OpenAPI Generator
+        uses: jdx/mise-action@90f833d396d0cc3674b631d2d225e306476c303a # v5.2.10
+        with:
+          working_directory: openapi
+          install_args: "java aqua:OpenAPITools/openapi-generator"
+          cache: false
+
+      - name: Generate clients
+        run: |
+          for script in openapi/*/scripts/generate-client.sh; do
+            "$script"
+          done
+
+      # テンプレートでは生成したパッケージをコミットしていないため、workspace に一時的に登録する
+      - name: Register clients in workspace
+        run: |
+          for dir in openapi/*/; do
+            pkg="packages/api/$(basename "$dir")"
+            if ! grep -qxF "  - $pkg" pubspec.yaml; then
+              awk -v pkg="$pkg" '{ print } /^workspace:$/ { print "  - " pkg }' pubspec.yaml > pubspec.yaml.tmp
+              mv pubspec.yaml.tmp pubspec.yaml
+            fi
+          done
+          dart run melos bootstrap
+
+      - name: Generate code
+        run: |
+          for dir in packages/api/*/; do
+            (cd "$dir" && dart run build_runner build)
+          done
+
+      - name: Analyze clients
+        run: dart analyze --fatal-infos packages/api
+
+      # 生成したパッケージをコミットしているプロジェクトでは、生成し直した結果と一致するかを確かめる
+      - name: Check difference
+        run: |
+          for dir in packages/api/*/; do
+            if [ -n "$(git ls-files -- "$dir")" ]; then
+              git add -N "$dir"
+              git diff --name-only --exit-code -- "$dir"
+            fi
+          done

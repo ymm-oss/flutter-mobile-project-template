@@ -64,16 +64,39 @@ fi
 ##
 ##############################################################################
 echo ""
-print_step "bun install --ignore-scripts"
+print_step "bun install --frozen-lockfile --ignore-scripts"
+bun_installed=0
 if type bun >/dev/null 2>&1; then
-  if bun install --ignore-scripts; then
-    print_result 0 "bun install --ignore-scripts"
+  # --frozen-lockfile fails when package.json and bun.lock disagree, so the husky run below is the version in bun.lock.
+  if bun install --frozen-lockfile --ignore-scripts; then
+    print_result 0 "bun install --frozen-lockfile --ignore-scripts"
+    bun_installed=1
   else
-    print_result $? "bun install --ignore-scripts"
+    print_result $? "bun install --frozen-lockfile --ignore-scripts"
   fi
 else
-  echo -e "${YELLOW}[!] bun install --ignore-scripts: Skip because it could not be found.${NC}"
+  echo -e "${YELLOW}[!] bun install --frozen-lockfile --ignore-scripts: Skip because it could not be found.${NC}"
   echo -e "${YELLOW}[!] This may be due to mise installation not completed.${NC}"
+fi
+
+echo ""
+print_step "bun --bun run prepare"
+# Run husky only after bun install succeeds, so a stale node_modules is not used.
+if [ "$bun_installed" -eq 1 ]; then
+  # bun install --ignore-scripts skips the prepare script, so run husky explicitly to enable Git hooks.
+  if bun --bun run prepare; then
+    print_result 0 "bun --bun run prepare"
+    # husky exits 0 without enabling hooks when HUSKY=0 is set, and a worktree-level core.hooksPath overrides it.
+    hooks_path=$(git config --get core.hooksPath || true)
+    if [ "$hooks_path" != ".husky/_" ]; then
+      echo -e "${YELLOW}[!] Git hooks are not enabled: core.hooksPath is '${hooks_path}', expected '.husky/_'.${NC}"
+      echo -e "${YELLOW}[!] Check the HUSKY environment variable and 'git config --show-origin --get-all core.hooksPath'.${NC}"
+    fi
+  else
+    print_result $? "bun --bun run prepare"
+  fi
+else
+  echo -e "${YELLOW}[!] bun --bun run prepare: Skip because bun install did not succeed.${NC}"
 fi
 
 ##############################################################################

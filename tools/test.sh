@@ -57,19 +57,11 @@ for target in "$@"; do
       ;;
   esac
 
-  # The melos scripts skip these packages too (packageFilters.dirExists).
-  if [ ! -d "$package_dir/test" ]; then
-    echo "Skipped: ${package_dir#"$root_dir"/} has no test directory."
-    continue
-  fi
-
-  # Same split as the melos scripts test:flutter and test:dart.
-  if grep -q '^  flutter_test:' "$package_dir/pubspec.yaml"; then
-    command=(flutter test --no-pub)
-  else
-    command=(dart test)
-  fi
-
-  echo "$ (cd ${package_dir#"$root_dir"/} && ${command[*]} $test_path)"
-  (cd "$package_dir" && "${command[@]}" ${test_path:+"$test_path"})
+  # Let melos choose the packages and the runner, so its packageFilters stay the only source.
+  # The test script is made of steps, which ignore --scope, so call each step.
+  # Packages excluded by the filters (for example catalog) run nothing, as in mise run check.
+  package_name="$(sed -n 's/^name: *//p' "$package_dir/pubspec.yaml")"
+  for script in test:flutter test:dart; do
+    dart run melos run "$script" --no-select --scope="$package_name" ${test_path:+-- "$test_path"}
+  done
 done

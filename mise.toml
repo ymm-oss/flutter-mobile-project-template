@@ -9,8 +9,6 @@ jq = "1.8.2"
 zizmor = "1.32.0"
 osv-scanner = "2.7.1"
 gitleaks = "8.30.1"
-java = "temurin-25.0.5+8.0.LTS"
-"aqua:OpenAPITools/openapi-generator" = "7.27.0"
 
 [settings]
 # Platforms recorded in mise.lock: CI runners, Linux arm64, and Apple Silicon / Intel Macs.
@@ -58,10 +56,10 @@ run = './tools/test.sh'
 [tasks.check]
 description = "Run before finishing work: format (rewrites files), then analyze, check dependency cycles and test."
 run = [
-  'dart run melos run format --no-select',
-  'dart analyze --fatal-infos',
+  { task = "format" },
+  { task = "analyze" },
   'dart run melos list --cycles',
-  'dart run melos run test --no-select',
+  { task = "test" },
 ]
 
 [tasks."check:debug_tree_shaking"]
