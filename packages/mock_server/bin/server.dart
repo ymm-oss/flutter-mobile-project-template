@@ -10,7 +10,7 @@ import 'package:shelf/shelf_io.dart' as shelf_io;
 /// リポジトリのルートで `mise run mock [<api_name>] [--port <port>]` として実行する。
 Future<void> main(List<String> arguments) async {
   final parser = ArgParser()
-    ..addOption('port', abbr: 'p', help: '待ち受けるポート', defaultsTo: '4000')
+    ..addOption('port', abbr: 'p', help: '待ち受けるポート', defaultsTo: '4010')
     ..addFlag('help', abbr: 'h', negatable: false, help: '使い方を表示する');
 
   final ArgResults results;
@@ -77,7 +77,7 @@ Future<void> main(List<String> arguments) async {
     'で起動しました。',
   );
   if (document.skippedPaths.isNotEmpty) {
-    stdout.writeln(r'次のパスは中身を読めないため、読み飛ばしました。ほかのファイルへの $ref は読めません。');
+    stdout.writeln(r'次のパスは中身を読めないため、501 を返します。ほかのファイルへの $ref は読めません。');
     for (final path in document.skippedPaths) {
       stdout.writeln('  - $path');
     }

@@ -9,7 +9,7 @@ import 'package:shelf/shelf.dart';
 /// [Request.url] を仕様書のパスと照合する。`servers` のパスの下に置くときは
 /// [mountAtBasePath] と組み合わせる。
 Handler createMockHandler(OpenApiDocument document) {
-  final routes = _routesOf(document.operations);
+  final routes = _routesOf(document.operations, document.skippedPaths);
   return (request) {
     final segments = request.url.pathSegments;
     final matched = [
@@ -20,6 +20,13 @@ Handler createMockHandler(OpenApiDocument document) {
       return _error(404, '仕様書に /${request.url.path} のパスがありません。');
     }
     for (final route in matched) {
+      // 中身を読めないパスは、どのメソッドがあるか分からないため、ほかのパスを探さない。
+      if (route.skipped) {
+        return _error(
+          501,
+          '仕様書の ${route.path} の中身を読めません。\$ref の参照先を確かめてください。',
+        );
+      }
       if (route.operationFor(request.method) case final operation?) {
         // HEAD の本文は、dart:io の HttpServer が送らずに捨てる。
         return _respond(operation.response);
@@ -81,8 +88,12 @@ Response _error(
 /// OpenAPI の決まりに合わせ、テンプレートより固定のパスを先に照合する順に並べる。
 ///
 /// 照合するのは区間の数が同じパスどうしなので、区間の数で分けてから、先頭の
-/// 区間から [_Segment.rank] を比べる。順位が同じなら仕様書の順に並べる。
-List<_Route> _routesOf(List<Operation> operations) {
+/// 区間から [_Segment.rank] を比べる。順位が同じなら仕様書の順に並べ、
+/// [skippedPaths] はそのあとに並べる。
+List<_Route> _routesOf(
+  List<Operation> operations,
+  List<String> skippedPaths,
+) {
   final byPath = <String, Map<String, Operation>>{};
   for (final operation in operations) {
     (byPath[operation.path] ??= {})[operation.method] = operation;
@@ -90,6 +101,7 @@ List<_Route> _routesOf(List<Operation> operations) {
   final routes = [
     for (final MapEntry(key: path, value: operations) in byPath.entries)
       _Route(path, operations),
+    for (final path in skippedPaths) _Route(path, const {}, skipped: true),
   ];
   final order = {for (final (index, route) in routes.indexed) route: index};
   return routes..sort((a, b) {
@@ -99,13 +111,16 @@ List<_Route> _routesOf(List<Operation> operations) {
 }
 
 final class _Route {
-  new(this.path, this.operations)
+  new(this.path, this.operations, {this.skipped = false})
     : _segments = [for (final segment in _split(path)) _Segment(segment)];
 
   final String path;
 
   /// メソッドごとの operation。
   final Map<String, Operation> operations;
+
+  /// 中身を読めず、[OpenApiDocument.skippedPaths] に入ったパスか。
+  final bool skipped;
 
   final List<_Segment> _segments;
 

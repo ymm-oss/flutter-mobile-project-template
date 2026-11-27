@@ -67,7 +67,6 @@ jobs:
               - '.github/actions/**/action.yaml'
               - '.github/workflows/*.yml'
               - '.github/workflows/*.yaml'
-              - '.github/zizmor.yml'
               # zizmor のバージョンを上げたときも検査する
               - 'mise.toml'
               - 'mise.lock'
@@ -82,6 +81,11 @@ jobs:
               - "**.dart"
               - "**.yaml"
               - "**/pubspec.lock"
+              # コード生成の元になる Dart 以外のファイル
+              # slang が読む i18n の定義
+              - "**/*.i18n.json"
+              # アセット。flutter_gen が読まない launcher_icon などにも当たる
+              - "**/assets/**"
             markdown:
               - "**.md"
             openapi:

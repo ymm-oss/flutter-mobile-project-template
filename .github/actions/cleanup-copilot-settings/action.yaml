@@ -43,7 +43,7 @@ runs:
         ."github.copilot.editor.enableAutoCompletions" |= false
         '
         > "$SETTINGS_JSON_PATH"
-      shell: sh
+      shell: bash
       env:
         SETTINGS_JSON_PATH: ${{ inputs.settings-json-path }}
         TEMP_JSON_PATH: ${{ inputs.temp-json-path }}

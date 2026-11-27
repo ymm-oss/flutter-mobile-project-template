@@ -23,7 +23,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Application Runtime
-        uses: ./.github/actions/setup-application-runtime
+        uses: $/.github/actions/setup-application-runtime
 
       - name: Check for package updates
         id: package
@@ -42,6 +42,7 @@ jobs:
       - name: Get Issue Number
         id: issue
         if: "${{ steps.package.outputs.path != '' }}"
+        shell: bash
         run: |
           getIssueNumber() {
             issue_numbers=$(gh issue list --label "$ISSUE_LABEL" --json number | jq '.[].number')
