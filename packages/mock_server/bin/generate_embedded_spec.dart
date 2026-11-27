@@ -23,12 +23,19 @@ Future<void> main(List<String> arguments) async {
     _fail('API 名は 1 つだけ指定してください。');
   }
 
+  final apiDirectory = ApiDirectory(Directory('openapi'));
+  final apiName = results.rest.firstOrNull;
   final File specFile;
   try {
-    specFile = ApiDirectory(
-      Directory('openapi'),
-    ).specFile(apiName: results.rest.firstOrNull);
+    specFile = apiDirectory.specFile(apiName: apiName);
   } on ApiSelectionException catch (e) {
+    if (apiName == null && apiDirectory.apiNames().length > 1) {
+      _fail(
+        '${e.message}\n'
+        '組み込む API 名を、ルートの pubspec.yaml の gen:embedded_mock_spec の '
+        'run の末尾に書いてください。',
+      );
+    }
     _fail(e.message);
   }
 

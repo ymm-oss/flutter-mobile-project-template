@@ -97,7 +97,7 @@ iOS の実機や配布するビルドからは、手元のモックサーバー�
 
 - 返す応答は、手元のモックサーバーの既定と同じく、仕様書の[応答](#応答)です。管理画面はなく、応答の切り替えとプロファイルは使えません。
 - ポートは OS が空いているものを選びます。URL は起動時のログ（`BuildConfig`）に出ます。iOS シミュレーターは Mac とループバックを共有するため、Mac からその URL に `curl` でつながります。
-- 仕様書は `apps/app/lib/mock_server/embedded_mock_spec.g.dart` に Dart の定数として持たせます。仕様書を変えたら、`mise run gen` で作り直してください。`openapi` に API が複数あると生成に失敗します。
+- 仕様書は `apps/app/lib/mock_server/embedded_mock_spec.g.dart` に Dart の定数として持たせます。仕様書を変えたら、`mise run gen` で作り直してください。組み込めるのは 1 つの API だけです。`openapi` に API が複数あるときは、ルートの `pubspec.yaml` の `gen:embedded_mock_spec` の `run` の末尾に、組み込む API 名を書いてください。書かないと `mise run gen` が失敗します。
 - `embedMockServer` を付けないビルドからは、モックサーバーと仕様書が tree shaking で除外されます。`mise run check:debug_tree_shaking` で確かめられます。assets は tree shaking で除外されないため、仕様書を assets に載せないでください。
 
 <!-- Links -->
