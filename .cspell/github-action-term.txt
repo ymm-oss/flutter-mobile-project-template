@@ -16,4 +16,6 @@ tonumber
 sarif
 strenv
 zizmor
+jactionlint
+shellcheck
 slurpfile
