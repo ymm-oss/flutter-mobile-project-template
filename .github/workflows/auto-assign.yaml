@@ -4,6 +4,10 @@ on:
   pull_request:
     types: [opened, ready_for_review]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions: {}
 
 jobs:
@@ -35,7 +39,7 @@ jobs:
       # https://github.com/marketplace/actions/create-github-app-token
       - name: Generate a token
         id: app-token
-        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0
         with:
           client-id: ${{ secrets.CLIENT_ID_OF_YMM_OSS_TEAM_REVIEW_REQUESTER }}
           private-key: ${{ secrets.APP_PRIVATE_KEY_OF_YMM_OSS_TEAM_REVIEW_REQUESTER }}
@@ -50,6 +54,7 @@ jobs:
           TEAM_REVIEWERS: ${{ vars.TEAM_REVIEWERS }}
           APP_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+        shell: bash
         run: |
           reviewers=$(jq -R 'split(",")' <<< "${REVIEWERS:-}" | jq 'map(select(length > 0))')
           team_reviewers=$(jq -R 'split(",")' <<< "${TEAM_REVIEWERS:-}" | jq 'map(select(length > 0))')
