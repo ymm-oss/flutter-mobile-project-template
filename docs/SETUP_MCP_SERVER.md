@@ -123,10 +123,10 @@ mise exec -- flutter run \
 `launch_app` を使うスキル（`flutter-add-integration-test` など）を使うときは、`.mcp.json` の `dart` の `args` の末尾に `--enable` と `flutter_app_lifecycle` を足してください。`launch_app`、`stop_app`、`list_devices`、`get_app_logs`、`list_running_apps` が有効になります。
 
 ```json
-"args": ["exec", "--", "dart", "mcp-server", "--enable", "flutter_app_lifecycle"]
+"args": ["exec", "--", "dart", "mcp-server", "--disable", "pub", "--enable", "flutter_app_lifecycle"]
 ```
 
-`dart_fix`、`dart_format`、`run_tests`、`create_project` も既定では無効です。フォーマットとテストは [AGENTS.md] のとおり `mise run` のタスクで実行するため、有効にしません。`analyze_files` と `pub` は既定で有効ですが、作業を終える前の検査は `mise run check` で、依存の変更は [AGENTS.md] の手順で行ってください。
+`dart_fix`、`dart_format`、`run_tests`、`create_project` も既定では無効です。フォーマットとテストは [AGENTS.md] のとおり `mise run` のタスクで実行するため、有効にしません。`analyze_files` は既定で有効ですが、作業を終える前の検査は `mise run check` で行ってください。
 
 ### 実行中のアプリへの接続
 

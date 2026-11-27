@@ -18,7 +18,9 @@
         "exec",
         "--",
         "dart",
-        "mcp-server"
+        "mcp-server",
+        "--disable",
+        "pub"
       ]
     }
   }
