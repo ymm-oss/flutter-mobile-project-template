@@ -194,11 +194,11 @@ melos:
         command: dart pub upgrade --major-versions
         concurrency: 1
         orderDependents: true
+    # ルートは packageFilters で選べないため、run でルートの実行と melos exec を続けて呼ぶ。
+    # ルートでの実行は yumemi_lints の公式の対応外。動く理由と、正しく読めなくなったときの動きは docs/CI.md を見る
     update:yumemi_lints:
-      description: yumemi_lints の更新を実行します。
-      exec: dart run yumemi_lints update
-      packageFilters:
-        dependsOn: yumemi_lints
+      description: ルートと、yumemi_lints を依存に直接書いたパッケージの analysis_options.yaml の include を更新します。
+      run: dart run yumemi_lints update && dart run melos exec --depends-on=yumemi_lints -- dart run yumemi_lints update
 
     # dependsOn で or 条件で指定することができないため
     # スクリプトを Flutter と Dart に分けている
