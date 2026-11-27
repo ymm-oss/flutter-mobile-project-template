@@ -72,7 +72,7 @@ jobs:
               echo
               echo "mise audit failed."
               echo
-              echo "$reason" | sed 's/^/    /'
+              echo "    ${reason//$'\n'/$'\n'    }"
             } | tee "$path"
             echo "path=$path" >> "$GITHUB_OUTPUT"
             echo "failed=true" >> "$GITHUB_OUTPUT"
