@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #
-# リリースビルドの Dart AOT スナップショットにデバッグ機能が含まれていないことを確認する。
+# 組み込みを有効にしないリリースビルドの Dart AOT スナップショットに、デバッグ機能と、
+# アプリに組み込むモックサーバーが含まれていないことを確認する。
 #
 # `flutter build apk --analyze-size` が内部で実行するものと同じ `flutter assemble` の
 # ターゲットを直接実行し、出力されるスナップショットのサイズプロファイルを検査する。
@@ -24,6 +25,11 @@ forbidden_libraries=(
   "package:shake_gesture/"
   "package:talker_flutter/"
   "package:talker_riverpod_logger/"
+  # アプリに組み込むモックサーバー。生成した仕様書の定数は呼び出し側に埋め込まれ、
+  # ライブラリとしては出ないため、lib/mock_server/ の外から参照しないこと。
+  "package:flutter_app/mock_server/"
+  "package:internal_mock_server/"
+  "package:shelf/"
 )
 
 # Flutter が生成する Dart プラグインレジストラント（dart_plugin_registrant.dart）は
@@ -94,8 +100,8 @@ for library in "${known_plugin_registrant_libraries[@]}"; do
 done
 
 if [ "$found" -ne 0 ]; then
-  echo "Debug features are not tree-shaken. Make sure they are referenced only from code guarded by kDebugMode." >&2
+  echo "Debug features or the embedded mock server are not tree-shaken. Make sure they are referenced only from code guarded by kDebugMode or embedMockServer." >&2
   exit 1
 fi
 
-echo "OK: debug features are not included in the release build."
+echo "OK: debug features and the embedded mock server are not included in the release build."

@@ -52,11 +52,11 @@ OpenAPI Generator と、その実行に必要な Java のバージョンは [ope
     path: ../api/<api_name>
   ```
 
-- [ ] 依存関係を解決し、`*.g.dart` を生成する
+- [ ] 依存関係を解決し、`*.g.dart` と、アプリに組み込むモックサーバーが読む仕様書の定数を生成する
 
   ```shell
   mise bs
-  dart run melos run gen:build
+  mise run gen
   ```
 
 - [ ] infrastructure で、生成したクライアントの Dio の `baseUrl` に `apiBaseUrl` を受け取って渡す。[apps/app/lib/composition_root] では、`buildConfigProvider` から読んだ `BuildConfig.apiBaseUrl` を infrastructure に渡す
@@ -75,7 +75,7 @@ OpenAPI Generator と、その実行に必要な Java のバージョンは [ope
 - [ ] 生成した `packages/api/<api_name>` と、`mise bs` が更新した [.github/labeler.yml] と [.github/labels.yml] をコミットする
 - [ ] 生成したパッケージを `infrastructure` 以外から使う場合は、[docs/ARCHITECTURE.md] の依存の向きを書き換える
 
-仕様書を更新したときは、生成スクリプト、`mise bs`、`dart run melos run gen:build` を同じ順で実行してください。モックサーバーを起動しているときは、起動し直してください。
+仕様書を更新したときは、生成スクリプト、`mise bs`、`mise run gen` を同じ順で実行してください。モックサーバーを起動しているときは、起動し直してください。
 `openapi` か `packages/api`、ルートの依存や解析の設定を変えた PR では、CI が生成し直した結果とコミット済みのものが一致するかを確かめます。
 
 OpenAPI を使わない場合は、次を削除してください。
@@ -83,10 +83,17 @@ OpenAPI を使わない場合は、次を削除してください。
 - [ ] `openapi` ディレクトリ
 - [ ] [.github/workflows/wc-check-openapi.yaml] と、[.github/workflows/check-pr.yaml]、[.github/workflows/merge-queue.yaml]、[.github/workflows/wc-changes.yml] の `openapi` の記述
 - [ ] `packages/mock_server` ディレクトリと、ルートの [pubspec.yaml] の `workspace` の `packages/mock_server`
+- [ ] アプリへの組み込み
+  - [ ] `apps/app/lib/mock_server` と `apps/app/test/mock_server` ディレクトリ
+  - [ ] [apps/app/pubspec.yaml] の `internal_mock_server` と `shelf`
+  - [ ] [apps/app/lib/app_initializer.dart] と [apps/app/lib/configuration/build_config.dart] の `embedMockServer` と `apiBaseUrlOverride`
+  - [ ] ルートの [pubspec.yaml] の `gen:embedded_mock_spec` と、`gen`、`gen:diff:default`、`gen:diff:head` の `steps` の `gen:embedded_mock_spec`
+  - [ ] [scripts/check-debug-tree-shaking.sh] の `forbidden_libraries` のモックサーバーの行
+  - [ ] [AGENTS.md] の `internal_mock_server`、`embedMockServer`、`openapi/<api_name>/openapi.yaml` の記述
 - [ ] [mise.toml] の `mock` タスク
 - [ ] [.vscode/launch.json] と [.idea/runConfigurations/mock_debug.xml] の `mock-debug`
 - [ ] [dprint.jsonc]、[cspell.jsonc]、[.gitattributes] の `packages/api` の行
-- [ ] [docs/ARCHITECTURE.md] のディレクトリ構造の `openapi`、`packages/api`、`packages/mock_server` と、依存の図の `api`
+- [ ] [docs/ARCHITECTURE.md] のディレクトリ構造の `openapi`、`packages/api`、`packages/mock_server` と、依存の図の `api`、モックサーバーの注記
 - [ ] [docs/GET_STARTED.md] の「モックサーバーの起動」と、末尾の `[モックサーバー]` のリンク定義、[docs/MOCK_SERVER.md]
 
 削除したあとに `mise bs` を実行し、更新された [.github/labeler.yml] と [.github/labels.yml] もコミットしてください。
@@ -99,6 +106,11 @@ OpenAPI を使わない場合は、次を削除してください。
 [openapi/sample]: ../tree/main/openapi/sample
 [openapi/mise.toml]: ../blob/main/openapi/mise.toml
 [pubspec.yaml]: ../blob/main/pubspec.yaml
+[AGENTS.md]: ../blob/main/AGENTS.md
+[apps/app/pubspec.yaml]: ../blob/main/apps/app/pubspec.yaml
+[apps/app/lib/app_initializer.dart]: ../blob/main/apps/app/lib/app_initializer.dart
+[apps/app/lib/configuration/build_config.dart]: ../blob/main/apps/app/lib/configuration/build_config.dart
+[scripts/check-debug-tree-shaking.sh]: ../blob/main/scripts/check-debug-tree-shaking.sh
 [packages/infrastructure/pubspec.yaml]: ../blob/main/packages/infrastructure/pubspec.yaml
 [dprint.jsonc]: ../blob/main/dprint.jsonc
 [cspell.jsonc]: ../blob/main/cspell.jsonc

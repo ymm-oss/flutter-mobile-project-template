@@ -133,7 +133,7 @@ jobs:
       - name: Check for circular dependencies
         run: dart run melos list --cycles
 
-      - name: Check debug features are excluded from release build
+      - name: Check debug features and embedded mock server are excluded from release build
         run: dart run melos run check:debug_tree_shaking
 
   test:

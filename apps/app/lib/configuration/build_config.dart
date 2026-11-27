@@ -7,6 +7,12 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 part 'build_config.freezed.dart';
 
+/// アプリの中でモックサーバーを起動し、API の向き先をそこにするか。
+///
+/// `--dart-define=embedMockServer=true` で有効にする。`const` のため、無効のビルドでは
+/// これで守った参照ごと、モックサーバーが tree shaking で除外される。
+const embedMockServer = bool.fromEnvironment('embedMockServer');
+
 @Freezed(map: FreezedMapOptions.none, when: FreezedWhenOptions.none)
 abstract class BuildConfig with _$BuildConfig {
   const factory _init({
@@ -20,10 +26,20 @@ abstract class BuildConfig with _$BuildConfig {
     required String apiBaseUrl,
   }) = _BuildConfig;
 
-  factory fromPackageInfo(PackageInfo packageInfo) {
+  /// [apiBaseUrlOverride] を渡すと、flavor ファイルなどの `apiBaseUrl` の代わりに使う。
+  ///
+  /// [flavor] と [apiBaseUrlFromEnvironment] は、テストで値を渡すためにある。
+  factory fromPackageInfo(
+    PackageInfo packageInfo, {
+    String? apiBaseUrlOverride,
     // ここに `~.fromEnvironment()` を集約する
-    const flavor = String.fromEnvironment('flavor');
-    const apiBaseUrl = String.fromEnvironment('apiBaseUrl');
+    @visibleForTesting String flavor = const String.fromEnvironment('flavor'),
+    @visibleForTesting
+    String apiBaseUrlFromEnvironment = const String.fromEnvironment(
+      'apiBaseUrl',
+    ),
+  }) {
+    final apiBaseUrl = apiBaseUrlOverride ?? apiBaseUrlFromEnvironment;
     if (apiBaseUrl.isEmpty) {
       throw StateError(
         'apiBaseUrl が空です。flavor ファイルか --dart-define で渡してください。',

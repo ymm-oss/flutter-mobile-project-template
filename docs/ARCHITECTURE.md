@@ -43,6 +43,8 @@
 > - Shared, Util レイヤーはどのレイヤーにも依存しておらず、Shared, Util 以外の全てのレイヤーから参照可能
 > - Debug レイヤーは全てのレイヤーに依存可能で、Presentation レイヤーからのみ参照される
 >   - リリースビルドから除外するため、`apps/app/lib/debug/debug_features_impl.dart` からのみ参照する（詳細は [internal_debug package](../packages/debug/README.md) を参照）
+>
+> モックサーバー（`mock_server`）も図に記載していません。アプリからは、組み込みを有効にしないビルドから除外するため、`apps/app/lib/mock_server/embedded_mock_server.dart` からのみ参照します。生成した仕様書の定数（`embedded_mock_spec.g.dart`）も、`apps/app/lib/mock_server/` からのみ参照します（詳細は [MOCK_SERVER.md](./MOCK_SERVER.md#アプリへの組み込み) を参照）。
 
 ```mermaid
 flowchart TD

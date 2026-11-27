@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_app/composition_root/build_config_provider.dart';
 import 'package:flutter_app/composition_root/data_sources/shared_preference_data_source.dart';
 import 'package:flutter_app/configuration/build_config.dart';
+import 'package:flutter_app/mock_server/embedded_mock_server.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:internal_shared/logger.dart';
@@ -30,7 +31,16 @@ final class AppInitializer {
     final packageInfo = await PackageInfo.fromPlatform();
     final preferences = await SharedPreferences.getInstance();
 
-    final buildConfig = BuildConfig.fromPackageInfo(packageInfo);
+    // embedMockServer はコンパイル時定数のため、無効のビルドでは
+    // startEmbeddedMockServer への参照ごと削除され、モックサーバーは
+    // tree shaking によってバイナリから除外される。
+    final mockServerUrl = embedMockServer
+        ? await startEmbeddedMockServer()
+        : null;
+    final buildConfig = BuildConfig.fromPackageInfo(
+      packageInfo,
+      apiBaseUrlOverride: mockServerUrl,
+    );
     logger.info(buildConfig);
 
     overrides.addAll(

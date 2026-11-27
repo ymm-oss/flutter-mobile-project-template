@@ -22,7 +22,7 @@
   - フォーマットを実行してから、解析（info も含む）、循環参照、テストを検査する。フォーマットはファイルを書き換える。対象は各パッケージの `lib/` だけで、`test/` は直さない。
   - 生成されたファイルが最新かは検査しない。作り直すのを忘れても `check` は通る。CI でも検出されないことがある。
   - 失敗した検査だけをやり直すときは、解析は `mise run analyze`、テストは `mise run test` を使う。フォーマットと循環参照は `check` をやり直す。
-- `debug` への参照を変えたときは、`mise run check:debug_tree_shaking` も通ることを確かめる。リリースビルドを作るため時間がかかり、`check` には含めていない。
+- `debug`、`internal_mock_server`、`embedMockServer` への参照を変えたときは、`mise run check:debug_tree_shaking` も通ることを確かめる。リリースビルドを作るため時間がかかり、`check` には含めていない。
 
 ## 生成されたファイル
 
@@ -32,12 +32,14 @@
   - `apps/catalog` の `@UseCase`（追加、削除、名前の変更）
   - i18n の定義（`*.i18n.json`）
   - `pubspec.yaml` の `flutter.assets` に載っている画像などのファイル（追加、削除、名前の変更）
+  - `openapi/<api_name>/openapi.yaml`（アプリに組み込むモックサーバーが読む）
 
 ## レイヤーと置き場所
 
 - ドメインのロジックは `domain_logic` に、データ取得や外部連携は `infrastructure` に置く。`presentation` に直接書かない。
 - `presentation` から `application` や `infrastructure` を直接 import しない。依存性の注入は `apps/app/lib/composition_root` で行う。
 - `debug` は `apps/app/lib/debug/debug_features_impl.dart` からだけ参照する。リリースビルドから外すため。
+- `internal_mock_server` は `apps/app/lib/mock_server/embedded_mock_server.dart` から、生成した仕様書の定数（`embedded_mock_spec.g.dart`）は `apps/app/lib/mock_server/` からだけ参照する。組み込みを有効にしないビルドから外すため。定数は `check:debug_tree_shaking` で検出できない。
 - パッケージの依存や import を足す前に、[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) の図で依存方向を確かめる。
 
 ## 公式スキルとの関係
