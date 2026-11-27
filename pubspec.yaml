@@ -194,13 +194,8 @@ melos:
         command: dart pub upgrade --major-versions
         concurrency: 1
         orderDependents: true
-    # ルートの analysis_options.yaml は、自分の analysis_options.yaml を持たないパッケージが使う。
-    # packageFilters の dependsOn ではルートを選べないため、run でルートの実行と melos exec を続けて呼ぶ。
-    # melos exec は対象のパッケージが 0 件（テンプレートから作ったプロジェクトで samples を消した状態）でも、終了コード 0 で終わる。
-    # yumemi_lints がルートで動くことは、公式には保証されていない。
-    # yumemi_lints の簡易な YAML のパーサーは、最後に出てくる environment（melos.command.bootstrap.environment）の flutter を読む。
-    # また、dev_dependencies の flutter_test にある sdk: flutter の行で、Flutter のプロジェクトと判定している。
-    # この pubspec.yaml の並びを変えると、正しく読めなくなることがある。そのときは、終了コードが 0 以外になるか、include が書き換わって diff-gen が失敗する
+    # ルートは packageFilters で選べないため、run でルートの実行と melos exec を続けて呼ぶ。
+    # ルートでの実行は yumemi_lints の公式の対応外。動く理由と、正しく読めなくなったときの動きは docs/CI.md を見る
     update:yumemi_lints:
       description: ルートと、yumemi_lints を依存に直接書いたパッケージの analysis_options.yaml の include を更新します。
       run: dart run yumemi_lints update && dart run melos exec --depends-on=yumemi_lints -- dart run yumemi_lints update

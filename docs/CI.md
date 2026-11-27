@@ -70,9 +70,9 @@ melos の `diff` フィルタは、ファイルが変わったパッケージだ
 
 `include:` は yumemi_lints のバージョンによっても変わります。`include:` を決める `pubspec.yaml` と `pubspec.lock`、書き直す `analysis_options.yaml` は、どれも diff-gen の `gen` フィルタ（`**.yaml`、`**/pubspec.lock`）に含まれます。
 
-yumemi_lints がルートで動くことは、公式には保証されていません。ルートの `pubspec.yaml` の並びによっては、正しく読めなくなることがあります。その場合は `update:yumemi_lints` が失敗するか、`include:` が書き換わって diff-gen が失敗します。詳しくはルートの `pubspec.yaml` の `update:yumemi_lints` のコメントを見てください。
+ルートでの実行は、yumemi_lints が公式に対応している使い方ではありません。yumemi_lints の簡易な YAML の読み取りは最後に出てくる `environment:` の `flutter` を読み、ルートの `pubspec.yaml` ではそれが `melos.command.bootstrap.environment` になります。また、`sdk: flutter` という行があると Flutter のプロジェクトと判定し、ルートでは melos の設定の `flutter_test` の下にこの行があります。ルートの `pubspec.yaml` の並びを変えて正しく読めなくなったときは、`update:yumemi_lints` が失敗するか、`include:` が書き換わって diff-gen が失敗します。
 
-テンプレートから作ったプロジェクトで `samples/` を消すと、yumemi_lints を依存に直接書いたパッケージはなくなります。その場合も diff-gen はルートの `include:` を検査します。パッケージが 0 件になることは正常なので、それだけでは失敗しません。
+テンプレートから作ったプロジェクトで `samples/` を消すと、yumemi_lints を依存に直接書いたパッケージはなくなります。その場合も diff-gen はルートの `include:` を検査します。パッケージが 0 件になることは正常で、`melos exec` は 0 件でも終了コード 0 で終わるので、それだけでは失敗しません。
 
 ## キャッシュ
 
