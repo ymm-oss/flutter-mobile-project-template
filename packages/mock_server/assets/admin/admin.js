@@ -229,11 +229,13 @@ function fillEditedResponse(operation, { statusCode, contentType, body }) {
   elements.responseBody.value = formatBody(body, contentType);
 }
 
-// JSON の本文は、字下げの違いを無視して比べる。
+// JSON の本文は、字下げの違いを無視して比べる。値を変えないよう、indentJson でそろえる。
 function sameBody(a, b, contentType) {
   if (/json/i.test(contentType)) {
     try {
-      return JSON.stringify(JSON.parse(a)) === JSON.stringify(JSON.parse(b));
+      JSON.parse(a);
+      JSON.parse(b);
+      return indentJson(a) === indentJson(b);
     } catch {
       // JSON として読めなければ、文字列のまま比べる。
     }
