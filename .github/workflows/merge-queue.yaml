@@ -189,7 +189,7 @@ jobs:
     if: ${{ needs.changes.outputs.vulnerabilities == 'true' }}
 
   status-check:
-    runs-on: ubuntu-26.04-arm
+    runs-on: ubuntu-slim
     needs:
       - changes
       - check-actions

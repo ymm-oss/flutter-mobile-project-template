@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   check-ai-skills:
-    runs-on: ubuntu-26.04-arm
+    runs-on: ubuntu-slim
     timeout-minutes: 5
     steps:
       # https://github.com/actions/checkout

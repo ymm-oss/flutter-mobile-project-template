@@ -9,7 +9,7 @@ permissions: {}
 
 jobs:
   condition:
-    runs-on: ubuntu-26.04-arm
+    runs-on: ubuntu-slim
     permissions: {}
     outputs:
       execute: ${{ steps.condition.outputs.execute }}
@@ -44,7 +44,7 @@ jobs:
         uses: ./.github/actions/generate-issue-matrix-at-initialization
 
   create-issues:
-    runs-on: ubuntu-26.04-arm
+    runs-on: ubuntu-slim
     permissions:
       contents: read
       issues: write
