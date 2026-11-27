@@ -104,10 +104,18 @@ melos:
 
     format:
       description: |
-        すべてのパッケージに `dart format` を実行します。
+        `dart format` を実行します。
+        対象は、各パッケージの `lib/` と `test/`、ルートの `scripts/` と `tools/` です。
+      steps:
+        - format:packages
+        - format:root
+    format:packages:
+      description: |
+        すべてのパッケージの `lib/` と `test/` に `dart format` を実行します。
         自動生成されたコードは対象外になるように設定しています。
       exec: >-
-        find lib -name "*.dart"
+        find . -name "*.dart"
+        \( -path "./lib/*" -o -path "./test/*" \)
         -not -path "*/gen/*"
         -not -name "*.g.dart"
         -not -name "*.freezed.dart"
@@ -115,12 +123,23 @@ melos:
         -not -name "*.g.theme.dart" | xargs dart format
       packageFilters:
         dirExists: lib
+    format:root:
+      description: ルートの `scripts/` と `tools/` に `dart format` を実行します。
+      run: dart format scripts tools
     format:check:
       description: |
-        すべてのパッケージに `dart format --output=none --set-exit-if-changed` を実行します。
+        `dart format --output=none --set-exit-if-changed` を実行します。
+        対象は、各パッケージの `lib/` と `test/`、ルートの `scripts/` と `tools/` です。
+      steps:
+        - format:check:packages
+        - format:check:root
+    format:check:packages:
+      description: |
+        すべてのパッケージの `lib/` と `test/` に `dart format --output=none --set-exit-if-changed` を実行します。
         自動生成されたコードは対象外になるように設定しています。
       exec: >-
-        find lib -name "*.dart"
+        find . -name "*.dart"
+        \( -path "./lib/*" -o -path "./test/*" \)
         -not -path "*/gen/*"
         -not -name "*.g.dart"
         -not -name "*.freezed.dart"
@@ -128,6 +147,9 @@ melos:
         -not -name "*.g.theme.dart" | xargs dart format --output=none --set-exit-if-changed
       packageFilters:
         dirExists: lib
+    format:check:root:
+      description: ルートの `scripts/` と `tools/` に `dart format --output=none --set-exit-if-changed` を実行します。
+      run: dart format --output=none --set-exit-if-changed scripts tools
 
     gen:
       description: build_runner と i18n の生成コマンドを実行します。
