@@ -14,7 +14,9 @@
     ".agents/skills/flutter-*/",
     ".config/dart_skills/",
     // OpenAPI Generator が生成する API クライアント
-    "packages/api/"
+    "packages/api/",
+    // Claude Code が作る git worktree（ほかのブランチのチェックアウト）
+    ".claude/worktrees/"
   ],
   "plugins": [
     "https://plugins.dprint.dev/json-0.20.0.wasm",

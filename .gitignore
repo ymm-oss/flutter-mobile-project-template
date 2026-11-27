@@ -15,3 +15,6 @@
 
 # dependencies (bun install)
 node_modules
+
+# Git worktrees that Claude Code creates for parallel sessions
+.claude/worktrees/
