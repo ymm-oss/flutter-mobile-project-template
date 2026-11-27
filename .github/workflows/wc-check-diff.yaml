@@ -57,10 +57,9 @@ jobs:
       # - ルート: ルートの pubspec.yaml の melos.command.bootstrap.environment から決める
       # - yumemi_lints を依存に直接書いたパッケージ（今は samples/webview）: そのパッケージの pubspec.yaml の environment から決める。
       #   environment は melos bootstrap がルートから書き込むため、bootstrap の後に実行する
-      # yumemi_lints がルートで動くことは、公式には保証されていない。詳しくはルートの pubspec.yaml の update:yumemi_lints:root を見る。
+      # yumemi_lints がルートで動くことは、公式には保証されていない。詳しくはルートの pubspec.yaml の update:yumemi_lints のコメントを見る。
       # テンプレートから作ったプロジェクトで samples を消すと、yumemi_lints を依存に直接書いたパッケージはなくなる。
-      # そのときもルートは検査し、パッケージが 0 件でも失敗させない。
-      # melos は NoPackageFoundScriptException と使い方を表示するが、終了コードは 0 で、次のステップに進む
+      # そのときもルートは検査し、パッケージが 0 件でも失敗させない
       - name: Update yumemi_lints
         run: dart run melos run update:yumemi_lints --no-select
 

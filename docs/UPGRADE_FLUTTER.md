@@ -29,6 +29,7 @@ melos:
 
 6. `dart run melos bootstrap`コマンドを実行
 7. `dart run melos run update:yumemi_lints --no-select`コマンドを実行
+   - 変わった `analysis_options.yaml` をコミットする
 8. iOS でアプリが起動できることを確認
 9. Android でアプリが起動できることを確認
 10. [Migration Guide](https://docs.flutter.dev/release/breaking-changes) に従い、必要に応じて deprecate 箇所を修正

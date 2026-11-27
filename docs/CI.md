@@ -66,9 +66,11 @@ melos の `diff` フィルタは、ファイルが変わったパッケージだ
 - ルート: 自分の `analysis_options.yaml` を持たないパッケージは、この設定を使います。`include:` はルートの `pubspec.yaml` の `melos.command.bootstrap.environment` から決まります。
 - yumemi_lints を `pubspec.yaml` の依存に直接書いたパッケージ（今は `samples/webview`）: `include:` はそのパッケージの `pubspec.yaml` の `environment` から決まります。
 
+パッケージに自分の `analysis_options.yaml` を作るときは、そのパッケージの `pubspec.yaml` の `dev_dependencies` に yumemi_lints を書いてください。書かないと、そのパッケージの `include:` は検査されません。
+
 `include:` は yumemi_lints のバージョンによっても変わります。`include:` を決める `pubspec.yaml` と `pubspec.lock`、書き直す `analysis_options.yaml` は、どれも diff-gen の `gen` フィルタ（`**.yaml`、`**/pubspec.lock`）に含まれます。
 
-yumemi_lints がルートで動くことは、公式には保証されていません。ルートの `pubspec.yaml` の並びによっては、正しく読めなくなることがあります。その場合は `update:yumemi_lints` が失敗するか、`include:` が書き換わって diff-gen が失敗します。詳しくはルートの `pubspec.yaml` の `update:yumemi_lints:root` のコメントを見てください。
+yumemi_lints がルートで動くことは、公式には保証されていません。ルートの `pubspec.yaml` の並びによっては、正しく読めなくなることがあります。その場合は `update:yumemi_lints` が失敗するか、`include:` が書き換わって diff-gen が失敗します。詳しくはルートの `pubspec.yaml` の `update:yumemi_lints` のコメントを見てください。
 
 テンプレートから作ったプロジェクトで `samples/` を消すと、yumemi_lints を依存に直接書いたパッケージはなくなります。その場合も diff-gen はルートの `include:` を検査します。パッケージが 0 件になることは正常なので、それだけでは失敗しません。
 
