@@ -30,7 +30,8 @@ dependencies:
   internal_infrastructure:
     path: ../../packages/infrastructure
   # 配布するビルドでも使うため dependencies に定義する。
-  # lib/mock_server/embedded_mock_server.dart 以外から参照しないこと。
+  # lib/mock_server/embedded_mock_server.dart 以外から参照しないこと。生成した仕様書の定数も、
+  # lib/mock_server/ の外から参照しないこと。
   internal_mock_server:
     path: ../../packages/mock_server
   internal_shared:

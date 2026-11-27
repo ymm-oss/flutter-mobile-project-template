@@ -39,7 +39,7 @@
 - ドメインのロジックは `domain_logic` に、データ取得や外部連携は `infrastructure` に置く。`presentation` に直接書かない。
 - `presentation` から `application` や `infrastructure` を直接 import しない。依存性の注入は `apps/app/lib/composition_root` で行う。
 - `debug` は `apps/app/lib/debug/debug_features_impl.dart` からだけ参照する。リリースビルドから外すため。
-- `internal_mock_server` は `apps/app/lib/mock_server/embedded_mock_server.dart` からだけ参照する。組み込みを有効にしないビルドから外すため。
+- `internal_mock_server` は `apps/app/lib/mock_server/embedded_mock_server.dart` から、生成した仕様書の定数（`embedded_mock_spec.g.dart`）は `apps/app/lib/mock_server/` からだけ参照する。組み込みを有効にしないビルドから外すため。定数は `check:debug_tree_shaking` で検出できない。
 - パッケージの依存や import を足す前に、[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) の図で依存方向を確かめる。
 
 ## 公式スキルとの関係
