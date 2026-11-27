@@ -27,7 +27,6 @@ dev_dependencies:
   melos: ^8.10.0
   path: ^1.9.1
   yaml: ^3.1.4
-  yaml_edit: ^2.2.4
   yumemi_lints: ^4.5.1
 
 dependency_overrides:
@@ -78,18 +77,8 @@ melos:
         test: ^1.31.1
         theme_extensions_builder: ^7.5.1
         flutter_gen_runner: ^5.15.0
-      hooks:
-        post: dart run melos run bootstrap:post
 
   scripts:
-    # bootstrap 後に実行する script 群
-    bootstrap:post:
-      description: bootstrap post hooks
-      steps:
-        - update:yumemi_lints
-        - gen:labeler
-        - gen:labels
-
     check:debug_tree_shaking:
       description: |
         リリースビルドにデバッグ機能が含まれていないこと（tree shaking されていること）を確認します。
@@ -214,12 +203,6 @@ melos:
       packageFilters:
         dependsOn: slang
         diff: ""
-    gen:labeler:
-      description: "`.github/labeler.yml` のパッケージ部分を生成します。"
-      run: dart run ./tools/gen_labeler.dart
-    gen:labels:
-      description: "`.github/labels.yml` のパッケージ部分を生成します。"
-      run: dart run ./tools/gen_labels.dart
 
     upgrade:
       description: dart pub のバージョンアップを実施します。

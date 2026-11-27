@@ -93,8 +93,6 @@ jobs:
 
       - name: Setup Application Runtime
         uses: $/.github/actions/setup-application-runtime
-        with:
-          bootstrap-workspace: false
 
       # https://github.com/reviewdog/action-setup
       - name: Setup reviewdog
@@ -122,8 +120,6 @@ jobs:
 
       - name: Setup Application Runtime
         uses: $/.github/actions/setup-application-runtime
-        with:
-          bootstrap-workspace: false
 
       - name: Check format
         run: dart run melos run format:check
@@ -152,8 +148,6 @@ jobs:
 
       - name: Setup Application Runtime
         uses: $/.github/actions/setup-application-runtime
-        with:
-          bootstrap-workspace: false
 
       - name: Run test
         uses: $/.github/actions/run-test

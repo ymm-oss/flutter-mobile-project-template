@@ -53,6 +53,12 @@ jobs:
             dart run melos run gen
           fi
 
+      # update:yumemi_lints は、yumemi_lints を依存に直接書いたパッケージ（今は samples/webview）の analysis_options.yaml を、
+      # そのパッケージの pubspec.yaml の environment から書き直す。environment は melos bootstrap がルートから書き込むため、bootstrap の後に実行する。
+      # ルートの analysis_options.yaml は対象外で、ルートの include: が古くてもこの検査は失敗しない
+      - name: Update yumemi_lints
+        run: dart run melos run update:yumemi_lints --no-select
+
       - name: Check difference
         run: |
           git add -N .
