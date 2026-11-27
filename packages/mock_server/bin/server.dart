@@ -55,22 +55,36 @@ Future<void> main(List<String> arguments) async {
   }
 
   final settings = MockSettings();
+  final log = RequestLog();
   final handler = mountAdmin(
     createAdminHandler(
       document,
       settings,
       assets: await packageAssetResolver(),
+      log: log,
+      profiles: DirectoryProfileStore(
+        Directory.fromUri(specFile.parent.uri.resolve('mock_profiles/')),
+      ),
     ),
-    mountAtBasePath(
-      document.basePath,
-      createMockHandler(document, settings: settings),
+    serveFavicon(
+      document,
+      // 管理画面は通信タブで履歴を読み続けるため、モックへのリクエストだけを出力する。
+      const Pipeline()
+          .addMiddleware(logRequests())
+          .addMiddleware(logTraffic(log))
+          .addHandler(
+            mountAtBasePath(
+              document.basePath,
+              createMockHandler(document, settings: settings),
+            ),
+          ),
     ),
   );
 
   final HttpServer server;
   try {
     server = await shelf_io.serve(
-      const Pipeline().addMiddleware(logRequests()).addHandler(handler),
+      handler,
       InternetAddress.loopbackIPv4,
       port,
     );

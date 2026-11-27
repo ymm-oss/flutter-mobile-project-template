@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "operations": {
+    "GET /items": {
+      "response": {
+        "type": "edited",
+        "statusCode": 200,
+        "contentType": "application/json; charset=utf-8",
+        "body": "[]"
+      },
+      "delayMs": 0
+    }
+  }
+}

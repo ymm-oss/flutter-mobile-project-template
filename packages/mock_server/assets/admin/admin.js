@@ -2,6 +2,8 @@
 // 応答は、仕様書のステータスコードを選んで example を編集欄に入れ、必要なら編集する。
 // 編集しなければ、仕様書の応答を返す。
 // ビルドせずに動くよう、ブラウザーの標準の機能だけで書く。
+// 通信タブは traffic.js、プロファイルは profile.js にある。このファイルの関数を使うため、
+// あとに読み込む。
 
 const api = "api/operations";
 
@@ -19,6 +21,8 @@ const elements = {
   delay: document.getElementById("delay"),
   reset: document.getElementById("reset"),
   resetAll: document.getElementById("reset-all"),
+  operationActions: document.getElementById("operation-actions"),
+  tabs: document.querySelectorAll(".tab"),
 };
 
 const defaultContentType = "application/json; charset=utf-8";
@@ -30,11 +34,21 @@ const otherStatus = "other";
 let filled = null;
 
 let operations = [];
-// 選んでいる operation のキー。再読み込みしても同じ operation を開けるよう、URL の # に置く。
+
+// 開いているタブと、選んでいる operation のキー。再読み込みしても同じ画面を開けるよう、
+// URL の # に置く（#/traffic、#/operations/<キー>）。#<キー> も operation として読む。
 // # を読めないときは、どの operation も選んでいないものとして扱う。
+const trafficHash = "#/traffic";
+const operationsHash = "#/operations/";
 let selectedKey = (() => {
+  const hash = location.hash;
+  if (hash === trafficHash) {
+    return "";
+  }
   try {
-    return decodeURIComponent(location.hash.slice(1));
+    return decodeURIComponent(
+      hash.startsWith(operationsHash) ? hash.slice(operationsHash.length) : hash.slice(1),
+    );
   } catch {
     return "";
   }
@@ -335,10 +349,42 @@ function updateKind(operation) {
 
 function select(key) {
   selectedKey = key;
-  history.replaceState(null, "", `#${encodeURIComponent(key)}`);
+  history.replaceState(null, "", `${operationsHash}${encodeURIComponent(key)}`);
   showStatus("");
   renderList();
   renderEditor();
+}
+
+// タブを切り替える。通信タブを開いている間だけ、履歴を読みに行く。
+function showTab(name) {
+  for (const tab of elements.tabs) {
+    if (tab.dataset.tab === name) {
+      tab.setAttribute("aria-current", "page");
+    } else {
+      tab.removeAttribute("aria-current");
+    }
+    document.getElementById(`tab-${tab.dataset.tab}`).hidden = tab.dataset.tab !== name;
+  }
+  elements.operationActions.hidden = name !== "operations";
+  showStatus("");
+  if (name === "traffic") {
+    history.replaceState(null, "", trafficHash);
+    startTraffic();
+  } else {
+    stopTraffic();
+    history.replaceState(
+      null,
+      "",
+      selectedKey ? `${operationsHash}${encodeURIComponent(selectedKey)}` : location.pathname,
+    );
+  }
+}
+
+// operation タブで [key] の設定を開く。通信タブから使う。
+function openOperation(key) {
+  showTab("operations");
+  select(key);
+  elements.editor.scrollIntoView();
 }
 
 function readEditedResponse() {
@@ -438,4 +484,15 @@ elements.resetAll.addEventListener("click", () => {
   }, "すべての operation を既定に戻しました。");
 });
 
-run(load, "");
+for (const tab of elements.tabs) {
+  tab.addEventListener("click", () => showTab(tab.dataset.tab));
+}
+
+// traffic.js と profile.js を読み込んでから始める。
+document.addEventListener("DOMContentLoaded", () => {
+  run(load, "");
+  run(loadProfiles, "");
+  if (location.hash === trafficHash) {
+    showTab("traffic");
+  }
+});

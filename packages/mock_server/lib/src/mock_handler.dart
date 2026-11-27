@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:internal_mock_server/src/mock_settings.dart';
 import 'package:internal_mock_server/src/openapi_document.dart';
+import 'package:internal_mock_server/src/request_log.dart';
+import 'package:internal_mock_server/src/traffic_middleware.dart';
 import 'package:shelf/shelf.dart';
 
 /// [document] の operation にリクエストを振り分け、仕様書の example を返す
@@ -72,9 +74,9 @@ Future<Response> _respondTo(
   if (settings.delay > Duration.zero) {
     await Future<void>.delayed(settings.delay);
   }
-  return switch (settings.response) {
-    null => _respond(operation.response),
-    EditedResponse(:final statusCode, :final contentType, :final body) =>
+  final (response, source) = switch (settings.response) {
+    null => (_respond(operation.response), ResponseSource.spec),
+    EditedResponse(:final statusCode, :final contentType, :final body) => (
       _respond(
         ExampleResponse(
           statusCode: statusCode,
@@ -82,11 +84,21 @@ Future<Response> _respondTo(
           body: body,
         ),
       ),
-    SpecErrorResponse(:final statusCode) => _respond(
-      operation.errorResponses[statusCode] ??
-          MissingExample('${operation.label} に $statusCode の応答がありません。'),
+      ResponseSource.edited,
+    ),
+    SpecErrorResponse(:final statusCode) => (
+      _respond(
+        operation.errorResponses[statusCode] ??
+            MissingExample('${operation.label} に $statusCode の応答がありません。'),
+      ),
+      ResponseSource.specError,
     ),
   };
+  return withTrafficInfo(
+    response,
+    operationKey: operation.key,
+    source: source,
+  );
 }
 
 Response _respond(MockResponse response) => switch (response) {

@@ -38,13 +38,23 @@ paths:
   final itemPath = '/_admin/api/operations/${Uri.encodeComponent(itemKey)}';
 
   late MockSettings settings;
+  late RequestLog log;
+  late _MemoryProfileStore profiles;
   late Handler handler;
 
   setUp(() {
     settings = MockSettings();
+    log = RequestLog();
+    profiles = _MemoryProfileStore();
     Future<Uint8List> assets(String path) async => utf8.encode('asset:$path');
     handler = mountAdmin(
-      createAdminHandler(document, settings, assets: assets),
+      createAdminHandler(
+        document,
+        settings,
+        assets: assets,
+        log: log,
+        profiles: profiles,
+      ),
       (request) => Response.ok('mock'),
     );
   });
@@ -73,6 +83,58 @@ paths:
     });
   });
 
+  group('serveFavicon', () {
+    Future<Response> get(Handler handler, String path) async =>
+        await handler(Request('GET', Uri.parse('http://localhost$path')));
+    Response mock(Request request) => Response.ok('mock');
+
+    test('/favicon.ico には 204 を返し、ほかは内側に渡す', () async {
+      final favicon = serveFavicon(document, mock);
+
+      final icon = await get(favicon, '/favicon.ico');
+      expect(icon.statusCode, 204);
+      expect(await icon.readAsString(), isEmpty);
+      expect(await (await get(favicon, '/items/1')).readAsString(), 'mock');
+    });
+
+    test('仕様書に /favicon.ico があれば、内側に渡す', () async {
+      final favicon = serveFavicon(
+        OpenApiDocument.parse('''
+paths:
+  /favicon.ico:
+    get:
+      responses:
+        "200":
+          description: ok
+          content:
+            text/plain:
+              example: icon
+'''),
+        mock,
+      );
+
+      expect(await (await get(favicon, '/favicon.ico')).readAsString(), 'mock');
+    });
+
+    test('servers にパスがあれば、仕様書に /favicon.ico があっても返す', () async {
+      final favicon = serveFavicon(
+        OpenApiDocument.parse('''
+servers:
+  - url: https://api.example.com/v1
+paths:
+  /favicon.ico:
+    get:
+      responses:
+        "200":
+          description: ok
+'''),
+        mock,
+      );
+
+      expect((await get(favicon, '/favicon.ico')).statusCode, 204);
+    });
+  });
+
   group('画面のファイル', () {
     test('/_admin/ には index.html を返す', () async {
       final response = await send('GET', '/_admin/');
@@ -96,6 +158,10 @@ paths:
       expect(js.headers['content-type'], 'text/javascript; charset=utf-8');
       expect(await js.readAsString(), 'asset:admin/admin.js');
       expect(css.headers['content-type'], 'text/css; charset=utf-8');
+      final traffic = await send('GET', '/_admin/traffic.js');
+      expect(await traffic.readAsString(), 'asset:admin/traffic.js');
+      final profile = await send('GET', '/_admin/profile.js');
+      expect(await profile.readAsString(), 'asset:admin/profile.js');
     });
 
     test('決まったファイルのほかには、リクエストのパスを示して 404 を返す', () async {
@@ -112,6 +178,8 @@ paths:
         document,
         settings,
         assets: (path) async => throw Exception('missing'),
+        log: log,
+        profiles: profiles,
       );
 
       final response = await failing(
@@ -350,4 +418,215 @@ paths:
       }
     });
   });
+
+  group('通信の履歴の API', () {
+    void addEntry(String path) => log.add(
+      time: DateTime.utc(2026),
+      method: 'GET',
+      path: path,
+      operationKey: itemKey,
+      source: ResponseSource.spec,
+      statusCode: 200,
+      duration: const Duration(milliseconds: 5),
+      requestHeaders: {'accept': 'application/json'},
+      requestBody: '',
+      responseContentType: 'application/json',
+      responseBody: '{"id":"1"}',
+    );
+
+    test('after より新しい履歴の一覧を、中身を除いて返す', () async {
+      addEntry('/items/1');
+      addEntry('/items/2');
+
+      final json = await jsonOf(
+        await send('GET', '/_admin/api/traffic?after=1'),
+      );
+
+      expect(json, {
+        'lastId': 2,
+        'entries': [
+          {
+            'id': 2,
+            'time': '2026-01-01T00:00:00.000Z',
+            'method': 'GET',
+            'path': '/items/2',
+            'operationKey': itemKey,
+            'source': 'spec',
+            'statusCode': 200,
+            'durationMs': 5,
+          },
+        ],
+      });
+    });
+
+    test('1 件の中身を返す', () async {
+      addEntry('/items/1');
+
+      final json = await jsonOf(await send('GET', '/_admin/api/traffic/1'));
+
+      expect(
+        json,
+        allOf(
+          containsPair('requestHeaders', {'accept': 'application/json'}),
+          containsPair('responseBody', '{"id":"1"}'),
+          containsPair('responseBodyTruncated', false),
+        ),
+      );
+    });
+
+    test('ない履歴には 404 を返す', () async {
+      expect((await send('GET', '/_admin/api/traffic/1')).statusCode, 404);
+    });
+
+    test('整数でない after には 400 を返す', () async {
+      expect(
+        (await send('GET', '/_admin/api/traffic?after=x')).statusCode,
+        400,
+      );
+    });
+
+    test('DELETE で履歴を消す', () async {
+      addEntry('/items/1');
+
+      final response = await send('DELETE', '/_admin/api/traffic');
+
+      expect(response.statusCode, 204);
+      expect(log.entries, isEmpty);
+    });
+  });
+
+  group('プロファイルの API', () {
+    test('共有と自分用のプロファイルの一覧を返す', () async {
+      profiles
+        ..shared['empty'] = '{}'
+        ..local['mine'] = '{}';
+
+      expect(await jsonOf(await send('GET', '/_admin/api/profiles')), {
+        'profiles': [
+          {'name': 'empty', 'shared': true},
+          {'name': 'mine', 'shared': false},
+        ],
+      });
+    });
+
+    test('今の設定を自分用に保存する', () async {
+      settings.update(
+        itemKey,
+        const OperationSettings(response: SpecErrorResponse(404)),
+      );
+
+      final response = await send('PUT', '/_admin/api/profiles/local/errors');
+
+      expect(response.statusCode, 200);
+      expect(jsonDecode(profiles.local['errors']!), {
+        'version': 1,
+        'operations': {
+          itemKey: {
+            'response': {'type': 'specError', 'statusCode': 404},
+            'delayMs': 0,
+          },
+        },
+      });
+    });
+
+    test('使えない名前には 400 を返す', () async {
+      final response = await send(
+        'PUT',
+        '/_admin/api/profiles/local/${Uri.encodeComponent('../x')}',
+      );
+
+      expect(response.statusCode, 400);
+      expect(profiles.local, isEmpty);
+    });
+
+    test('プロファイルを適用し、読み飛ばしたものを返す', () async {
+      profiles.shared['errors'] = jsonEncode({
+        'version': 1,
+        'operations': {
+          itemKey: {
+            'response': {'type': 'specError', 'statusCode': 404},
+          },
+          'GET /removed': {'delayMs': 10},
+        },
+      });
+
+      final response = await send(
+        'POST',
+        '/_admin/api/profiles/apply',
+        body: {'name': 'errors', 'shared': true},
+      );
+
+      expect(response.statusCode, 200);
+      expect(await jsonOf(response), {
+        'skipped': ['仕様書に GET /removed の operation がありません。'],
+      });
+      expect(settings.of(itemKey).response, isA<SpecErrorResponse>());
+    });
+
+    test('ないプロファイルの適用には 404 を返す', () async {
+      final response = await send(
+        'POST',
+        '/_admin/api/profiles/apply',
+        body: {'name': 'none', 'shared': false},
+      );
+
+      expect(response.statusCode, 404);
+    });
+
+    test('読めないプロファイルの適用には 422 を返し、設定を変えない', () async {
+      settings.update(
+        itemKey,
+        const OperationSettings(delay: Duration(seconds: 1)),
+      );
+      profiles.local['broken'] = '{';
+
+      final response = await send(
+        'POST',
+        '/_admin/api/profiles/apply',
+        body: {'name': 'broken', 'shared': false},
+      );
+
+      expect(response.statusCode, 422);
+      expect(settings.of(itemKey).delay, const Duration(seconds: 1));
+    });
+
+    test('自分用のプロファイルを消す', () async {
+      profiles.local['mine'] = '{}';
+
+      final response = await send('DELETE', '/_admin/api/profiles/local/mine');
+
+      expect(response.statusCode, 204);
+      expect(profiles.local, isEmpty);
+    });
+  });
+}
+
+final class _MemoryProfileStore implements ProfileStore {
+  final shared = <String, String>{};
+
+  final local = <String, String>{};
+
+  @override
+  Future<List<ProfileRef>> list() async => [
+    for (final name in shared.keys) (name: name, shared: true),
+    for (final name in local.keys) (name: name, shared: false),
+  ];
+
+  @override
+  Future<String> read(ProfileRef ref) async =>
+      (ref.shared ? shared : local)[ref.name] ??
+      (throw ProfileStoreException('${ref.name} がありません。'));
+
+  @override
+  Future<void> save(String name, String content) async {
+    validateProfileName(name);
+    local[name] = content;
+  }
+
+  @override
+  Future<void> delete(String name) async {
+    if (local.remove(name) == null) {
+      throw ProfileStoreException('$name がありません。');
+    }
+  }
 }

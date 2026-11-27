@@ -28,8 +28,19 @@ header h1 {
   font-size: 1.1rem;
 }
 
+header {
+  flex-wrap: wrap;
+}
+
 nav {
   flex: 1;
+}
+
+#operation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
 }
 
 .tab {
@@ -134,4 +145,80 @@ textarea {
 .actions {
   display: flex;
   gap: 8px;
+}
+
+#tab-traffic {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+@media (max-width: 720px) {
+  #tab-traffic {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+#traffic-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+
+#traffic-list button {
+  display: grid;
+  grid-template-columns: 5em 4em minmax(0, 1fr) 2.5em 4.5em;
+  gap: 8px;
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  background: none;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+#traffic-list button[aria-current="true"] {
+  border-color: var(--accent);
+}
+
+#traffic-list .method {
+  font-weight: bold;
+}
+
+#traffic-list .path {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#traffic-list .failed .status {
+  color: #d33;
+}
+
+#traffic-list .duration,
+#traffic-list .time {
+  opacity: 0.7;
+  font-size: 0.9em;
+}
+
+#traffic-detail h2 {
+  margin-top: 0;
+  font-size: 1rem;
+  word-break: break-all;
+}
+
+#traffic-detail h3 {
+  font-size: 0.95rem;
+}
+
+#traffic-detail pre {
+  margin: 4px 0;
+  padding: 8px;
+  border: 1px solid var(--border);
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-family: ui-monospace, monospace;
+}
+
+#traffic-detail pre:empty {
+  display: none;
 }
