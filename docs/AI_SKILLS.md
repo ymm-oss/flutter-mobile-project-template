@@ -152,6 +152,8 @@ dart run skills@1.0.4 get --agent generic --git <取り込み元の URL> --skill
 | `flutter-add-integration-test` | `launch_app`、`get_widget_tree`、`tap` など。`get_widget_tree` は `widget_inspector` の、`tap` は `flutter_driver_command` のコマンド    |
 | `flutter-fix-layout-issues`    | `description` に MCP のツールを使うとある。ツール名は書かれていない                                                                      |
 
+`dart-fix-runtime-errors` と `flutter-fix-layout-issues` は、`description` だけが Server のツールに触れている。エージェントは `description` を見てスキルを選ぶため、この表に載せている。
+
 `flutter-add-integration-test` の `launch_app` は既定では無効なため、このスキルを使うときは Server の起動時に `--enable flutter_app_lifecycle` を足す。`tap` などは、アプリが Flutter Driver の拡張を有効にしていないと使えない。Flutter Driver の拡張は Marionette と同じアプリでは使えない（[MCP Server の設定] の「Flutter Driver の制約」）。
 
 `dart-run-static-analysis` と `dart-use-ffigen` も Server のツールに触れるが、Server がなければ CLI や pub.dev で同じことをするよう書かれており、前提にはしていない。

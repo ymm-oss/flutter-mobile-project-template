@@ -27,7 +27,7 @@ MCPサーバーは、特定のドメインやサービス（Flutterアプリの�
 3. 後述する各種 MCP Server のセットアップを実施する
 4. Claude Code を起動し直す。`.mcp.json` の MCP Server を使ってよいか確認されたら承認する。接続の状態は `/mcp` で確かめられる
 
-Cursor を使う場合は、`.mcp.json` と同じ内容を `.cursor/mcp.json` に書いてください。Cursor で `analyze_files` や `lsp` が表示されない場合は、Cursor が MCP の roots に対応していない可能性があります。
+Cursor を使う場合は、`.mcp.json` と同じ内容を `.cursor/mcp.json` に書いてください。
 
 Codex 用の設定例は、このドキュメントでは扱いません。
 
@@ -106,7 +106,7 @@ mise exec -- flutter run \
 
 - 実行中のアプリのランタイムエラーと Widget ツリーの取得
 - Hot reload、Hot restart
-- 静的解析、シンボルの定義の検索
+- 静的解析、シンボルの検索
 - pub.dev の検索、依存パッケージのソースの参照
 - アプリの起動と停止（既定では無効）
 
