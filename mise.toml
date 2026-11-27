@@ -1,5 +1,5 @@
-# mise release used in CI when this was set; it enforces mise.lock checksums for every backend.
-min_version = "2026.10.25"
+# mise release that added `mise audit`, which CI runs; it also enforces mise.lock checksums for every backend.
+min_version = "2026.11.12"
 
 [tools]
 bun = "1.4.4"

@@ -27,6 +27,7 @@ jobs:
             pubspec.lock
             bun.lock
             osv-scanner.toml
+            mise.toml
           sparse-checkout-cone-mode: false
 
       # https://github.com/jdx/mise-action
@@ -49,14 +50,42 @@ jobs:
           scan base "$RUNNER_TEMP/base.json"
           scan . "$RUNNER_TEMP/head.json"
 
-          new=$(jq -r --slurpfile base "$RUNNER_TEMP/base.json" '
-            def findings: [.results[]?.packages[]? | .package as $p | .vulnerabilities[]?
+      # mise.toml のツールは OSV-Scanner で読めないため、mise audit で調べる。
+      # 脆弱性が見つかっても設定を読めなくても終了コード 1 になるため、JSON を読めるかで見分ける。
+      - name: Run mise audit
+        shell: bash
+        run: |
+          audit() {
+            mise audit --json -C "$1" > "$2" || true
+            if ! jq -e '.vulnerabilities | type == "array"' "$2" > /dev/null; then
+              echo "::error::mise audit failed in $1"
+              exit 1
+            fi
+          }
+          # ワークスペースの中では親のフォルダにあるヘッドの mise.toml も読まれるため、外に写して調べる。
+          mkdir "$RUNNER_TEMP/base-mise"
+          cp base/mise.toml "$RUNNER_TEMP/base-mise/"
+          mise trust "$RUNNER_TEMP/base-mise/mise.toml"
+          audit "$RUNNER_TEMP/base-mise" "$RUNNER_TEMP/base-mise.json"
+          audit . "$RUNNER_TEMP/head-mise.json"
+
+      - name: Report new vulnerabilities
+        shell: bash
+        run: |
+          new=$(jq -rn \
+            --slurpfile osv_base "$RUNNER_TEMP/base.json" \
+            --slurpfile osv_head "$RUNNER_TEMP/head.json" \
+            --slurpfile mise_base "$RUNNER_TEMP/base-mise.json" \
+            --slurpfile mise_head "$RUNNER_TEMP/head-mise.json" '
+            def osv: [.results[]?.packages[]? | .package as $p | .vulnerabilities[]?
               | {ecosystem: $p.ecosystem, name: $p.name, version: $p.version, id}];
-            ($base[0] | findings | map({ecosystem, name, id})) as $known
-            | findings[]
+            def mise: [.vulnerabilities[] | {ecosystem: "mise", name: .tool, version, id}];
+            (($osv_base[0] | osv) + ($mise_base[0] | mise) | map({ecosystem, name, id})) as $known
+            | ($osv_head[0] | osv) + ($mise_head[0] | mise)
+            | .[]
             | select({ecosystem, name, id} as $k | any($known[]; . == $k) | not)
             | "| \(.ecosystem) | \(.name) | \(.version) | [\(.id)](https://osv.dev/vulnerability/\(.id)) |"
-          ' "$RUNNER_TEMP/head.json")
+          ')
 
           if [ -z "$new" ]; then
             echo "No new vulnerabilities found." | tee -a "$GITHUB_STEP_SUMMARY"

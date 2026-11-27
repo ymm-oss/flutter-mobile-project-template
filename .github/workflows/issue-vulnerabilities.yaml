@@ -35,7 +35,7 @@ jobs:
       - name: Run OSV-Scanner
         id: scan
         run: |
-          path="$RUNNER_TEMP/vulnerabilities.md"
+          path="$RUNNER_TEMP/osv-scanner.md"
           status=0
           osv-scanner scan source --verbosity warn --format markdown -L pubspec.lock -L bun.lock > "$path" || status=$?
           cat "$path"
@@ -46,10 +46,62 @@ jobs:
             exit "$status"
           fi
 
+      # mise.toml のツールは OSV-Scanner で読めないため、mise audit で調べる。
+      # 脆弱性が見つかっても設定を読めなくても終了コード 1 になるため、JSON を読めるかで見分ける。
+      - name: Run mise audit
+        id: audit
+        run: |
+          json="$RUNNER_TEMP/mise-audit.json"
+          mise audit --json > "$json" || true
+          if ! jq -e '.vulnerabilities | type == "array"' "$json" > /dev/null; then
+            echo "::error::mise audit failed"
+            exit 1
+          fi
+
+          rows=$(jq -r '.vulnerabilities | sort_by(.tool, .id)[]
+            | "| \(.tool) | \(.version) | [\(.id)](https://osv.dev/vulnerability/\(.id)) | \(.fixed | join(", ")) |"' "$json")
+          if [ -z "$rows" ]; then
+            exit 0
+          fi
+
+          path="$RUNNER_TEMP/mise-audit.md"
+          {
+            echo "## mise audit"
+            echo
+            echo "| Tool | Version | ID | Fixed |"
+            echo "| --- | --- | --- | --- |"
+            echo "$rows"
+          } | tee "$path"
+          echo "path=$path" >> "$GITHUB_OUTPUT"
+
+      # 見つかった結果だけを、OSV-Scanner、mise audit の順につなげて本文にする
+      - name: Write the issue body
+        id: body
+        env:
+          OSV_PATH: ${{ steps.scan.outputs.path }}
+          MISE_PATH: ${{ steps.audit.outputs.path }}
+        run: |
+          if [ -z "$OSV_PATH" ] && [ -z "$MISE_PATH" ]; then
+            exit 0
+          fi
+
+          path="$RUNNER_TEMP/vulnerabilities.md"
+          : > "$path"
+          for part in "$OSV_PATH" "$MISE_PATH"; do
+            if [ -z "$part" ]; then
+              continue
+            fi
+            if [ -s "$path" ]; then
+              echo >> "$path"
+            fi
+            cat "$part" >> "$path"
+          done
+          echo "path=$path" >> "$GITHUB_OUTPUT"
+
       - name: Update the issue
         env:
           GH_TOKEN: ${{ github.token }}
-          BODY_PATH: ${{ steps.scan.outputs.path }}
+          BODY_PATH: ${{ steps.body.outputs.path }}
         run: |
           issue_number=$(gh issue list --label "$ISSUE_LABEL" --json number --jq '.[].number')
 
