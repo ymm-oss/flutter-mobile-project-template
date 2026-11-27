@@ -45,6 +45,13 @@ OpenAPI Generator と、その実行に必要な Java のバージョンは [ope
   ```
 
 - [ ] ルートの [pubspec.yaml] の `workspace` に `packages/api/<api_name>` を追加する
+- [ ] [packages/infrastructure/pubspec.yaml] の `dependencies` に `internal_api_<api_name>` を追加する
+
+  ```yaml
+  internal_api_<api_name>:
+    path: ../api/<api_name>
+  ```
+
 - [ ] 依存関係を解決し、`*.g.dart` を生成する
 
   ```shell
@@ -52,6 +59,9 @@ OpenAPI Generator と、その実行に必要な Java のバージョンは [ope
   dart run melos run gen:build
   ```
 
+- [ ] infrastructure で、生成したクライアントの Dio の `baseUrl` に `apiBaseUrl` を受け取って渡す。[apps/app/lib/composition_root] では、`buildConfigProvider` から読んだ `BuildConfig.apiBaseUrl` を infrastructure に渡す
+- [ ] [apps/app/flavor] の `dev.json`、`stg.json`、`prd.json` の `apiBaseUrl` を、各環境の API の URL に書き換える
+  - 仕様書の `servers` の URL にパス（`/v1` など）があるときは、そのパスも含める。[.vscode/launch.json] と [.idea/runConfigurations/mock_debug.xml] の `mock-debug` の `apiBaseUrl` にも、同じパスを付ける
 - [ ] モックサーバーを起動し、仕様書の `example` が返ることを確かめる
 
   ```shell
@@ -59,6 +69,8 @@ OpenAPI Generator と、その実行に必要な Java のバージョンは [ope
   ```
 
   `example` がない operation には 501 を返すため、モックで確かめたい operation には `example` を書く
+
+- [ ] アプリを実行構成 `mock-debug` で起動し、API のリクエストがモックサーバーのログに出ることを確かめる。Android では先に `adb reverse` を実行する（[docs/MOCK_SERVER.md] の「アプリからの接続」を参照）
 
 - [ ] 生成した `packages/api/<api_name>` と、`mise bs` が更新した [.github/labeler.yml] と [.github/labels.yml] をコミットする
 - [ ] 生成したパッケージを `infrastructure` 以外から使う場合は、[docs/ARCHITECTURE.md] の依存の向きを書き換える
@@ -72,11 +84,14 @@ OpenAPI を使わない場合は、次を削除してください。
 - [ ] [.github/workflows/wc-check-openapi.yaml] と、[.github/workflows/check-pr.yaml]、[.github/workflows/merge-queue.yaml]、[.github/workflows/wc-changes.yml] の `openapi` の記述
 - [ ] `packages/mock_server` ディレクトリと、ルートの [pubspec.yaml] の `workspace` の `packages/mock_server`
 - [ ] [mise.toml] の `mock` タスク
+- [ ] [.vscode/launch.json] と [.idea/runConfigurations/mock_debug.xml] の `mock-debug`
 - [ ] [dprint.jsonc]、[cspell.jsonc]、[.gitattributes] の `packages/api` の行
 - [ ] [docs/ARCHITECTURE.md] のディレクトリ構造の `openapi`、`packages/api`、`packages/mock_server` と、依存の図の `api`
 - [ ] [docs/GET_STARTED.md] の「モックサーバーの起動」と、末尾の `[モックサーバー]` のリンク定義、[docs/MOCK_SERVER.md]
 
 削除したあとに `mise bs` を実行し、更新された [.github/labeler.yml] と [.github/labels.yml] もコミットしてください。
+
+`BuildConfig.apiBaseUrl` と [apps/app/flavor] の `apiBaseUrl` は削除しません。OpenAPI を使わずに API を呼ぶときも、`apiBaseUrl` を各環境の API の URL に書き換えてください。
 
 <!-- Links -->
 
@@ -84,6 +99,7 @@ OpenAPI を使わない場合は、次を削除してください。
 [openapi/sample]: ../tree/main/openapi/sample
 [openapi/mise.toml]: ../blob/main/openapi/mise.toml
 [pubspec.yaml]: ../blob/main/pubspec.yaml
+[packages/infrastructure/pubspec.yaml]: ../blob/main/packages/infrastructure/pubspec.yaml
 [dprint.jsonc]: ../blob/main/dprint.jsonc
 [cspell.jsonc]: ../blob/main/cspell.jsonc
 [.gitattributes]: ../blob/main/.gitattributes
@@ -97,3 +113,7 @@ OpenAPI を使わない場合は、次を削除してください。
 [docs/GET_STARTED.md]: ../blob/main/docs/GET_STARTED.md
 [docs/MOCK_SERVER.md]: ../blob/main/docs/MOCK_SERVER.md
 [packages/mock_server]: ../tree/main/packages/mock_server
+[apps/app/lib/composition_root]: ../tree/main/apps/app/lib/composition_root
+[apps/app/flavor]: ../tree/main/apps/app/flavor
+[.vscode/launch.json]: ../blob/main/.vscode/launch.json
+[.idea/runConfigurations/mock_debug.xml]: ../blob/main/.idea/runConfigurations/mock_debug.xml

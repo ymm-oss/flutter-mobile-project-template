@@ -3,5 +3,6 @@
   "appName": "stg-Template",
   "appIdAndroid": "jp.co.yumemi.template",
   "appIdIos": "jp.co.yumemi.template",
-  "appIdSuffix": ".stg"
+  "appIdSuffix": ".stg",
+  "apiBaseUrl": "https://stg.api.example.com"
 }

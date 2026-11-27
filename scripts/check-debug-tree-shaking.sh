@@ -44,10 +44,10 @@ code_size_dir="$work_dir/code-size"
 mkdir -p "$code_size_dir"
 
 # flutter assemble は Gradle などから base64 エンコード済みの dart-define を受け取る前提のため、
-# flavor ファイルの各値をエンコードして渡す。
+# flavor ファイルの各値をエンコードして渡す。GNU の base64 は 76 文字ごとに改行を入れるため、改行を取り除く。
 dart_define_args=()
 while IFS= read -r define; do
-  dart_define_args+=("--dart-define=$(printf '%s' "$define" | base64)")
+  dart_define_args+=("--dart-define=$(printf '%s' "$define" | base64 | tr -d '\n')")
 done < <(jq -r 'to_entries[] | "\(.key)=\(.value)"' "$app_dir/flavor/$flavor.json")
 
 # Android 向けの AOT コンパイルに必要なアーティファクト（gen_snapshot）を取得する

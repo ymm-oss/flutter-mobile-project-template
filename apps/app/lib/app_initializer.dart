@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_app/composition_root/build_config_provider.dart';
 import 'package:flutter_app/composition_root/data_sources/shared_preference_data_source.dart';
 import 'package:flutter_app/configuration/build_config.dart';
-import 'package:flutter_app/presentation/providers/build_config_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:internal_shared/logger.dart';

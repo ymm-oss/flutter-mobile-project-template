@@ -186,7 +186,8 @@ flowchart TD
 apps/app/lib/composition_root/
 ├── data_sources/              # データソースの依存関係を定義
 ├── repositories/              # リポジトリの依存関係を定義
-└── use_cases/                 # ユースケースの依存関係を定義
+├── use_cases/                 # ユースケースの依存関係を定義
+└── build_config_provider.dart # 起動時に上書きして渡す BuildConfig の provider
 ```
 
 ##### 実装例
