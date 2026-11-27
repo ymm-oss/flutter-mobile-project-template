@@ -61,9 +61,16 @@ melos の `diff` フィルタは、ファイルが変わったパッケージだ
 
 [Setup Application Runtime] は、すべてのジョブで `melos bootstrap` を実行します。bootstrap の post フックは使っていないため、増える時間はわずかです。時間のかかる処理を post フックに足さないでください。
 
-`analysis_options.yaml` の `include:` は bootstrap では更新しません。diff-gen が bootstrap の後に `melos run update:yumemi_lints` を実行し、差分が出たら失敗します。`update:yumemi_lints` が更新するのは、yumemi_lints を `pubspec.yaml` の依存に直接書いたパッケージ（今は `samples/webview`）の `analysis_options.yaml` だけです。yumemi_lints はそのパッケージの `pubspec.yaml` の `environment` と、yumemi_lints のバージョンから `include:` を決めます。どちらも diff-gen の `gen` フィルタ（`**.yaml`、`**/pubspec.lock`）に含まれます。
+`analysis_options.yaml` の `include:` は bootstrap では更新しません。diff-gen が bootstrap の後に `melos run update:yumemi_lints` を実行し、差分が出たら失敗します。`update:yumemi_lints` は次の `analysis_options.yaml` を更新します。
 
-ほかのパッケージが使うルートの `analysis_options.yaml` は、`update:yumemi_lints` の対象外です。ルートの `include:` は手で直してください。diff-gen はルートの `include:` が古くても失敗しません。テンプレートから作ったプロジェクトで `samples/` を消したときは、対象のパッケージがなくなり、diff-gen はどの `include:` も検査せずに通ります。
+- ルート: 自分の `analysis_options.yaml` を持たないパッケージは、この設定を使います。`include:` はルートの `pubspec.yaml` の `melos.command.bootstrap.environment` から決まります。
+- yumemi_lints を `pubspec.yaml` の依存に直接書いたパッケージ（今は `samples/webview`）: `include:` はそのパッケージの `pubspec.yaml` の `environment` から決まります。
+
+`include:` は yumemi_lints のバージョンによっても変わります。`include:` を決める `pubspec.yaml` と `pubspec.lock`、書き直す `analysis_options.yaml` は、どれも diff-gen の `gen` フィルタ（`**.yaml`、`**/pubspec.lock`）に含まれます。
+
+yumemi_lints がルートで動くことは、公式には保証されていません。ルートの `pubspec.yaml` の並びによっては、正しく読めなくなることがあります。その場合は `update:yumemi_lints` が失敗するか、`include:` が書き換わって diff-gen が失敗します。詳しくはルートの `pubspec.yaml` の `update:yumemi_lints:root` のコメントを見てください。
+
+テンプレートから作ったプロジェクトで `samples/` を消すと、yumemi_lints を依存に直接書いたパッケージはなくなります。その場合も diff-gen はルートの `include:` を検査します。パッケージが 0 件になることは正常なので、それだけでは失敗しません。
 
 ## キャッシュ
 
