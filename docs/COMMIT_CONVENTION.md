@@ -92,10 +92,44 @@ fix(api): ユーザー情報取得APIのエラーハンドリングを修正
 ただし、コミットメッセージの検査も飛ばされます。
 ファイルの検査の違反は CI で検出されますが、コミットメッセージは CI では検査しません。
 
-CI の `gitleaks git` は、`.gitleaks.toml` と `.gitleaksignore` を PR のマージ先のブランチから読みます。
+CI の `gitleaks git` は、`.gitleaks.toml` と `.gitleaksignore` を PR の base のコミットから読みます。
+マージキューでは直前のエントリのマージ結果から読みます。
 PR で足したり変えたりした設定と除外は、マージされるまで CI では使われません。
 `.gitattributes` と行コメントの `gitleaks:allow` は使いません。
 `.gitleaks.toml` の `[extend] path` で別のファイルを読むと、CI の検査は失敗します。
+
+コミットの前に実行する `gitleaks git --staged` は、作業ツリーの `.gitleaks.toml`、`.gitleaksignore`、`gitleaks:allow` を使います。
+そのため、PR で足した除外は手元では効いても CI では効きません。
+
+### 秘密情報ではない値が検出されたとき
+
+CI の `gitleaks git` が秘密情報ではない値（テスト用のダミーの値など）を検出したら、次の順で除外します。
+CI を無視してマージする必要はありません。
+
+1. 除外だけを足す PR を別に作り、マージします。
+   この PR には検出されたコミットが入っていないので、CI は通ります。
+2. 元の PR に push するか、Update branch で更新します。
+   CI を再実行するだけでは、除外は反映されません。
+   CI が設定を読む base のコミットは、PR を最後に更新したときのものに決まるためです。
+
+除外は `.gitleaks.toml` の allowlist に書きます。
+`[extend] useDefault = true` は必ず書いてください。
+書かないと gitleaks の既定のルールが使われなくなり、ほかの秘密情報も検出されなくなります。
+
+```toml
+[extend]
+useDefault = true
+
+[allowlist]
+# ファイルやディレクトリごと除外する
+paths = ['''^test/fixtures/''']
+# 特定の値だけを除外する
+regexes = ['''^dummy-api-key-for-tests$''']
+```
+
+`.gitleaksignore` に検出結果の指紋（fingerprint）を書く方法は使いません。
+指紋には検出したコミットの SHA が入るので、元の PR を rebase すると効かなくなります。
+SHA を除いた指紋は行番号に結び付くので、同じ値が別の行に出ると検出されます。
 
 <!-- Links -->
 
