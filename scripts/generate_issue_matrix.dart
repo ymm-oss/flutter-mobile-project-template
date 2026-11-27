@@ -1,4 +1,5 @@
 #!/usr/bin/env dart
+
 /// GitHub Actions Matrix Strategy用のJSON生成スクリプト
 ///
 /// .github/initialization ディレクトリ内のマークダウンファイルを読み取り、
@@ -12,7 +13,6 @@ import 'dart:io';
 import 'package:yaml/yaml.dart';
 
 final class FileMetadata {
-
   new({required this.title, required this.labels});
 
   factory fromYaml(YamlMap yaml) {
@@ -27,7 +27,6 @@ final class FileMetadata {
 
 /// Matrix Strategy用のデータ
 final class MatrixItem {
-
   new({
     required this.title,
     required this.contentFilepath,
@@ -100,9 +99,9 @@ List<MatrixItem> _readInitializationFiles(String initDir) {
   final files = directory
       .listSync()
       .whereType<File>()
-      .where((file) =>
-          file.path.endsWith('.md') &&
-          !file.path.endsWith('README.md'),)
+      .where(
+        (file) => file.path.endsWith('.md') && !file.path.endsWith('README.md'),
+      )
       .toList();
 
   for (final file in files) {
@@ -112,25 +111,33 @@ List<MatrixItem> _readInitializationFiles(String initDir) {
 
       if (metadata == null) {
         stderr.writeln('Error: ${file.path} has no valid YAML frontmatter');
-        stderr.writeln('''All markdown files must have YAML frontmatter with title and labels''');
+        stderr.writeln(
+          '''All markdown files must have YAML frontmatter with title and labels''',
+        );
         exit(1);
       }
 
       // title と labels が必須
       if (metadata.title.isEmpty || metadata.labels == null) {
-        stderr.writeln('''Error: ${file.path} is missing required metadata (title or labels)''');
-        stderr.writeln('''Required fields: title (String), labels (String or List<String>)''');
+        stderr.writeln(
+          '''Error: ${file.path} is missing required metadata (title or labels)''',
+        );
+        stderr.writeln(
+          '''Required fields: title (String), labels (String or List<String>)''',
+        );
         exit(1);
       }
 
       final fileName = file.path.split('/').last;
       final relativePath = '.github/initialization/$fileName';
 
-      items.add(MatrixItem(
-        title: metadata.title,
-        contentFilepath: relativePath,
-        labels: metadata.labels,
-      ),);
+      items.add(
+        MatrixItem(
+          title: metadata.title,
+          contentFilepath: relativePath,
+          labels: metadata.labels,
+        ),
+      );
     } on FileSystemException catch (e) {
       stderr.writeln('Error processing ${file.path}: $e');
       exit(1);

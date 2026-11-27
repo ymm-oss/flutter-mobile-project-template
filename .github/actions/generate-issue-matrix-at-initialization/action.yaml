@@ -26,6 +26,6 @@ runs:
       run: |
         # Dartスクリプトでmatrix JSONを生成
         matrix=$(dart run scripts/generate_issue_matrix.dart)
-        echo "matrix=$matrix" >> $GITHUB_OUTPUT
+        echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
         echo "Generated matrix:"
         echo "$matrix" | jq .

@@ -52,7 +52,7 @@
       "type": "dart",
       "args": [
         "--dart-define-from-file=flavor/dev.json",
-        "--dart-define=apiBaseUrl=http://127.0.0.1:4000"
+        "--dart-define=apiBaseUrl=http://127.0.0.1:4010"
       ]
     },
     {

@@ -19,9 +19,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Application Runtime
-        uses: ./.github/actions/setup-application-runtime
-        with:
-          bootstrap-workspace: false
+        uses: $/.github/actions/setup-application-runtime
 
       # https://github.com/jdx/mise-action
       # キャッシュを使うと、前のステップで入れた Flutter も別のキーで保存されるため、使わない

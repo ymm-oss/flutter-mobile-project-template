@@ -11,7 +11,7 @@ import 'package:shelf/shelf_io.dart' as shelf_io;
 /// `/_admin/` で、operation ごとに応答を切り替える管理画面を配信する。
 Future<void> main(List<String> arguments) async {
   final parser = ArgParser()
-    ..addOption('port', abbr: 'p', help: '待ち受けるポート', defaultsTo: '4000')
+    ..addOption('port', abbr: 'p', help: '待ち受けるポート', defaultsTo: '4010')
     ..addFlag('help', abbr: 'h', negatable: false, help: '使い方を表示する');
 
   final ArgResults results;
@@ -90,7 +90,7 @@ Future<void> main(List<String> arguments) async {
     '管理画面: http://${server.address.host}:${server.port}$adminPath/',
   );
   if (document.skippedPaths.isNotEmpty) {
-    stdout.writeln(r'次のパスは中身を読めないため、読み飛ばしました。ほかのファイルへの $ref は読めません。');
+    stdout.writeln(r'次のパスは中身を読めないため、501 を返します。ほかのファイルへの $ref は読めません。');
     for (final path in document.skippedPaths) {
       stdout.writeln('  - $path');
     }
