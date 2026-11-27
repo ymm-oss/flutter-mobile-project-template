@@ -78,6 +78,14 @@ Please check:
 - [Visual Studio Code] の場合、`.vscode/launch.json` を確認してください。
 - [IntelliJ IDEA] または [Android Studio] の場合、`.idea/runConfigurations/~.xml` を確認してください。
 
+### モックサーバーの起動
+
+OpenAPI を使う場合は、次のコマンドで、仕様書（`openapi/<api_name>/openapi.yaml`）の `example` を返すモックサーバーが起動します。`openapi/` に API が複数あるときは、`mise run mock <api_name>` で API 名を指定してください。アプリからの接続と応答については、[モックサーバー] を参照してください。
+
+```shell
+mise run mock
+```
+
 ## AI コーディングツール
 
 Cursor、GitHub Copilot、Claude Code で共有するスキルは `.agents/skills/` に含まれています。Claude Code は `.agents/skills/` への symlink である `.claude/skills` から読みます。Windows で symlink がパス文字列のファイルとして checkout されたときは、次のスクリプトで復元します。手順と Windows での設定は [AI スキルの配置] を参照してください。
@@ -134,5 +142,6 @@ AI が常に守る規約は、ルートの [AGENTS.md] に書いています。�
 [flutter-mobile-project-template]: https://github.com/ymm-oss/flutter-mobile-project-template/tree/main
 [flutter-mobile-project-docs-template]: https://github.com/ymm-oss/flutter-mobile-project-docs-template
 [AI スキルの配置]: AI_SKILLS.md
+[モックサーバー]: MOCK_SERVER.md
 [AGENTS.md]: ../AGENTS.md
 [アーキテクチャ]: ARCHITECTURE.md

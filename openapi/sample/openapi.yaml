@@ -4,7 +4,7 @@ info:
   description: クライアント生成の動作確認に使うサンプルの仕様書です。プロジェクトの仕様書に差し替えてください。
   version: 1.0.0
 servers:
-  - url: https://api.example.com/v1
+  - url: https://api.example.com
 tags:
   - name: items
     description: アイテム
@@ -34,6 +34,14 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Item"
+              example:
+                - id: "1"
+                  name: アイテム 1
+                  description: 説明があるアイテムです。
+                  createdAt: "2026-01-01T00:00:00Z"
+                - id: "2"
+                  name: アイテム 2
+                  createdAt: "2026-01-02T00:00:00Z"
   /items/{itemId}:
     get:
       tags:
@@ -54,12 +62,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Item"
+              example:
+                id: "1"
+                name: アイテム 1
+                description: 説明があるアイテムです。
+                createdAt: "2026-01-01T00:00:00Z"
         "404":
           description: アイテムが見つからない
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+              example:
+                message: アイテムが見つかりません。
 components:
   schemas:
     Item:

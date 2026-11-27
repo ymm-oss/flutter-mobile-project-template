@@ -43,6 +43,10 @@ labels:
     files:
       - packages/infrastructure/.+
 
+  - label: "@packages/mock_server"
+    files:
+      - packages/mock_server/.+
+
   - label: "@packages/shared"
     files:
       - packages/shared/.+
