@@ -28,6 +28,10 @@ run = [
   'dart run melos clean',
 ]
 
+[tasks.mock]
+description = "Start the mock server that returns examples from an OpenAPI spec."
+run = 'dart run internal_mock_server:server'
+
 [tasks.cspell]
 description = "Run cspell to check spelling."
 run = [
