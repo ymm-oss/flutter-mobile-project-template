@@ -28,6 +28,8 @@ jobs:
       - name: Install Mise dependencies
         uses: jdx/mise-action@90f833d396d0cc3674b631d2d225e306476c303a # v5.2.10
         with:
+          # mise audit の JSON の形と標準エラーの出し方に頼るため、確かめたバージョンに固定する。
+          version: "2026.11.14"
           install_args: "osv-scanner"
 
       # https://google.github.io/osv-scanner/output/#return-codes
@@ -35,7 +37,7 @@ jobs:
       - name: Run OSV-Scanner
         id: scan
         run: |
-          path="$RUNNER_TEMP/vulnerabilities.md"
+          path="$RUNNER_TEMP/osv-scanner.md"
           status=0
           osv-scanner scan source --verbosity warn --format markdown -L pubspec.lock -L bun.lock > "$path" || status=$?
           cat "$path"
@@ -46,10 +48,80 @@ jobs:
             exit "$status"
           fi
 
+      # mise.toml のツールは OSV-Scanner で読めないため、mise audit で調べる。
+      # 脆弱性が見つかっても設定を読めなくても終了コード 1 になるため、JSON を読めるかで見分ける。
+      # バージョンを解決できないツールがあると、JSON を出したあとに標準エラーに ERROR を出すため、それも失敗にする。
+      # 失敗しても OSV-Scanner の結果を Issue に載せるため、ここでは止めずに理由を本文に書き、最後のステップで失敗にする。
+      - name: Run mise audit
+        id: audit
+        env:
+          NO_COLOR: 1
+        run: |
+          json="$RUNNER_TEMP/mise-audit.json"
+          log="$RUNNER_TEMP/mise-audit.log"
+          path="$RUNNER_TEMP/mise-audit.md"
+          mise audit --json > "$json" 2> "$log" || true
+          cat "$log" >&2
+
+          if ! jq -e '.vulnerabilities | type == "array"' "$json" > /dev/null || grep -q ERROR "$log"; then
+            # ERROR の行を理由にする。ERROR の行がないとき（設定ファイルの解析エラーなど）は、最後の 20 行を使う。
+            # 理由に ``` があっても表示が崩れないよう、囲まずに字下げしたコードブロックにする。
+            reason=$(grep ERROR "$log" || tail -n 20 "$log")
+            {
+              echo "## mise audit"
+              echo
+              echo "mise audit failed."
+              echo
+              echo "    ${reason//$'\n'/$'\n'    }"
+            } | tee "$path"
+            echo "path=$path" >> "$GITHUB_OUTPUT"
+            echo "failed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          rows=$(jq -r '.vulnerabilities | sort_by(.tool, .id)[]
+            | "| \(.tool) | \(.version) | [\(.id)](https://osv.dev/vulnerability/\(.id)) | \(.fixed | join(", ")) |"' "$json")
+          if [ -z "$rows" ]; then
+            exit 0
+          fi
+
+          {
+            echo "## mise audit"
+            echo
+            echo "| Tool | Version | ID | Fixed |"
+            echo "| --- | --- | --- | --- |"
+            echo "$rows"
+          } | tee "$path"
+          echo "path=$path" >> "$GITHUB_OUTPUT"
+
+      # 見つかった結果だけを、OSV-Scanner、mise audit の順につなげて本文にする
+      - name: Write the issue body
+        id: body
+        env:
+          OSV_PATH: ${{ steps.scan.outputs.path }}
+          MISE_PATH: ${{ steps.audit.outputs.path }}
+        run: |
+          if [ -z "$OSV_PATH" ] && [ -z "$MISE_PATH" ]; then
+            exit 0
+          fi
+
+          path="$RUNNER_TEMP/vulnerabilities.md"
+          : > "$path"
+          for part in "$OSV_PATH" "$MISE_PATH"; do
+            if [ -z "$part" ]; then
+              continue
+            fi
+            if [ -s "$path" ]; then
+              echo >> "$path"
+            fi
+            cat "$part" >> "$path"
+          done
+          echo "path=$path" >> "$GITHUB_OUTPUT"
+
       - name: Update the issue
         env:
           GH_TOKEN: ${{ github.token }}
-          BODY_PATH: ${{ steps.scan.outputs.path }}
+          BODY_PATH: ${{ steps.body.outputs.path }}
         run: |
           issue_number=$(gh issue list --label "$ISSUE_LABEL" --json number --jq '.[].number')
 
@@ -80,3 +152,10 @@ jobs:
           fi
 
           gh issue comment "$issue_number" --body-file "$BODY_PATH"
+
+      # mise audit の失敗に Actions の画面でも気づけるよう、Issue を更新したあとに失敗にする
+      - name: Fail if mise audit failed
+        if: steps.audit.outputs.failed == 'true'
+        run: |
+          echo "::error::mise audit failed. See the log of the Run mise audit step."
+          exit 1

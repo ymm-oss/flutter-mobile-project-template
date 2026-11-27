@@ -19,3 +19,4 @@ zizmor
 jactionlint
 shellcheck
 slurpfile
+miserc
