@@ -27,14 +27,19 @@ abstract class BuildConfig with _$BuildConfig {
   }) = _BuildConfig;
 
   /// [apiBaseUrlOverride] を渡すと、flavor ファイルなどの `apiBaseUrl` の代わりに使う。
+  ///
+  /// [flavor] と [apiBaseUrlFromEnvironment] は、テストで値を渡すためにある。
   factory fromPackageInfo(
     PackageInfo packageInfo, {
     String? apiBaseUrlOverride,
-  }) {
     // ここに `~.fromEnvironment()` を集約する
-    const flavor = String.fromEnvironment('flavor');
-    final apiBaseUrl =
-        apiBaseUrlOverride ?? const String.fromEnvironment('apiBaseUrl');
+    @visibleForTesting String flavor = const String.fromEnvironment('flavor'),
+    @visibleForTesting
+    String apiBaseUrlFromEnvironment = const String.fromEnvironment(
+      'apiBaseUrl',
+    ),
+  }) {
+    final apiBaseUrl = apiBaseUrlOverride ?? apiBaseUrlFromEnvironment;
     if (apiBaseUrl.isEmpty) {
       throw StateError(
         'apiBaseUrl が空です。flavor ファイルか --dart-define で渡してください。',
