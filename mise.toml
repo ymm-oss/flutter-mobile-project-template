@@ -48,7 +48,7 @@ description = "Format all packages, excluding generated code."
 run = 'dart run melos run format --no-select'
 
 [tasks.gen]
-description = "Generate code with build_runner and slang."
+description = "Generate code with build_runner and slang, and the spec for the embedded mock server."
 run = 'dart run melos run gen --no-select'
 
 [tasks.test]

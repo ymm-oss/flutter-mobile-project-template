@@ -131,7 +131,7 @@ melos:
         dirExists: lib
 
     gen:
-      description: build_runner と i18n の生成コマンドを実行します。
+      description: build_runner と i18n の生成コマンドと、アプリに組み込むモックサーバーが読む仕様書の生成を実行します。
       steps:
         - gen:i18n
         - gen:build
@@ -140,10 +140,11 @@ melos:
       description: アプリに組み込むモックサーバーが読む仕様書を、Dart の定数にして生成します。
       run: dart run internal_mock_server:generate_embedded_spec --output apps/app/lib/mock_server/embedded_mock_spec.g.dart
     gen:diff:default:
-      description: 既定ブランチと差分のあるパッケージのみ build_runner と i18n の生成コマンドを実行します。
+      description: 既定ブランチと差分のあるパッケージのみ build_runner と i18n の生成コマンドを実行し、アプリに組み込むモックサーバーが読む仕様書を生成します。
       steps:
         - gen:i18n:diff:default
         - gen:build:diff:default
+        - gen:embedded_mock_spec
     gen:build:
       description: build_runner を使用してコードを生成します。
       exec:
@@ -177,10 +178,11 @@ melos:
     # ローカル確認用
     # - 未コミットの差分パッケージのみ[build_runner][i18n]を処理するスクリプト
     gen:diff:head:
-      description: 未コミットの差分パッケージのみ build_runner と i18n の生成コマンドを実行します。
+      description: 未コミットの差分パッケージのみ build_runner と i18n の生成コマンドを実行し、アプリに組み込むモックサーバーが読む仕様書を生成します。
       steps:
         - gen:build:diff:head
         - gen:i18n:diff:head
+        - gen:embedded_mock_spec
     gen:build:diff:head:
       description: 未コミットの差分パッケージのみ build_runner を使用してコードを生成します。
       exec:

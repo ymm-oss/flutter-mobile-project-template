@@ -52,11 +52,11 @@ OpenAPI Generator と、その実行に必要な Java のバージョンは [ope
     path: ../api/<api_name>
   ```
 
-- [ ] 依存関係を解決し、`*.g.dart` を生成する
+- [ ] 依存関係を解決し、`*.g.dart` と、アプリに組み込むモックサーバーが読む仕様書の定数を生成する
 
   ```shell
   mise bs
-  dart run melos run gen:build
+  mise run gen
   ```
 
 - [ ] infrastructure で、生成したクライアントの Dio の `baseUrl` に `apiBaseUrl` を受け取って渡す。[apps/app/lib/composition_root] では、`buildConfigProvider` から読んだ `BuildConfig.apiBaseUrl` を infrastructure に渡す
@@ -75,7 +75,7 @@ OpenAPI Generator と、その実行に必要な Java のバージョンは [ope
 - [ ] 生成した `packages/api/<api_name>` と、`mise bs` が更新した [.github/labeler.yml] と [.github/labels.yml] をコミットする
 - [ ] 生成したパッケージを `infrastructure` 以外から使う場合は、[docs/ARCHITECTURE.md] の依存の向きを書き換える
 
-仕様書を更新したときは、生成スクリプト、`mise bs`、`dart run melos run gen:build` を同じ順で実行してください。モックサーバーを起動しているときは、起動し直してください。
+仕様書を更新したときは、生成スクリプト、`mise bs`、`mise run gen` を同じ順で実行してください。モックサーバーを起動しているときは、起動し直してください。
 `openapi` か `packages/api`、ルートの依存や解析の設定を変えた PR では、CI が生成し直した結果とコミット済みのものが一致するかを確かめます。
 
 OpenAPI を使わない場合は、次を削除してください。
