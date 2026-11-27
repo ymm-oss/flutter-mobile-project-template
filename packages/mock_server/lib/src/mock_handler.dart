@@ -1,14 +1,18 @@
 import 'dart:convert';
 
+import 'package:internal_mock_server/src/mock_settings.dart';
 import 'package:internal_mock_server/src/openapi_document.dart';
 import 'package:shelf/shelf.dart';
 
 /// [document] の operation にリクエストを振り分け、仕様書の example を返す
 /// [Handler] を作る。
 ///
+/// [settings] を渡すと、operation ごとの設定に従って、遅延、エラー、編集した
+/// 応答を返す。
+///
 /// [Request.url] を仕様書のパスと照合する。`servers` のパスの下に置くときは
 /// [mountAtBasePath] と組み合わせる。
-Handler createMockHandler(OpenApiDocument document) {
+Handler createMockHandler(OpenApiDocument document, {MockSettings? settings}) {
   final routes = _routesOf(document.operations);
   return (request) {
     final segments = request.url.pathSegments;
@@ -22,7 +26,10 @@ Handler createMockHandler(OpenApiDocument document) {
     for (final route in matched) {
       if (route.operationFor(request.method) case final operation?) {
         // HEAD の本文は、dart:io の HttpServer が送らずに捨てる。
-        return _respond(operation.response);
+        return _respondTo(
+          operation,
+          settings?.of(operation.key) ?? OperationSettings.defaults,
+        );
       }
     }
     final allowed = {for (final route in matched) ...route.allowedMethods};
@@ -54,6 +61,31 @@ Handler mountAtBasePath(String basePath, Handler handler) {
       );
     }
     return handler(request.change(path: prefix));
+  };
+}
+
+/// [settings] に従い、遅延を入れてから、設定した応答か仕様書の応答を返す。
+Future<Response> _respondTo(
+  Operation operation,
+  OperationSettings settings,
+) async {
+  if (settings.delay > Duration.zero) {
+    await Future<void>.delayed(settings.delay);
+  }
+  return switch (settings.response) {
+    null => _respond(operation.response),
+    EditedResponse(:final statusCode, :final contentType, :final body) =>
+      _respond(
+        ExampleResponse(
+          statusCode: statusCode,
+          contentType: contentType,
+          body: body,
+        ),
+      ),
+    SpecErrorResponse(:final statusCode) => _respond(
+      operation.errorResponses[statusCode] ??
+          MissingExample('${operation.label} に $statusCode の応答がありません。'),
+    ),
   };
 }
 
