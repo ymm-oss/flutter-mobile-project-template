@@ -77,7 +77,7 @@ Future<void> main(List<String> arguments) async {
     'で起動しました。',
   );
   if (document.skippedPaths.isNotEmpty) {
-    stdout.writeln(r'次のパスは中身を読めないため、読み飛ばしました。ほかのファイルへの $ref は読めません。');
+    stdout.writeln(r'次のパスは中身を読めないため、501 を返します。ほかのファイルへの $ref は読めません。');
     for (final path in document.skippedPaths) {
       stdout.writeln('  - $path');
     }

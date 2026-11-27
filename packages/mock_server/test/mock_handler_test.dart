@@ -156,6 +156,48 @@ paths:
     });
   });
 
+  group('中身を読めないパス', () {
+    final handler = createMockHandler(
+      OpenApiDocument.parse(r'''
+openapi: 3.0.3
+info:
+  title: Test
+  version: 1.0.0
+paths:
+  /items/{itemId}:
+    get:
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              example: item
+  /items/special:
+    $ref: other.yaml#/paths/special
+'''),
+    );
+
+    Future<Response> send(String method, String path) async =>
+        await handler(Request(method, Uri.parse('http://localhost$path')));
+
+    test('どのメソッドにも 501 と理由を返し、Allow を付けない', () async {
+      for (final method in ['GET', 'POST']) {
+        final response = await send(method, '/items/special');
+
+        expect(response.statusCode, 501, reason: method);
+        expect(response.headers, isNot(contains('allow')), reason: method);
+        expect(await jsonOf(response), {
+          'message': r'仕様書の /items/special の中身を読めません。$ref の参照先を確かめてください。',
+        });
+      }
+    });
+
+    test('テンプレートのパスより先に照合する', () async {
+      expect((await send('GET', '/items/special')).statusCode, 501);
+      expect(await jsonOf(await send('GET', '/items/1')), 'item');
+    });
+  });
+
   group('mountAtBasePath', () {
     final document = OpenApiDocument.parse('''
 openapi: 3.0.3
