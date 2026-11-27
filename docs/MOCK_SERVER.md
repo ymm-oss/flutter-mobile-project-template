@@ -93,7 +93,7 @@ operation タブの設定をまとめて名前を付けて保存し、切り替�
 
 iOS の実機や配布するビルドからは、手元のモックサーバーにつながりません。そのときは、モックサーバーをアプリの中で起動し、API の向き先をそこにします。
 
-`--dart-define=embedMockServer=true` を付けてビルドすると、アプリは起動時に `127.0.0.1` でモックサーバーを起動し、`BuildConfig.apiBaseUrl` をその URL にします。flavor ファイルの `apiBaseUrl` は使いません。実行構成では `mock-embedded-debug` で起動できます。配布するビルドでは、選んだ flavor の `--dart-define-from-file` に `--dart-define=embedMockServer=true` を足してビルドしてください。
+`--dart-define=embedMockServer=true` を付けてビルドすると、アプリは起動時に `127.0.0.1` でモックサーバーを起動し、`BuildConfig.apiBaseUrl` をその URL にします。flavor ファイルの `apiBaseUrl` は使いません。配布するビルドでは、選んだ flavor の `--dart-define-from-file` に `--dart-define=embedMockServer=true` を足してビルドしてください。
 
 - 返す応答は、手元のモックサーバーの既定と同じく、仕様書の[応答](#応答)です。管理画面はなく、応答の切り替えとプロファイルは使えません。
 - ポートは OS が空いているものを選びます。URL は起動時のログ（`BuildConfig`）に出ます。iOS シミュレーターは Mac とループバックを共有するため、Mac からその URL に `curl` でつながります。

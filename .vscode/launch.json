@@ -56,17 +56,6 @@
       ]
     },
     {
-      "name": "mock-embedded-debug",
-      "cwd": "apps/app",
-      "request": "launch",
-      "program": "lib/main.dart",
-      "type": "dart",
-      "args": [
-        "--dart-define-from-file=flavor/dev.json",
-        "--dart-define=embedMockServer=true"
-      ]
-    },
-    {
       "name": "ui-catalog",
       "cwd": "apps/catalog",
       "request": "launch",
