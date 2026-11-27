@@ -52,10 +52,16 @@ Dependabotが作成したPull Requestから動くワークフローには、Acti
 
 > [!WARNING]
 > Dependabotのシークレットに登録しないと、Dependabotが作成したPull Requestで`request-reviewers`ジョブが失敗します。
-> `Generate a token`のstepで、次のエラーが出ます。
+> `Generate a token`のstepで、たとえば次のエラーが出ます（Client IDが無い場合）。
 >
 > ```text
 > The 'client-id' (or deprecated 'app-id') input must be set to a non-empty string. If using a secret or variable, ensure it is available in this workflow context.
+> ```
+>
+> 秘密鍵が無い場合は、次のエラーが出ます。
+>
+> ```text
+> The 'private-key' input must be set to a non-empty string. If using a secret or variable, ensure it is available in this workflow context.
 > ```
 
 登録したあと、Dependabotが作成したPull Requestで`request-reviewers`ジョブが成功し、レビュアーがアサインされることを確認してください。
