@@ -8,6 +8,7 @@ import 'package:shelf/shelf_io.dart' as shelf_io;
 /// `openapi/<api_name>/openapi.yaml` の example を返すモックサーバーを起動する。
 ///
 /// リポジトリのルートで `mise run mock [<api_name>] [--port <port>]` として実行する。
+/// `/_admin/` で、operation ごとに応答を切り替える管理画面を配信する。
 Future<void> main(List<String> arguments) async {
   final parser = ArgParser()
     ..addOption('port', abbr: 'p', help: '待ち受けるポート', defaultsTo: '4010')
@@ -53,14 +54,23 @@ Future<void> main(List<String> arguments) async {
     exit(1);
   }
 
+  final settings = MockSettings();
+  final handler = mountAdmin(
+    createAdminHandler(
+      document,
+      settings,
+      assets: await packageAssetResolver(),
+    ),
+    mountAtBasePath(
+      document.basePath,
+      createMockHandler(document, settings: settings),
+    ),
+  );
+
   final HttpServer server;
   try {
     server = await shelf_io.serve(
-      const Pipeline()
-          .addMiddleware(logRequests())
-          .addHandler(
-            mountAtBasePath(document.basePath, createMockHandler(document)),
-          ),
+      const Pipeline().addMiddleware(logRequests()).addHandler(handler),
       InternetAddress.loopbackIPv4,
       port,
     );
@@ -75,6 +85,9 @@ Future<void> main(List<String> arguments) async {
     '${specFile.path} のモックサーバーを '
     'http://${server.address.host}:${server.port}${document.basePath} '
     'で起動しました。',
+  );
+  stdout.writeln(
+    '管理画面: http://${server.address.host}:${server.port}$adminPath/',
   );
   if (document.skippedPaths.isNotEmpty) {
     stdout.writeln(r'次のパスは中身を読めないため、501 を返します。ほかのファイルへの $ref は読めません。');

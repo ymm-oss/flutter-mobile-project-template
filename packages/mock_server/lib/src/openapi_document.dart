@@ -115,6 +115,7 @@ final class Operation {
     required this.method,
     required this.path,
     required this.response,
+    required this.errorResponses,
     this.operationId,
   });
 
@@ -129,11 +130,26 @@ final class Operation {
       _ => null,
     };
     final label = _label(method, path, operationId);
+    final responses = switch (resolver.resolve(operation['responses'])) {
+      final Map<String, Object?> responses => responses,
+      _ => const <String, Object?>{},
+    };
     return Operation._(
       method: method,
       path: path,
       operationId: operationId,
-      response: _mockResponse(label, operation['responses'], resolver),
+      response: _mockResponse(label, responses, resolver),
+      errorResponses: Map.unmodifiable({
+        for (final MapEntry(:key, :value) in responses.entries)
+          if (_errorStatusCode.hasMatch(key))
+            int.parse(key): _responseOf(
+              label,
+              statusCode: int.parse(key),
+              key: key,
+              response: value,
+              resolver: resolver,
+            ),
+      }),
     );
   }
 
@@ -145,7 +161,18 @@ final class Operation {
 
   final String? operationId;
 
+  /// 既定で返す応答。
   final MockResponse response;
+
+  /// 仕様書にある 3xx、4xx、5xx の応答。キーはステータスコード。
+  ///
+  /// 管理画面でエラーを注入するときに選ぶ。`4XX` や `default` は含めない。
+  final Map<int, MockResponse> errorResponses;
+
+  /// operation を示すキー（`GET /items/{itemId}` など）。
+  ///
+  /// operationId は省略できるため、メソッドとパスから作る。
+  String get key => '$method $path';
 
   /// ログやエラーで operation を示す名前。
   String get label => _label(method, path, operationId);
@@ -159,9 +186,17 @@ sealed class MockResponse;
 
 /// 仕様書の example から作った応答。
 final class ExampleResponse extends MockResponse {
-  new({required this.statusCode, this.contentType, this.body});
+  new({
+    required this.statusCode,
+    this.contentType,
+    this.body,
+    this.description,
+  });
 
   final int statusCode;
+
+  /// 仕様書の応答の description。
+  final String? description;
 
   /// content のない応答では null。
   final String? contentType;
@@ -172,34 +207,63 @@ final class ExampleResponse extends MockResponse {
 
 /// example がないなどの理由で、仕様書から作れなかった応答。
 final class MissingExample extends MockResponse {
-  new(this.reason);
+  new(this.reason, {this.statusCode, this.description});
 
   final String reason;
+
+  /// 仕様書の応答の description。
+  final String? description;
+
+  /// 仕様書の応答のステータスコード。応答を選べなかったときは null。
+  final int? statusCode;
 }
+
+final _errorStatusCode = RegExp(r'^[3-5]\d\d$');
 
 MockResponse _mockResponse(
   String label,
-  Object? responses,
+  Map<String, Object?> responses,
   _RefResolver resolver,
 ) {
-  final selected = switch (resolver.resolve(responses)) {
-    final Map<String, Object?> responses => _selectResponse(responses),
-    _ => null,
-  };
+  final selected = _selectResponse(responses);
   if (selected == null) {
     return MissingExample('$label に 2xx と default の応答がありません。');
   }
   final (:statusCode, :key, :response) = selected;
+  return _responseOf(
+    label,
+    statusCode: statusCode,
+    key: key,
+    response: response,
+    resolver: resolver,
+  );
+}
+
+/// 仕様書の responses の [key] の応答 1 つから、モックサーバーの応答を作る。
+MockResponse _responseOf(
+  String label, {
+  required int statusCode,
+  required String key,
+  required Object? response,
+  required _RefResolver resolver,
+}) {
   final resolved = resolver.resolve(response);
   if (resolved is! Map<String, Object?>) {
-    return MissingExample('$label の $key の応答を読めません。\$ref の参照先を確かめてください。');
+    return MissingExample(
+      '$label の $key の応答を読めません。\$ref の参照先を確かめてください。',
+      statusCode: statusCode,
+    );
   }
+  final description = switch (resolved['description']) {
+    final String description => description,
+    _ => null,
+  };
   final content = switch (resolved['content']) {
     final Map<String, Object?> content when content.isNotEmpty => content,
     _ => null,
   };
   if (content == null) {
-    return ExampleResponse(statusCode: statusCode);
+    return ExampleResponse(statusCode: statusCode, description: description);
   }
 
   final mediaType = _selectMediaType(content.keys);
@@ -210,6 +274,8 @@ MockResponse _mockResponse(
       _hasUnresolvedRef(content[mediaType], resolver)
           ? '$whereの \$ref を読めません。\$ref の参照先を確かめてください。ほかのファイルへの \$ref は読めません。'
           : '$whereに example がありません。仕様書に example を書いてください。',
+      statusCode: statusCode,
+      description: description,
     );
   }
   final value = example.value;
@@ -218,13 +284,20 @@ MockResponse _mockResponse(
   if (!json && (value is Map || value is List)) {
     return MissingExample(
       '$whereの example はオブジェクトか配列のため、本文にできません。example を文字列で書いてください。',
+      statusCode: statusCode,
+      description: description,
     );
   }
   if (json && _hasNonFiniteNumber(value)) {
-    return MissingExample('$whereの example に NaN か Infinity があり、JSON で表せません。');
+    return MissingExample(
+      '$whereの example に NaN か Infinity があり、JSON で表せません。',
+      statusCode: statusCode,
+      description: description,
+    );
   }
   return ExampleResponse(
     statusCode: statusCode,
+    description: description,
     contentType: _contentType(mediaType, json: json, wildcard: wildcard),
     body: json ? jsonEncode(value) : '$value',
   );

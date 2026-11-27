@@ -1,0 +1,137 @@
+:root {
+  color-scheme: light dark;
+  --border: #8884;
+  --accent: #2f6fde;
+  --changed: #d98a00;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+}
+
+/* display を指定した要素も、hidden 属性で隠せるようにする。 */
+[hidden] {
+  display: none !important;
+}
+
+header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+nav {
+  flex: 1;
+}
+
+.tab {
+  border: none;
+  background: none;
+  padding: 4px 8px;
+}
+
+.tab[aria-current="page"] {
+  border-bottom: 2px solid var(--accent);
+}
+
+#status {
+  margin: 0;
+  padding: 4px 16px;
+  min-height: 1.4em;
+}
+
+#status.error {
+  color: #d33;
+}
+
+main {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) 2fr;
+  gap: 16px;
+  padding: 0 16px 16px;
+}
+
+@media (max-width: 720px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+}
+
+#operations {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#operations button {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  background: none;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+#operations button[aria-current="true"] {
+  border-color: var(--accent);
+}
+
+#operations .method {
+  min-width: 4em;
+  font-weight: bold;
+}
+
+#operations .changed::after {
+  content: "変更中";
+  margin-left: auto;
+  color: var(--changed);
+  font-size: 0.85em;
+}
+
+#operations .operation-id {
+  opacity: 0.7;
+}
+
+#editor h2 {
+  margin-top: 0;
+  font-size: 1rem;
+  word-break: break-all;
+}
+
+fieldset {
+  margin: 0 0 12px;
+  border: 1px solid var(--border);
+}
+
+fieldset label {
+  display: block;
+  margin: 4px 0;
+}
+
+input[type="text"],
+textarea {
+  box-sizing: border-box;
+  width: 100%;
+  font-family: ui-monospace, monospace;
+}
+
+.options {
+  margin-top: 8px;
+  padding-left: 24px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}

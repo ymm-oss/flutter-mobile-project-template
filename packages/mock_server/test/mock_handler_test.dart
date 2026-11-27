@@ -260,4 +260,127 @@ paths:
       expect(mountAtBasePath('', inner), same(inner));
     });
   });
+
+  group('設定', () {
+    final document = OpenApiDocument.parse('''
+paths:
+  /items:
+    get:
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              example: items
+        "404":
+          description: not found
+          content:
+            application/json:
+              example:
+                message: not found
+  /drafts:
+    get:
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+''');
+    late MockSettings settings;
+    late Handler handler;
+
+    setUp(() {
+      settings = MockSettings();
+      handler = createMockHandler(document, settings: settings);
+    });
+
+    Future<Response> send(String path) async =>
+        await handler(Request('GET', Uri.parse('http://localhost$path')));
+
+    test('設定がなければ仕様書の example を返す', () async {
+      expect(await jsonOf(await send('/items')), 'items');
+    });
+
+    test('編集した応答を返す', () async {
+      settings.update(
+        'GET /drafts',
+        const OperationSettings(
+          response: EditedResponse(
+            statusCode: 201,
+            contentType: 'text/plain',
+            body: 'edited',
+          ),
+        ),
+      );
+
+      final response = await send('/drafts');
+
+      expect(response.statusCode, 201);
+      expect(response.headers['content-type'], 'text/plain');
+      expect(await response.readAsString(), 'edited');
+    });
+
+    test('仕様書のエラーの応答を返す', () async {
+      settings.update(
+        'GET /items',
+        const OperationSettings(response: SpecErrorResponse(404)),
+      );
+
+      final response = await send('/items');
+
+      expect(response.statusCode, 404);
+      expect(await jsonOf(response), {'message': 'not found'});
+    });
+
+    test('仕様書にないエラーの応答には 501 を返す', () async {
+      settings.update(
+        'GET /items',
+        const OperationSettings(response: SpecErrorResponse(500)),
+      );
+
+      final response = await send('/items');
+
+      expect(response.statusCode, 501);
+      expect(await jsonOf(response), {
+        'message': 'GET /items に 500 の応答がありません。',
+      });
+    });
+
+    test('編集した異常系の応答を返す', () async {
+      settings.update(
+        'GET /items',
+        const OperationSettings(
+          response: EditedResponse(
+            statusCode: 422,
+            contentType: 'application/json',
+            body: '{"message":"invalid"}',
+          ),
+        ),
+      );
+
+      final response = await send('/items');
+
+      expect(response.statusCode, 422);
+      expect(await jsonOf(response), {'message': 'invalid'});
+    });
+
+    test('遅延を指定すると、その時間だけ待ってから返す', () async {
+      settings.update(
+        'GET /items',
+        const OperationSettings(delay: Duration(milliseconds: 200)),
+      );
+
+      final stopwatch = Stopwatch()..start();
+      final response = await send('/items');
+      stopwatch.stop();
+
+      expect(response.statusCode, 200);
+      expect(
+        stopwatch.elapsed,
+        greaterThanOrEqualTo(const Duration(milliseconds: 200)),
+      );
+    });
+  });
 }

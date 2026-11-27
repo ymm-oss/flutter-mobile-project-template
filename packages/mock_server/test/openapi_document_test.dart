@@ -589,4 +589,75 @@ components:
       );
     });
   });
+
+  group('Operation.errorResponses', () {
+    test('3xx、4xx、5xx の応答を、ステータスコードごとに読む', () {
+      final operation = OpenApiDocument.parse('''
+paths:
+  /items:
+    get:
+      responses:
+        "200":
+          description: ok
+        "304":
+          description: not modified
+        "404":
+          description: not found
+          content:
+            application/json:
+              example:
+                message: not found
+        "500":
+          description: error
+          content:
+            application/json:
+              schema:
+                type: object
+        4XX:
+          description: client error
+        default:
+          description: error
+''').operations.single;
+
+      expect(operation.errorResponses.keys, [304, 404, 500]);
+      expect(
+        operation.errorResponses[304],
+        isA<ExampleResponse>()
+            .having((r) => r.statusCode, 'statusCode', 304)
+            .having((r) => r.body, 'body', isNull),
+      );
+      expect(
+        operation.errorResponses[404],
+        isA<ExampleResponse>()
+            .having((r) => r.statusCode, 'statusCode', 404)
+            .having((r) => r.description, 'description', 'not found')
+            .having((r) => r.body, 'body', '{"message":"not found"}'),
+      );
+      expect(
+        operation.errorResponses[500],
+        isA<MissingExample>()
+            .having((r) => r.statusCode, 'statusCode', 500)
+            .having((r) => r.description, 'description', 'error')
+            .having(
+              (r) => r.reason,
+              'reason',
+              'GET /items の 500 の応答（application/json）に example がありません。仕様書に example を書いてください。',
+            ),
+      );
+    });
+
+    test('key はメソッドとパスから作る', () {
+      final operation = OpenApiDocument.parse('''
+paths:
+  /items/{itemId}:
+    get:
+      operationId: getItem
+      responses:
+        "200":
+          description: ok
+''').operations.single;
+
+      expect(operation.key, 'GET /items/{itemId}');
+    });
+  });
 }
