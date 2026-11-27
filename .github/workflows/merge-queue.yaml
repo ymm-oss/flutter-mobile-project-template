@@ -17,7 +17,7 @@ jobs:
       contents: read
 
   check-actions:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04-arm
     permissions:
       contents: read
       pull-requests: write
@@ -189,7 +189,7 @@ jobs:
     if: ${{ needs.changes.outputs.vulnerabilities == 'true' }}
 
   status-check:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     needs:
       - changes
       - check-actions
