@@ -77,6 +77,24 @@ GitHub Actions のキャッシュは、PR で保存したものはその PR か�
 
 mise のキャッシュのキーは 30 日ごとに変わるため、create-cache.yaml は毎日の schedule でも動きます。mise と pub のキャッシュのキーに使うファイルは、create-cache.yaml の `paths` に含めてください。含めないと、そのファイルが変わっても次の schedule まで既定ブランチのキャッシュが作り直されず、PR と merge queue がキャッシュに当たらなくなります。
 
+## PR のコードを実行するジョブ
+
+check-pr と merge-queue のジョブは、PR のコードを実行します。テストのコードだけでなく、PR の `mise.toml` も実行の対象です。mise-action の `mise install` や `mise audit` のような mise のコマンドは、`[env]` の `_.source` や `exec()`、`[hooks]` に書いたコマンドを実行します。CI では `CI=true` が設定されているので、mise は `mise trust` なしで設定を信頼します。
+
+今の設定でこれが問題にならないのは、次の条件がそろっているためです。
+
+- `pull_request` と `merge_group` のイベントで動き、`pull_request_target` を使っていない
+- トークンの権限は読み取りだけで、フォークからの PR にはシークレットが渡らない
+- GitHub が用意するランナーで動き、ランナーはジョブごとに作り直される
+
+次のように変えると、PR を出した人が CI の中でシークレットや書き込みの権限を使えるようになります。変える前に、PR のコードをその環境で実行してよいかを確かめてください。
+
+- `pull_request_target` のイベントで PR のコードを checkout し、mise-action やテストを実行する
+- PR のコードを実行するジョブに、シークレットや書き込みの権限（`permissions` の `write`）を渡す
+- self-hosted runner で実行する。PR のコードがランナーに残したものが、同じランナーで動くあとのジョブに影響する
+
+check-vulnerabilities は、PR の `mise.toml` の `[env]` を後続のステップに持ち込まず、`mise.toml` 以外の mise の設定ファイルがあれば失敗します。ただし、上のとおり PR の `mise.toml` はコードを実行できるので、検査を壊すつもりの PR までは防げません。レビューでは、`mise.toml` の `[env]`、`[hooks]`、`[tool_alias]`、`[settings]` の変更や、実行ファイルの追加を、コードの変更として確かめてください。
+
 [auto-assign.yaml]: ../.github/workflows/auto-assign.yaml
 [check-pr.yaml]: ../.github/workflows/check-pr.yaml
 [create-cache.yaml]: ../.github/workflows/create-cache.yaml
