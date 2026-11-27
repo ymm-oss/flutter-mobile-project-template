@@ -1,2 +1,6 @@
 extends:
   - "@commitlint/config-conventional"
+rules:
+  # config-conventional の設定のうち、件名の大文字小文字の検査だけ無効にする。
+  # 件名は日本語が中心で、MCP や Flutter など英単語から始めたいことがあるため、大文字小文字は任意とする。
+  subject-case: [0]
