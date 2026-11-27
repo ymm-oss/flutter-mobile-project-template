@@ -28,6 +28,7 @@ jobs:
             bun.lock
             osv-scanner.toml
             mise.toml
+            mise.lock
           sparse-checkout-cone-mode: false
 
       # https://github.com/jdx/mise-action
@@ -52,19 +53,22 @@ jobs:
 
       # mise.toml のツールは OSV-Scanner で読めないため、mise audit で調べる。
       # 脆弱性が見つかっても設定を読めなくても終了コード 1 になるため、JSON を読めるかで見分ける。
+      # バージョンを解決できないツールがあると、JSON を出したあとに標準エラーに ERROR を出すため、それも失敗にする。
       - name: Run mise audit
         shell: bash
         run: |
           audit() {
-            mise audit --json -C "$1" > "$2" || true
-            if ! jq -e '.vulnerabilities | type == "array"' "$2" > /dev/null; then
+            mise audit --json -C "$1" > "$2" 2> "$2.log" || true
+            cat "$2.log" >&2
+            if ! jq -e '.vulnerabilities | type == "array"' "$2" > /dev/null || grep -q ERROR "$2.log"; then
               echo "::error::mise audit failed in $1"
               exit 1
             fi
           }
           # ワークスペースの中では親のフォルダにあるヘッドの mise.toml も読まれるため、外に写して調べる。
+          # ヘッドと同じく mise.lock からバージョンを解決できるよう、mise.lock も写す。
           mkdir "$RUNNER_TEMP/base-mise"
-          cp base/mise.toml "$RUNNER_TEMP/base-mise/"
+          cp base/mise.toml base/mise.lock "$RUNNER_TEMP/base-mise/"
           mise trust "$RUNNER_TEMP/base-mise/mise.toml"
           audit "$RUNNER_TEMP/base-mise" "$RUNNER_TEMP/base-mise.json"
           audit . "$RUNNER_TEMP/head-mise.json"

@@ -48,14 +48,34 @@ jobs:
 
       # mise.toml のツールは OSV-Scanner で読めないため、mise audit で調べる。
       # 脆弱性が見つかっても設定を読めなくても終了コード 1 になるため、JSON を読めるかで見分ける。
+      # バージョンを解決できないツールがあると、JSON を出したあとに標準エラーに ERROR を出すため、それも失敗にする。
+      # 失敗しても OSV-Scanner の結果を Issue に載せるため、ここでは止めずに理由を本文に書き、最後のステップで失敗にする。
       - name: Run mise audit
         id: audit
+        env:
+          NO_COLOR: 1
         run: |
           json="$RUNNER_TEMP/mise-audit.json"
-          mise audit --json > "$json" || true
-          if ! jq -e '.vulnerabilities | type == "array"' "$json" > /dev/null; then
-            echo "::error::mise audit failed"
-            exit 1
+          log="$RUNNER_TEMP/mise-audit.log"
+          path="$RUNNER_TEMP/mise-audit.md"
+          mise audit --json > "$json" 2> "$log" || true
+          cat "$log" >&2
+
+          if ! jq -e '.vulnerabilities | type == "array"' "$json" > /dev/null || grep -q ERROR "$log"; then
+            # ERROR の行を理由にする。ERROR の行がないとき（設定ファイルの解析エラーなど）は、最後の 20 行を使う
+            reason=$(grep ERROR "$log" || tail -n 20 "$log")
+            {
+              echo "## mise audit"
+              echo
+              echo "mise audit failed."
+              echo
+              echo '```'
+              echo "$reason"
+              echo '```'
+            } | tee "$path"
+            echo "path=$path" >> "$GITHUB_OUTPUT"
+            echo "failed=true" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
 
           rows=$(jq -r '.vulnerabilities | sort_by(.tool, .id)[]
@@ -64,7 +84,6 @@ jobs:
             exit 0
           fi
 
-          path="$RUNNER_TEMP/mise-audit.md"
           {
             echo "## mise audit"
             echo
@@ -132,3 +151,10 @@ jobs:
           fi
 
           gh issue comment "$issue_number" --body-file "$BODY_PATH"
+
+      # mise audit の失敗に Actions の画面でも気づけるよう、Issue を更新したあとに失敗にする
+      - name: Fail if mise audit failed
+        if: steps.audit.outputs.failed == 'true'
+        run: |
+          echo "::error::mise audit failed. See the log of the Run mise audit step."
+          exit 1
