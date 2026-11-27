@@ -35,7 +35,13 @@ jobs:
       - name: Install Mise dependencies
         uses: jdx/mise-action@90f833d396d0cc3674b631d2d225e306476c303a # v5.2.10
         with:
+          # mise audit の JSON の形と標準エラーの出し方に頼るため、確かめたバージョンに固定する。
+          version: "2026.11.14"
           install_args: "osv-scanner"
+          # PR の mise.toml の [env]（_.path を含む）を、後続のステップに持ち込まない。
+          # 持ち込むと、PR が置いた jq などのプログラムで検査の結果を書き換えられる。
+          env: false
+          export_path: false
 
       # https://google.github.io/osv-scanner/output/#return-codes
       - name: Run OSV-Scanner
@@ -57,6 +63,15 @@ jobs:
       - name: Run mise audit
         shell: bash
         run: |
+          # mise は mise.toml のほかに mise.local.toml や .config/mise/config.toml なども読む。
+          # そこに書いたツールが検査やレビューから漏れないよう、ワークスペースに mise.toml 以外の設定があれば失敗にする。
+          others=$(mise config ls --json | jq -r --arg root "$PWD" \
+            '.[].path | select(startswith($root + "/") and . != $root + "/mise.toml")')
+          if [ -n "$others" ]; then
+            echo "::error::Move the settings in these files to mise.toml: $(echo "$others" | tr '\n' ' ')"
+            exit 1
+          fi
+
           audit() {
             mise audit --json -C "$1" > "$2" 2> "$2.log" || true
             cat "$2.log" >&2
@@ -67,9 +82,9 @@ jobs:
           }
           # ワークスペースの中では親のフォルダにあるヘッドの mise.toml も読まれるため、外に写して調べる。
           # ヘッドと同じく mise.lock からバージョンを解決できるよう、mise.lock も写す。
+          # CI（CI=true）では mise が設定を自動で信頼するため、mise trust は実行しない。
           mkdir "$RUNNER_TEMP/base-mise"
           cp base/mise.toml base/mise.lock "$RUNNER_TEMP/base-mise/"
-          mise trust "$RUNNER_TEMP/base-mise/mise.toml"
           audit "$RUNNER_TEMP/base-mise" "$RUNNER_TEMP/base-mise.json"
           audit . "$RUNNER_TEMP/head-mise.json"
 
@@ -91,16 +106,43 @@ jobs:
             | "| \(.ecosystem) | \(.name) | \(.version) | [\(.id)](https://osv.dev/vulnerability/\(.id)) |"
           ')
 
-          if [ -z "$new" ]; then
-            echo "No new vulnerabilities found." | tee -a "$GITHUB_STEP_SUMMARY"
-            exit 0
+          # mise audit が調べられないツール（unchecked）は、脆弱性があっても報告されない。
+          # backend を変えたり別名を付けたりして検査を逃れられないよう、ベースで調べられないツールのほかは失敗にする。
+          unchecked=$(jq -rn \
+            --slurpfile mise_base "$RUNNER_TEMP/base-mise.json" \
+            --slurpfile mise_head "$RUNNER_TEMP/head-mise.json" '
+            ($mise_base[0].unchecked // [] | map(.tool)) as $known
+            | ($mise_head[0].unchecked // [])[]
+            | select(.tool as $t | any($known[]; . == $t) | not)
+            | "| \(.tool) | \(.version) |"
+          ')
+
+          status=0
+          if [ -n "$new" ]; then
+            {
+              echo "## New vulnerabilities"
+              echo
+              echo "| Ecosystem | Package | Version | ID |"
+              echo "| --- | --- | --- | --- |"
+              echo "$new"
+            } | tee -a "$GITHUB_STEP_SUMMARY"
+            status=1
           fi
 
-          {
-            echo "## New vulnerabilities"
-            echo
-            echo "| Ecosystem | Package | Version | ID |"
-            echo "| --- | --- | --- | --- |"
-            echo "$new"
-          } | tee -a "$GITHUB_STEP_SUMMARY"
-          exit 1
+          if [ -n "$unchecked" ]; then
+            {
+              echo "## Tools not checked by mise audit"
+              echo
+              echo "mise audit cannot check these tools, which are new or were checked on the base branch. Use a backend that mise audit supports."
+              echo
+              echo "| Tool | Version |"
+              echo "| --- | --- |"
+              echo "$unchecked"
+            } | tee -a "$GITHUB_STEP_SUMMARY"
+            status=1
+          fi
+
+          if [ "$status" -eq 0 ]; then
+            echo "No new vulnerabilities found." | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$status"

@@ -28,6 +28,8 @@ jobs:
       - name: Install Mise dependencies
         uses: jdx/mise-action@90f833d396d0cc3674b631d2d225e306476c303a # v5.2.10
         with:
+          # mise audit の JSON の形と標準エラーの出し方に頼るため、確かめたバージョンに固定する。
+          version: "2026.11.14"
           install_args: "osv-scanner"
 
       # https://google.github.io/osv-scanner/output/#return-codes
@@ -62,16 +64,15 @@ jobs:
           cat "$log" >&2
 
           if ! jq -e '.vulnerabilities | type == "array"' "$json" > /dev/null || grep -q ERROR "$log"; then
-            # ERROR の行を理由にする。ERROR の行がないとき（設定ファイルの解析エラーなど）は、最後の 20 行を使う
+            # ERROR の行を理由にする。ERROR の行がないとき（設定ファイルの解析エラーなど）は、最後の 20 行を使う。
+            # 理由に ``` があっても表示が崩れないよう、囲まずに字下げしたコードブロックにする。
             reason=$(grep ERROR "$log" || tail -n 20 "$log")
             {
               echo "## mise audit"
               echo
               echo "mise audit failed."
               echo
-              echo '```'
-              echo "$reason"
-              echo '```'
+              echo "$reason" | sed 's/^/    /'
             } | tee "$path"
             echo "path=$path" >> "$GITHUB_OUTPUT"
             echo "failed=true" >> "$GITHUB_OUTPUT"
