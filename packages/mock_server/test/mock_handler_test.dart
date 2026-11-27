@@ -102,6 +102,8 @@ paths:
   test('区間の一部がテンプレートのパスは、全体がテンプレートのパスより先に照合する', () async {
     expect(await jsonOf(await send('GET', '/files/a.json')), 'file');
     expect(await jsonOf(await send('GET', '/files/a')), 'any');
+    // テンプレートの外の . は、任意の 1 文字に一致しない。
+    expect(await jsonOf(await send('GET', '/files/a-json')), 'any');
   });
 
   test('HEAD には GET の operation で応える', () async {

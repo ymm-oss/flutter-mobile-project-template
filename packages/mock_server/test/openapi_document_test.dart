@@ -219,6 +219,38 @@ components:
       );
     });
 
+    test(r'$ref の ~1 と ~0 を、/ と ~ に戻して解決する', () {
+      final document = OpenApiDocument.parse(r'''
+openapi: 3.0.3
+info:
+  title: Test
+  version: 1.0.0
+paths:
+  /items:
+    get:
+      responses:
+        "200":
+          $ref: "#/components/responses/Item~0v1"
+  /alias:
+    get:
+      responses:
+        "200":
+          $ref: "#/paths/~1items/get/responses/200"
+components:
+  responses:
+    Item~v1:
+      description: ok
+      content:
+        application/json:
+          example: item
+''');
+
+      expect(
+        document.operations.last.response,
+        isA<ExampleResponse>().having((r) => r.body, 'body', '"item"'),
+      );
+    });
+
     test('schema に example がなければ、schema の examples の最初の値を返す', () {
       final response = responseOf('''
         "200":
@@ -506,6 +538,23 @@ components:
         isA<ExampleResponse>()
             .having((r) => r.contentType, 'contentType', 'text/plain')
             .having((r) => r.body, 'body', 'text'),
+      );
+    });
+
+    test('application/json をほかの JSON 系より優先する', () {
+      final response = responseOf('''
+        "200":
+          description: ok
+          content:
+            application/problem+json:
+              example: problem
+            application/json:
+              example: json
+''');
+
+      expect(
+        response,
+        isA<ExampleResponse>().having((r) => r.body, 'body', '"json"'),
       );
     });
 
