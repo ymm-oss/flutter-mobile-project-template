@@ -67,5 +67,5 @@ run = [
 ]
 
 [tasks."check:debug_tree_shaking"]
-description = "Check that the release build excludes the debug features. Builds a release snapshot."
+description = "Check that the release build excludes the debug features and the embedded mock server. Builds a release snapshot."
 run = 'dart run melos run check:debug_tree_shaking'
