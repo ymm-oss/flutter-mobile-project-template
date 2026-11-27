@@ -8,7 +8,6 @@ hkusu
 mikefarah
 nofilter
 reviewdog
-srvaroa
 startswith
 webframeworks
 elif
@@ -16,4 +15,6 @@ tonumber
 sarif
 strenv
 zizmor
+jactionlint
+shellcheck
 slurpfile

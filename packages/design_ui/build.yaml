@@ -1,5 +1,14 @@
 targets:
   $default:
+    # build_runner の既定の sources に res/** は入っていない。
+    # 入れないと、res/assets/ を変えても flutter_gen が生成し直さない。
+    # sources を書くと既定の一覧は使われないため、必要なものをすべて並べる。
+    sources:
+      - $package$
+      - lib/**
+      - test/**
+      - pubspec.yaml
+      - res/**
     builders:
       flutter_gen_runner:
         options:

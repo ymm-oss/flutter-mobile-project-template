@@ -138,7 +138,6 @@ mise run bootstrap
 - `apps/app_preview/`
 - `apps/app/pubspec.yaml`（`multi_device_preview` の dev 依存）
 - ルートの `pubspec.yaml` と `pubspec.lock`（CI は `flutter pub get --enforce-lockfile` で依存を解決するため、ロックファイルがコミットされていないと失敗します）
-- `.github/labeler.yml` と `.github/labels.yml`（bootstrap で `@apps/app_preview` が追加されます。PR のラベル付けに使います）
 
 ## 4. エントリポイントを仕上げる
 
@@ -269,6 +268,6 @@ Future<void> main() async {
 
 - `apps/app_preview/` を削除する
 - `apps/app/pubspec.yaml` の `dev_dependencies` から `multi_device_preview` を削除する
-- ルートの `pubspec.yaml` の `workspace:` から `apps/app_preview` を削除し、`mise run bootstrap` を実行する（`pubspec.lock` と、`.github/labeler.yml`・`.github/labels.yml` の `@apps/app_preview` が更新されます）
+- ルートの `pubspec.yaml` の `workspace:` から `apps/app_preview` を削除し、`mise run bootstrap` を実行する（`pubspec.lock` が更新されます）
 
 手順 1 の GlobalKey の変更は戻さなくて構いません。`rootNavigatorKey` の削除は冗長な指定の整理で、SnackBar のキーを Provider に置く形も単体で問題なく動きます。
