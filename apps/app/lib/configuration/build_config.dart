@@ -17,11 +17,18 @@ abstract class BuildConfig with _$BuildConfig {
     required String buildSignature,
     required Flavor flavor,
     required String? installerStore,
+    required String apiBaseUrl,
   }) = _BuildConfig;
 
   factory fromPackageInfo(PackageInfo packageInfo) {
     // ここに `~.fromEnvironment()` を集約する
     const flavor = String.fromEnvironment('flavor');
+    const apiBaseUrl = String.fromEnvironment('apiBaseUrl');
+    if (apiBaseUrl.isEmpty) {
+      throw StateError(
+        'apiBaseUrl が空です。flavor ファイルか --dart-define で渡してください。',
+      );
+    }
 
     return BuildConfig._init(
       flavor: Flavor.values.byName(flavor),
@@ -31,6 +38,7 @@ abstract class BuildConfig with _$BuildConfig {
       buildNumber: packageInfo.buildNumber,
       buildSignature: packageInfo.buildSignature,
       installerStore: packageInfo.installerStore,
+      apiBaseUrl: apiBaseUrl,
     );
   }
 }

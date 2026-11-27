@@ -86,6 +86,8 @@ OpenAPI を使う場合は、次のコマンドで、仕様書（`openapi/<api_n
 mise run mock
 ```
 
+実行構成 `mock-debug` でアプリを起動すると、`apiBaseUrl` が `http://127.0.0.1:4010` になります。生成したクライアントに `BuildConfig.apiBaseUrl` を渡していれば、アプリは API のリクエストをこのモックサーバーに送ります。Android からつなぐときは、先に `adb reverse` を実行してください。手順は [モックサーバー] を参照してください。
+
 ## AI コーディングツール
 
 Cursor、GitHub Copilot、Claude Code で共有するスキルは `.agents/skills/` に含まれています。Claude Code は `.agents/skills/` への symlink である `.claude/skills` から読みます。Windows で symlink がパス文字列のファイルとして checkout されたときは、次のスクリプトで復元します。手順と Windows での設定は [AI スキルの配置] を参照してください。

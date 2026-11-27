@@ -3,5 +3,6 @@
   "appName": "dev-Template",
   "appIdAndroid": "jp.co.yumemi.template",
   "appIdIos": "jp.co.yumemi.template",
-  "appIdSuffix": ".dev"
+  "appIdSuffix": ".dev",
+  "apiBaseUrl": "https://dev.api.example.com"
 }
