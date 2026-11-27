@@ -725,6 +725,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.0"
+  marionette_mcp:
+    dependency: "direct dev"
+    description:
+      name: marionette_mcp
+      sha256: b24c595b2e9f195c9e86cbdead507d583c8d5699e0b2cc9cfe7b488d5d0ca36a
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.0"
   matcher:
     dependency: transitive
     description:
@@ -741,6 +749,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.13.0"
+  mcp_dart:
+    dependency: transitive
+    description:
+      name: mcp_dart
+      sha256: "0fdd953006edb8bce24d31f2d36d5c4acc89009e1331417955d3e77560cdb77b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.4"
   melos:
     dependency: "direct dev"
     description:

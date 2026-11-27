@@ -57,13 +57,11 @@ Releaseビルドや自動回帰テストの代替には使用しません。再�
 
 ### セットアップ
 
-1. MCP Serverをインストールする。
+[前提条件](#前提条件)のとおり `.mcp.json` を用意し、`marionette` を残してください。
 
-   ```shell
-   mise exec -- dart pub global activate marionette_mcp 0.7.0
-   ```
+MCP Server の `marionette_mcp` は、ルートの `pubspec.yaml` の `dev_dependencies` にあります。`mise run bootstrap` で入るため、追加のインストールは不要です。`.mcp.json` の `dart run marionette_mcp` は、リポジトリの外で実行すると `marionette_mcp` を見つけられません。
 
-2. [前提条件](#前提条件)のとおり`.mcp.json`を用意し、`marionette`を残す。
+`marionette_mcp` のバージョンを変えるときは、アプリの依存の `marionette_flutter`（`apps/app` と `apps/catalog`）とそろえてください。
 
 ### アプリの起動
 

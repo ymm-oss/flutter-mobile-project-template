@@ -6,8 +6,6 @@
         "exec",
         "--",
         "dart",
-        "pub",
-        "global",
         "run",
         "marionette_mcp"
       ]
