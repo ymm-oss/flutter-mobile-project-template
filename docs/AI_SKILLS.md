@@ -146,11 +146,11 @@ dart run skills@1.0.4 get --agent generic --git <取り込み元の URL> --skill
 
 次の公式スキルは、Dart and Flutter MCP Server のツールを前提にしている。Server を有効にしていないと、スキルが呼ぶツールが存在しない。有効にする手順は [MCP Server の設定] を見る。
 
-| スキル                         | 前提にしているツール                                                                                                                  |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `dart-fix-runtime-errors`      | `get_runtime_errors`、`lsp`、`hot_reload`                                                                                             |
-| `flutter-add-integration-test` | `launch_app`、`get_widget_tree`、`tap` など。`get_widget_tree` は `widget_inspector` の、`tap` は `flutter_driver_command` のコマンド |
-| `flutter-fix-layout-issues`    | `description` に MCP のツールを使うとある。ツール名は書かれていない                                                                   |
+| スキル                         | 前提にしているツール                                                                                                                     |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `dart-fix-runtime-errors`      | `description` に `get_runtime_errors`、`lsp`、`hot_reload` とある。本文は `dart analyze` と `dart fix` の CLI の手順で、ツールは呼ばない |
+| `flutter-add-integration-test` | `launch_app`、`get_widget_tree`、`tap` など。`get_widget_tree` は `widget_inspector` の、`tap` は `flutter_driver_command` のコマンド    |
+| `flutter-fix-layout-issues`    | `description` に MCP のツールを使うとある。ツール名は書かれていない                                                                      |
 
 `flutter-add-integration-test` の `launch_app` は既定では無効なため、このスキルを使うときは Server の起動時に `--enable flutter_app_lifecycle` を足す。`tap` などは、アプリが Flutter Driver の拡張を有効にしていないと使えない。Flutter Driver の拡張は Marionette と同じアプリでは使えない（[MCP Server の設定] の「Flutter Driver の制約」）。
 

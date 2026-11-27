@@ -16,5 +16,5 @@
 # dependencies (bun install)
 node_modules
 
-# MCP Server の各自の設定（.mcp.sample.json からコピーする）
+# Per-developer MCP config (copy from .mcp.sample.json)
 /.mcp.json

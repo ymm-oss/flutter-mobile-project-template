@@ -27,7 +27,9 @@ MCPサーバーは、特定のドメインやサービス（Flutterアプリの�
 3. 後述する各種 MCP Server のセットアップを実施する
 4. Claude Code を起動し直す。`.mcp.json` の MCP Server を使ってよいか確認されたら承認する。接続の状態は `/mcp` で確かめられる
 
-Cursor を使う場合は、`.mcp.json` と同じ内容を `.cursor/mcp.json` に書いてください。
+Cursor を使う場合は、`.mcp.json` と同じ内容を `.cursor/mcp.json` に書いてください。Cursor で `analyze_files` や `lsp` が表示されない場合は、Cursor が MCP の roots に対応していない可能性があります。
+
+Codex 用の設定例は、このドキュメントでは扱いません。
 
 ## 利用上の注意点
 
@@ -104,9 +106,11 @@ mise exec -- flutter run \
 
 - 実行中のアプリのランタイムエラーと Widget ツリーの取得
 - Hot reload、Hot restart
-- 静的解析、シンボルの定義や参照の検索
+- 静的解析、シンボルの定義の検索
 - pub.dev の検索、依存パッケージのソースの参照
 - アプリの起動と停止（既定では無効）
+
+依存パッケージのソースを検索する `rip_grep_packages` は ripgrep（`rg`）を使います。ripgrep がない環境では、`read_package_uris` でソースを読んでください。
 
 一部の公式スキルは、この Server のツールを前提にしています。対象のスキルは [AI スキルの配置] を見てください。
 
@@ -122,7 +126,7 @@ mise exec -- flutter run \
 "args": ["exec", "--", "dart", "mcp-server", "--enable", "flutter_app_lifecycle"]
 ```
 
-`dart_fix`、`dart_format`、`run_tests`、`create_project` も既定では無効です。フォーマット、解析、テストは [AGENTS.md] のとおり `mise run` のタスクで実行するため、有効にしません。
+`dart_fix`、`dart_format`、`run_tests`、`create_project` も既定では無効です。フォーマットとテストは [AGENTS.md] のとおり `mise run` のタスクで実行するため、有効にしません。`analyze_files` と `pub` は既定で有効ですが、作業を終える前の検査は `mise run check` で、依存の変更は [AGENTS.md] の手順で行ってください。
 
 ### 実行中のアプリへの接続
 
